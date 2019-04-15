@@ -1,3 +1,11 @@
+Development flow
+-----------------
+test sql with direct sql statements
+load test file loads
+load test outbound (outbound is a mock -- setTimeout)
+
+
+
 data loading
 -----------------
 
