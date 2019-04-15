@@ -1,0 +1,10 @@
+data loading
+-----------------
+
+ingested - file is recorded to be "in the system", but data not loaded yet
+loaded - rows have been loaded into the system, no transformations made
+mapped - rows have been tagged with appropriate metadata, or transformed
+    -- message functions applied and built out
+queued / contacting - rows have been copied into appropriate contact queue tables
+    -- last chance to cancel contacts
+complete -- all contacts have been completed (whether errors were encountered we need to look into individual contact statuses)

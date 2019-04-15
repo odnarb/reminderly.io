@@ -1,0 +1,10 @@
+x- create db
+x- create mock schema
+x- create mock get messages table / data / proc
+x- create node.js app to get messages from mysql db depending on run type
+    x - update table to say batch is complete (stored proc)
+- flesh out db schema and stored procedures needed
+- flesh out logging
+- create tests for failures
+- create tests
+    - randomize appointment times
