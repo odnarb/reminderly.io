@@ -42,7 +42,7 @@ class ReminderlySMS extends ReminderlyMessage {
                 });
 
                 let tx_guid = msgs[0].tx_guid;
-                let sqlQuery = "CALL GetMessagesReady('"+tx_guid+"');";
+                let sqlQuery = "CALL SetMessagesProcessed('"+tx_guid+"');";
                 connection.query(sqlQuery, function (error, msgs, fields) {
                     if(error) cb(error);
                     else cb(null,'success!: sms');
@@ -88,7 +88,7 @@ class ReminderlyPhoneCall extends ReminderlyMessage {
                 });
 
                 let tx_guid = msgs[0].tx_guid;
-                let sqlQuery = "CALL GetMessagesReady('"+tx_guid+"');";
+                let sqlQuery = "CALL SetMessagesProcessed('"+tx_guid+"');";
                 connection.query(sqlQuery, function (error, msgs, fields) {
                     if(error) cb(error);
                     else cb(null,'success!: call');
@@ -117,7 +117,7 @@ class ReminderlyEmail extends ReminderlyMessage {
                 });
 
                 let tx_guid = msgs[0].tx_guid;
-                let sqlQuery = "CALL GetMessagesReady('"+tx_guid+"');";
+                let sqlQuery = "CALL SetMessagesProcessed('"+tx_guid+"');";
                 connection.query(sqlQuery, function (error, msgs, fields) {
                     if(error) cb(error);
                     else cb(null,'success!: email');
