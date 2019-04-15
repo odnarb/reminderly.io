@@ -104,6 +104,12 @@ DELIMITER ;
 -- need logging tables
 -- need log offloaders
 
+--proc moves data to history
+    --removes entries from log tables
+
+-- table of processed flags
+-- table of contact methods
+-- table of contact status / description
 -- figure out a shard method
 shards
     id
@@ -129,6 +135,7 @@ other features to be built out
 survey -- who responded the most, and who's most likely to respond to a survey
 url shortener
 auto reminders / cancellations
+messae options - leave a different message on answering machine vs human
 
 */
 
@@ -147,6 +154,28 @@ sources
         push or pull
     Google Assistant?
     Google Calendar?
+*/
+
+/*
+global_confirmation_templates
+    #this is for confirmations and whatnot
+    -- content for after clicking "confirm"/"cancel"/"reschedule"
+
+data cleaning
+    apply company rules based on field mapping
+    filter duplicates
+
+outbound rules
+    auto responses
+    days offset
+*/
+
+/*
+-- wth is this?
+flags
+    id
+    flag
+    description
 */
 
 -- company table
@@ -367,7 +396,6 @@ CREATE TABLE `log_users` (
 )  ENGINE=INNODB;
 
 
-
 -- users_passwords table
 CREATE TABLE `users_passwords` (
     `id` INT AUTO_INCREMENT,
@@ -490,7 +518,6 @@ CREATE TABLE `user_role` (
 )  ENGINE=INNODB;
 
 
-
 -- log_user_role table
 CREATE TABLE `log_user_role` (
     `id` INT AUTO_INCREMENT,
@@ -573,7 +600,6 @@ CREATE TABLE `data_ingest_stage` (
 )  ENGINE=INNODB;
 
 
-
 -- log_data_ingest_stage table
 CREATE TABLE `log_data_ingest_stage` (
     `id` INT AUTO_INCREMENT,
@@ -587,13 +613,15 @@ CREATE TABLE `log_data_ingest_stage` (
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
-
+-- track the number of times we tried to load this file
 -- data_packet table
 CREATE TABLE `data_packet` (
     `id` INT AUTO_INCREMENT,
     `data_ingest_source_id` INT NOT NULL,
     `data_ingest_stage_id` INT NOT NULL,
     `company_id` INT NOT NULL,
+    `tx_guid` VARCHAR(80) NOT NULL DEFAULT UUID(),
+    `num_tries` INT NOT NULL,
     `metadata` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -605,7 +633,7 @@ CREATE TABLE `data_packet` (
 
 
 -- this would be a more visible on the platform than other log tables?
--- log the stages a packet  is in
+-- log the stages a packet is in
 
 -- log_data_ingest_stage table
 CREATE TABLE `log_data_packet` (
@@ -628,6 +656,7 @@ CREATE TABLE `log_data_packet` (
     -- this also allows companies to have several load maps to be active
         -- then each import (or data feed, or file) needs to reference a company_load_map.id
     -- this can also remove the requirement of having a "customer_xref" table..?
+
 -- company_load_map table
 CREATE TABLE `company_load_map` (
     `id` INT AUTO_INCREMENT,
@@ -656,26 +685,6 @@ CREATE TABLE `log_company_load_map` (
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
-/*
-field mapping
--------------------
-template
-    per-company or per-customer defined
-        --if commercial or schools, no need for "customer",
-            or can use big school districts and delegate to Principals at each school
-    field cleaning / validation
-    messaging setup
-        sms
-            templates
-        phone
-            snippets, templates
-        email
-            spoof address (tier-1 clients ONLY)
-            html email templates (tier-2 clients and above)
-*/
-
--- they choose what to match on
-    --needs to be at least first name, last name, phone|email
 
 -- contact_blocks table
 CREATE TABLE `contact_blocks` (
@@ -714,224 +723,337 @@ messaging
     {data.[property]}
     {data.appointment_date|date|MM-DD-YYYY HH:MM:ss}
 -You have an appointment on {data.appointment_date|date|MM-DD-YYYY HH:MM:ss} with {data.provider|name}
-- {data.first_name} - capitalize the first letter, this is a proper name
-- {data.last_name} - capitalize the first letter, this is a proper name
-- {data.location} - capitalize the first letter, this is a proper name
-- {company.name}
+- {data.first_name|name} - capitalize the first letter, this is a proper name
+- {data.last_name|name} - capitalize the first letter, this is a proper name
+- {data.location|name} - capitalize the first letter, this is a proper name
+- {company.name|name}
 - {company.phone_number}
 */
 
-message_functions
-    id
-    name
-    created_at
-    updated_at
+
+-- message_functions table
+CREATE TABLE `message_functions` (
+    `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(80) NOT NULL DEFAULT '',
+    `description` VARCHAR(255) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 
-global_phone_templates
-    template_id
-    name
-    type (HealthCare, School, Utilities, Commercial, etc)
-    message  (JSON)
-        message contains a JSON structure or array with message snippet details
-        will be tts and can contain message tags and functions
-    updated_at
-    created_at
+--  (HealthCare, School, Utilities, Commercial, etc)
+-- template_types table
+CREATE TABLE `template_types` (
+    `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(80) NOT NULL DEFAULT '',
+    `description` VARCHAR(255) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 
-phone_templates
-    template_id
-    customer_id
-    company_id
-    name
-    message  (JSON)
-        message contains a JSON structure or array with message snippet details
-    updated_at
-    created_at
+-- template types just help one identify what it's useful for
+-- global_templates table
+CREATE TABLE `global_templates` (
+    `id` INT AUTO_INCREMENT,
+    `template_type_id` VARCHAR(80) NOT NULL DEFAULT '',
+    `name` VARCHAR(80) NOT NULL DEFAULT '',
+    `message` json NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`template_type_id`) REFERENCES template_types (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 
-global_sms_templates
-    template_id
-    name
-    message
-        message is a string with message tags and functions
-    updated_at
-    created_at
+-- company_templates table
+CREATE TABLE `company_templates` (
+    `id` INT AUTO_INCREMENT,
+    `template_type_id` VARCHAR(80) NOT NULL DEFAULT '',
+    `customer_id` INT NOT NULL,
+    `company_id` INT NOT NULL,
+    `name` VARCHAR(80) NOT NULL DEFAULT '',
+    `message` json NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`template_type_id`) REFERENCES template_types (`id`),
+    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
+    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
-
-sms_templates
-    template_id
-    customer_id
-    company_id
-    name
-    message
-        message is a string with message tags and functions
-    updated_at
-    created_at
-
-
-global_email_templates (these are templates designed by us and customers have access to)
-    template_id
-    html_email
-    raw_text
-    updated_at
-    created_at
-
-
-email_templates
-    template_id
-    customer_id
-    company_id
-    html_email
-    raw_text
-    updated_at
-    created_at
-
-
-global_confirmation_templates
-    #this is for 
-
--- wth is this?
-flags
-    id
-    flag
-    description
-
-
-data cleaning
-    apply company rules based on field mapping
-    filter duplicates
-
-outbound rules
-    auto responses
-    days offset
 
 
 -- consider the limitation of the json column here..
     -- maybe not a big deal
 -- max size is server's max-allowed-packet size. defauly is 64MB
-message
-    id
-    company_id
-    customer_id
-    data (JSON)
-        -- { first_name, last_name, middle_name, phone_number, email_address, appointment_date, patient_id, customer, customer_id, etc... }
-    contact_method [phone, email, sms]
-    contact_date (UTC time)
-    processed (various flags/states of contacting in system queueing)
-    contact_status {message sent, contacted, failed, etc}
-    contact_status_description {why it failed, etc}
-    raw_response [DTMF, character, word, raw data]
-    created_at
-    updated_at
+
+-- message table
+CREATE TABLE `messages` (
+    `id` INT AUTO_INCREMENT,
+    `data_packet_id` NOT NULL,
+    `company_id` INT NOT NULL,
+    `customer_id` INT NOT NULL,
+    `contact_method_id` INT NOT NULL,
+    `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
+    `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
+    `data` json NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `contact_status_description` VARCHAR(255) NOT NULL DEFAULT, -- {why it failed, etc}
+    `raw_response` VARCHAR(80) NOT NULL DEFAULT, -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
+    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
+    FOREIGN KEY (`contact_method_id`) REFERENCES contact_method (`id`),
+    FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
+    FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 
-log_message
-    id
-    message_id
-    user_id
-    details JSON
-    updated_at
-    created_at
+-- log_message table
+CREATE TABLE `log_messages` (
+    `id` INT AUTO_INCREMENT,
+    `message_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`message_id`) REFERENCES messages (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 
-messages_history
-    same fields as contact_records
-
-messages_history_history ?
-    same fields as contact_records
-
-
---proc moves data to history
-    --removes entries from log tables
-
-sms_queue (transient)
-    message_id
-    to_phone
-    from_phone
-    message_data
-    contact_date
-    priority
-    created_at
-    updated_at
-
-
-phone_queue (transient)
-    message_id
-    to_phone
-    from_phone
-    message_data
-    contact_date
-    priority
-    created_at
-    updated_at
+-- messages_history table
+CREATE TABLE `messages_history` (
+    `id` INT AUTO_INCREMENT,
+    `message_id` INT NOT NULL,
+    `data_packet_id` NOT NULL,
+    `company_id` INT NOT NULL,
+    `customer_id` INT NOT NULL,
+    `contact_method_id` INT NOT NULL,
+    `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
+    `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
+    `data` json NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `contact_status_description` VARCHAR(255) NOT NULL DEFAULT, -- {why it failed, etc}
+    `raw_response` VARCHAR(80) NOT NULL DEFAULT, -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
+    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
+    FOREIGN KEY (`contact_method_id`) REFERENCES contact_method (`id`),
+    FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
+    FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 
-email_queue (transient)
-    message_id
-    to_email
-    from_email
-    reply_to
-    message_data (includes HTML and text-only as a backup)
-    contact_date
-    priority
-    created_at
-    updated_at
+-- log_messages_history table
+CREATE TABLE `log_messages_history` (
+    `id` INT AUTO_INCREMENT,
+    `messages_history_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`message_id`) REFERENCES messages_history (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 
-message_updates (sms sent, bounces, complaints, rejects, etc)
-    id
-    message_id
-    contact_method
-    status JSON
-    created_at
-    updated_at
+-- messages_history_history table
+CREATE TABLE `messages_history_history` (
+    `id` INT AUTO_INCREMENT,
+    `message_id` INT NOT NULL,
+    `data_packet_id` NOT NULL,
+    `company_id` INT NOT NULL,
+    `customer_id` INT NOT NULL,
+    `contact_method_id` INT NOT NULL,
+    `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
+    `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
+    `data` json NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `contact_status_description` VARCHAR(255) NOT NULL DEFAULT, -- {why it failed, etc}
+    `raw_response` VARCHAR(80) NOT NULL DEFAULT, -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
+    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
+    FOREIGN KEY (`contact_method_id`) REFERENCES contact_method (`id`),
+    FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
+    FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 
-message_updates_history
-    id
-    message_id
-    contact_method
-    status JSON
-    created_at
-    updated_at
+-- log_messages_history_history table
+CREATE TABLE `log_messages_history_history` (
+    `id` INT AUTO_INCREMENT,
+    `messages_history_history_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`message_id`) REFERENCES messages_history_history (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 
--- different tiers?
-credit_prices
-    id
-    credits_package -- 5000, 20000, 50000
-    price_per_credit -- .10, .08, .06
-    created_at
-    updated_at
+CREATE TABLE `sms_queue` (
+    `id` INT AUTO_INCREMENT,
+    `message_id` INT NOT NULL,
+    `to_phone` VARCHAR(20) NOT NULL DEFAULT '',
+    `from_phone` VARCHAR(20) NOT NULL DEFAULT '',
+    `data` json NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `priority` INT NOT NULL DEFAULT 0,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`message_id`) REFERENCES messages (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 
-log_price
-    id
-    company_id
-    created_at
-    updated_at
+-- log_sms_queue table
+CREATE TABLE `log_sms_queue` (
+    `id` INT AUTO_INCREMENT,
+    `sms_queue_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`sms_queue_id`) REFERENCES sms_queue (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 
--- all strings must have an english counterpart
-i18n_string
-    id
-    company_id
-    string_en
-    string_translation
-    country_code
-    created_at
-    updated_at
+-- phone_queue table
+CREATE TABLE `phone_queue` (
+    `id` INT AUTO_INCREMENT,
+    `message_id` INT NOT NULL,
+    `to_phone` VARCHAR(20) NOT NULL DEFAULT '',
+    `from_phone` VARCHAR(20) NOT NULL DEFAULT '',
+    `data` json NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `priority` INT NOT NULL DEFAULT 0,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`message_id`) REFERENCES messages (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 
-log_i18n_strings
-    id
-    i18n_string_id
-    user_id
-    details JSON
-    updated_at
-    created_at
+-- log_phone_queue table
+CREATE TABLE `log_phone_queue` (
+    `id` INT AUTO_INCREMENT,
+    `phone_queue_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`phone_queue_id`) REFERENCES phone_queue (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
+
+-- email_queue table
+CREATE TABLE `email_queue` (
+    `id` INT AUTO_INCREMENT,
+    `message_id` INT NOT NULL,
+    `to_email` VARCHAR(255) NOT NULL DEFAULT '',
+    `from_email` VARCHAR(255) NOT NULL DEFAULT '',
+    `reply_to` VARCHAR(255) NOT NULL DEFAULT '',
+    `data` json NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `priority` INT NOT NULL DEFAULT 0,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`message_id`) REFERENCES messages (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- log_phone_queue table
+CREATE TABLE `log_email_queue` (
+    `id` INT AUTO_INCREMENT,
+    `email_queue_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`email_queue_id`) REFERENCES email_queue (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- products table
+CREATE TABLE `products` (
+    `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(80) NOT NULL DEFAULT '',
+    `descripton` VARCHAR(255) NOT NULL DEFAULT '',
+    `credits_package_amt` INT NOT NULL,
+    `price` INT NOT NULL,
+    `price_per_credit` INT NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- log_products table
+CREATE TABLE `log_products` (
+    `id` INT AUTO_INCREMENT,
+    `product_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`product_id`) REFERENCES products (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- all strings must have an english counterpart if there is a translation
+-- i18n_string table
+CREATE TABLE `i18n_string` (
+    `id` INT AUTO_INCREMENT,
+    `company_id` INT NOT NULL,
+    `string_en` VARCHAR(255) NOT NULL DEFAULT '',
+    `string_translation` VARCHAR(255) NOT NULL DEFAULT '',
+    `country_code` VARCHAR(2) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- log_i18n_strings table
+CREATE TABLE `log_i18n_strings` (
+    `id` INT AUTO_INCREMENT,
+    `i18n_string_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`i18n_string_id`) REFERENCES i18n_string (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 -- 
 -- 
