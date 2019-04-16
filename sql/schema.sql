@@ -128,6 +128,26 @@ customer_xref
     updated_at
     created_at
 
+/*
+- use MyIsam for logging or tables that might deadlock
+- use table rotating for logs
+- use gearman for caching inserts https://lornajane.net/posts/2011/using-persistent-storage-with-gearman
+
+http://brian.moonspot.net/logging-with-mysql
+
+create table messages_new like messages;
+rename table messages to messages_history_2019041600001, messages_new to messages;
+
+
+can query the system for tables that are messages_history_*: show tables like 'messages_history_%'
+
+messages_history_2019041600001
+messages_history_2019051600001
+messages_history_2019061600001
+etc
+
+then union them for a complete poll of history
+*/
 
 /*
 other features to be built out
@@ -227,7 +247,7 @@ CREATE TABLE `log_groups` (
     FOREIGN KEY (`group_id`) REFERENCES groups (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 -- so companies can be part of a group, set one as master
 -- company_group table
@@ -255,7 +275,7 @@ CREATE TABLE `log_company_group` (
     FOREIGN KEY (`company_group_id`) REFERENCES company_group (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- customer table
@@ -283,7 +303,7 @@ CREATE TABLE `log_customer` (
     FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- company_apps table
@@ -311,7 +331,7 @@ CREATE TABLE `log_company_apps` (
     FOREIGN KEY (`company_apps_id`) REFERENCES company_apps (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- company_apps_restriction table
@@ -338,7 +358,7 @@ CREATE TABLE `log_company_apps_restriction` (
     FOREIGN KEY (`company_apps_restriction_id`) REFERENCES company_apps_restriction (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- company_api table
@@ -365,7 +385,7 @@ CREATE TABLE `log_company_api` (
     FOREIGN KEY (`company_api_id`) REFERENCES company_api (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 CREATE TABLE `users` (
@@ -393,7 +413,7 @@ CREATE TABLE `log_users` (
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- users_passwords table
@@ -419,7 +439,7 @@ CREATE TABLE `log_users_passwords` (
     FOREIGN KEY (`users_passwords_id`) REFERENCES users_passwords (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- these need to be fleshed out, primarily for the UI of the system
@@ -447,7 +467,7 @@ CREATE TABLE `log_role` (
     FOREIGN KEY (`role_id`) REFERENCES role (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- policy table
@@ -474,7 +494,7 @@ CREATE TABLE `log_policy` (
     FOREIGN KEY (`policy_id`) REFERENCES policy (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- roles_policies table
@@ -501,7 +521,7 @@ CREATE TABLE `log_roles_policies` (
     FOREIGN KEY (`roles_policies_id`) REFERENCES roles_policies (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 
@@ -529,7 +549,7 @@ CREATE TABLE `log_user_role` (
     FOREIGN KEY (`user_role_id`) REFERENCES roles_policies (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- company_location table
@@ -560,7 +580,7 @@ CREATE TABLE `log_company_location` (
     FOREIGN KEY (`company_location_id`) REFERENCES company_location (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- consider: what to do with additional data? overwrite / flush / append?
@@ -586,7 +606,7 @@ CREATE TABLE `log_data_ingest_source` (
     FOREIGN KEY (`data_ingest_source_id`) REFERENCES data_ingest_source (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- data_ingest_stage table
@@ -611,7 +631,7 @@ CREATE TABLE `log_data_ingest_stage` (
     FOREIGN KEY (`data_ingest_stage_id`) REFERENCES data_ingest_stage (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 -- track the number of times we tried to load this file
 -- data_packet table
@@ -646,7 +666,7 @@ CREATE TABLE `log_data_packet` (
     FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- allow client/cust support to reset stage?
@@ -683,7 +703,7 @@ CREATE TABLE `log_company_load_map` (
     FOREIGN KEY (`company_load_map_id`) REFERENCES company_load_map (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- contact_blocks table
@@ -709,7 +729,7 @@ CREATE TABLE `log_contact_blocks` (
     FOREIGN KEY (`contact_blocks_id`) REFERENCES contact_blocks (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 messaging
@@ -812,7 +832,7 @@ CREATE TABLE `messages` (
     FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
     FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- log_message table
@@ -826,11 +846,14 @@ CREATE TABLE `log_messages` (
     FOREIGN KEY (`message_id`) REFERENCES messages (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
--- messages_history table
-CREATE TABLE `messages_history` (
+-- this is just an example of history tables and how we'd use them
+-- deletes suck
+-- drops are quick.. once this table expires... drop it.
+-- messages_history_4_1_2019 table
+CREATE TABLE `messages_history_4_1_2019` (
     `id` INT AUTO_INCREMENT,
     `message_id` INT NOT NULL,
     `data_packet_id` NOT NULL,
@@ -852,25 +875,11 @@ CREATE TABLE `messages_history` (
     FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
     FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
--- log_messages_history table
-CREATE TABLE `log_messages_history` (
-    `id` INT AUTO_INCREMENT,
-    `messages_history_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`message_id`) REFERENCES messages_history (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
--- messages_history_history table
-CREATE TABLE `messages_history_history` (
+-- messages_history_5_1_2019 table
+CREATE TABLE `messages_history_5_1_2019` (
     `id` INT AUTO_INCREMENT,
     `message_id` INT NOT NULL,
     `data_packet_id` NOT NULL,
@@ -892,21 +901,7 @@ CREATE TABLE `messages_history_history` (
     FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
     FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
--- log_messages_history_history table
-CREATE TABLE `log_messages_history_history` (
-    `id` INT AUTO_INCREMENT,
-    `messages_history_history_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`message_id`) REFERENCES messages_history_history (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 CREATE TABLE `sms_queue` (
@@ -935,7 +930,7 @@ CREATE TABLE `log_sms_queue` (
     FOREIGN KEY (`sms_queue_id`) REFERENCES sms_queue (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- phone_queue table
@@ -965,7 +960,7 @@ CREATE TABLE `log_phone_queue` (
     FOREIGN KEY (`phone_queue_id`) REFERENCES phone_queue (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- email_queue table
@@ -996,7 +991,7 @@ CREATE TABLE `log_email_queue` (
     FOREIGN KEY (`email_queue_id`) REFERENCES email_queue (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- products table
@@ -1024,7 +1019,7 @@ CREATE TABLE `log_products` (
     FOREIGN KEY (`product_id`) REFERENCES products (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
+)  ENGINE=MyISAM;
 
 
 -- all strings must have an english counterpart if there is a translation
@@ -1053,73 +1048,4 @@ CREATE TABLE `log_i18n_strings` (
     FOREIGN KEY (`i18n_string_id`) REFERENCES i18n_string (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
--- 
--- 
--- NOW BEGIN DATA ENTRY
--- 
-INSERT INTO `contact_status` (`contact_status`) VALUES
-('not sent'),
-('queue'),
-('sent'),
-('error');
-
-INSERT INTO `contact_method` (`contact_method`) VALUES
-('phone'),
-('sms'),
-('email'),
-('general');
-
-INSERT INTO `customer` (`name`) VALUES
-('test customer 1'),
-('test customer 2'),
-('test customer 3'),
-('test customer 4');
-
-INSERT INTO `messages`
-(`customer_id`,`contact_method`,`contact_status`,`message_body`,`contact_date`,`priority`)
-VALUES
--- customer 1
-(1,1,1,'{ "to": "(530) 908-2640", "body": "This is a test phone call 1. Thank you!" }',now(),0),
-(1,1,1,'{ "to": "(530) 908-2640", "body": "This is a test phone call 2. Thank you!" }',now(),0),
-(1,1,1,'{ "to": "(530) 908-2640", "body": "This is a test phone call 3. Thank you!" }',now(),0),
-(2,1,1,'{ "to": "(530) 908-2640", "body": "This is a test sms 1. Thank you!" }',now(),0),
-(2,1,1,'{ "to": "(530) 908-2640", "body": "This is a test sms 2. Thank you!" }',now(),0),
-(2,1,1,'{ "to": "(530) 908-2640", "body": "This is a test sms 3. Thank you!" }',now(),0),
-(3,1,1,'{"email_address":"bran.cham@gmail.com","subject":"El Rio - Appointment Reminder 1","from":"notifications@reminderly.io","reply_to":"notifications@reminderly.io","text_body":"This is a test 1","html_body":"<html><body><h1>This is an HTML test 1</h1></body></html>"}',now(),0),
-(3,1,1,'{"email_address":"bran.cham@gmail.com","subject":"El Rio - Appointment Reminder 2","from":"notifications@reminderly.io","reply_to":"notifications@reminderly.io","text_body":"This is a test 2","html_body":"<html><body><h1>This is an HTML test 2</h1></body></html>"}',now(),0),
-(3,1,1,'{"email_address":"bran.cham@gmail.com","subject":"El Rio - Appointment Reminder 3","from":"notifications@reminderly.io","reply_to":"notifications@reminderly.io","text_body":"This is a test 3","html_body":"<html><body><h1>This is an HTML test 3</h1></body></html>"}',now(),0),
-
--- customer 2
-(1,2,1,'{ "to": "(530) 908-2640", "body": "This is a test phone call 4. Thank you!" }',now(),0),
-(1,2,1,'{ "to": "(530) 908-2640", "body": "This is a test phone call 5. Thank you!" }',now(),0),
-(1,2,1,'{ "to": "(530) 908-2640", "body": "This is a test phone call 6. Thank you!" }',now(),0),
-(2,2,1,'{ "to": "(530) 908-2640", "body": "This is a test sms 1. Thank you!" }',now(),0),
-(2,2,1,'{ "to": "(530) 908-2640", "body": "This is a test sms 2. Thank you!" }',now(),0),
-(2,2,1,'{ "to": "(530) 908-2640", "body": "This is a test sms 3. Thank you!" }',now(),0),
-(3,2,1,'{"email_address":"bran.cham@gmail.com","subject":"El Rio - Appointment Reminder 1","from":"notifications@reminderly.io","reply_to":"notifications@reminderly.io","text_body":"This is a test 1","html_body":"<html><body><h1>This is an HTML test 1</h1></body></html>"}',now(),0),
-(3,2,1,'{"email_address":"bran.cham@gmail.com","subject":"El Rio - Appointment Reminder 2","from":"notifications@reminderly.io","reply_to":"notifications@reminderly.io","text_body":"This is a test 2","html_body":"<html><body><h1>This is an HTML test 2</h1></body></html>"}',now(),0),
-(3,2,1,'{"email_address":"bran.cham@gmail.com","subject":"El Rio - Appointment Reminder 3","from":"notifications@reminderly.io","reply_to":"notifications@reminderly.io","text_body":"This is a test 3","html_body":"<html><body><h1>This is an HTML test 3</h1></body></html>"}',now(),0),
-
--- customer 3
-(1,3,1,'{ "to": "(530) 908-2640", "body": "This is a test phone call 7. Thank you!" }',now(),0),
-(1,3,1,'{ "to": "(530) 908-2640", "body": "This is a test phone call 8. Thank you!" }',now(),0),
-(1,3,1,'{ "to": "(530) 908-2640", "body": "This is a test phone call 9. Thank you!" }',now(),0),
-(2,3,1,'{ "to": "(530) 908-2640", "body": "This is a test sms 1. Thank you!" }',now(),0),
-(2,3,1,'{ "to": "(530) 908-2640", "body": "This is a test sms 2. Thank you!" }',now(),0),
-(2,3,1,'{ "to": "(530) 908-2640", "body": "This is a test sms 3. Thank you!" }',now(),0),
-(3,3,1,'{"email_address":"bran.cham@gmail.com","subject":"El Rio - Appointment Reminder 1","from":"notifications@reminderly.io","reply_to":"notifications@reminderly.io","text_body":"This is a test 1","html_body":"<html><body><h1>This is an HTML test 1</h1></body></html>"}',now(),0),
-(3,3,1,'{"email_address":"bran.cham@gmail.com","subject":"El Rio - Appointment Reminder 2","from":"notifications@reminderly.io","reply_to":"notifications@reminderly.io","text_body":"This is a test 2","html_body":"<html><body><h1>This is an HTML test 2</h1></body></html>"}',now(),0),
-(3,3,1,'{"email_address":"bran.cham@gmail.com","subject":"El Rio - Appointment Reminder 3","from":"notifications@reminderly.io","reply_to":"notifications@reminderly.io","text_body":"This is a test 3","html_body":"<html><body><h1>This is an HTML test 3</h1></body></html>"}',now(),0),
-
--- customer 4
-(1,4,1,'{ "to": "(530) 908-2640", "body": "This is a test phone call 10. Thank you!" }',now(),0),
-(1,4,1,'{ "to": "(530) 908-2640", "body": "This is a test phone call 11. Thank you!" }',now(),0),
-(1,4,1,'{ "to": "(530) 908-2640", "body": "This is a test phone call 12. Thank you!" }',now(),0),
-(2,4,1,'{ "to": "(530) 908-2640", "body": "This is a test sms 1. Thank you!" }',now(),0),
-(2,4,1,'{ "to": "(530) 908-2640", "body": "This is a test sms 2. Thank you!" }',now(),0),
-(2,4,1,'{ "to": "(530) 908-2640", "body": "This is a test sms 3. Thank you!" }',now(),0),
-(3,4,1,'{"email_address":"bran.cham@gmail.com","subject":"El Rio - Appointment Reminder 1","from":"notifications@reminderly.io","reply_to":"notifications@reminderly.io","text_body":"This is a test 1","html_body":"<html><body><h1>This is an HTML test 1</h1></body></html>"}',now(),0),
-(3,4,1,'{"email_address":"bran.cham@gmail.com","subject":"El Rio - Appointment Reminder 2","from":"notifications@reminderly.io","reply_to":"notifications@reminderly.io","text_body":"This is a test 2","html_body":"<html><body><h1>This is an HTML test 2</h1></body></html>"}',now(),0),
-(3,4,1,'{"email_address":"bran.cham@gmail.com","subject":"El Rio - Appointment Reminder 3","from":"notifications@reminderly.io","reply_to":"notifications@reminderly.io","text_body":"This is a test 3","html_body":"<html><body><h1>This is an HTML test 3</h1></body></html>"}',now(),0);
+)  ENGINE=MyISAM;
