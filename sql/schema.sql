@@ -1,18 +1,3 @@
--- 1 - sms,2 - email, 3 - phone
-CREATE TABLE `contact_method` (
-    `id` INT AUTO_INCREMENT,
-    `contact_method` VARCHAR(80) NOT NULL,
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
--- 0 - not sent,1 - in queue,2 - sent, 3 - error
-CREATE TABLE `contact_status` (
-    `id` INT AUTO_INCREMENT,
-    `contact_status` VARCHAR(255) NOT NULL,
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
 ------------------------------------------------ 
 
 /*
@@ -32,6 +17,22 @@ customer_xref
     updated_at
     created_at
 */
+
+-- 1 - sms,2 - email, 3 - phone
+CREATE TABLE `contact_method` (
+    `id` INT AUTO_INCREMENT,
+    `contact_method` VARCHAR(80) NOT NULL,
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- 0 - not sent,1 - in queue,2 - sent, 3 - error
+CREATE TABLE `contact_status` (
+    `id` INT AUTO_INCREMENT,
+    `contact_status` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
 
 -- company table
 CREATE TABLE `company` (
