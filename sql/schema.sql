@@ -1,3 +1,4 @@
+-- 1 - sms,2 - email, 3 - phone
 CREATE TABLE `contact_method` (
     `id` INT AUTO_INCREMENT,
     `contact_method` VARCHAR(80) NOT NULL,

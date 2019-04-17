@@ -9,10 +9,9 @@ INSERT INTO `contact_status` (`contact_status`) VALUES
 ('error');
 
 INSERT INTO `contact_method` (`contact_method`) VALUES
-('phone'),
 ('sms'),
 ('email'),
-('general');
+('phone');
 
 INSERT INTO `customer` (`name`) VALUES
 ('test customer 1'),
