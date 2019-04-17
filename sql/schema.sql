@@ -1,4 +1,3 @@
--- 0 - not sent,1 - in queue,2 - sent, 3 - error
 CREATE TABLE `contact_method` (
     `id` INT AUTO_INCREMENT,
     `contact_method` VARCHAR(80) NOT NULL,
@@ -99,12 +98,12 @@ DELIMITER ;
 
 
 ------------------------------------------------ 
+-- DONE - need logging tables
+-- - need log offloader script
+    -- log tables can be dumped out after x days to a .sql file, and then rotate the table
+    -- simply use the mysqldump command for relevant tables
 -- TODO: figure role company restriction (or allow list) via role table
--- need to track changes in db
--- need logging tables
--- need log offloaders
-
---proc moves data to history
+-- proc moves data to history
     --removes entries from log tables
 
 -- table of processed flags
