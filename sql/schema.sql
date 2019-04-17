@@ -130,20 +130,6 @@ CREATE TABLE `company` (
 )  ENGINE=INNODB;
 
 
--- log_company table
-CREATE TABLE `log_company` (
-    `id` INT AUTO_INCREMENT,
-    `company_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
 -- groups table
 CREATE TABLE `groups` (
     `id` INT AUTO_INCREMENT,
@@ -155,18 +141,6 @@ CREATE TABLE `groups` (
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
--- log_groups table
-CREATE TABLE `log_groups` (
-    `id` INT AUTO_INCREMENT,
-    `group_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`group_id`) REFERENCES groups (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
 
 -- so companies can be part of a group, set one as master
 -- company_group table
@@ -183,20 +157,6 @@ CREATE TABLE `company_group` (
 )  ENGINE=INNODB;
 
 
--- log_company_group table
-CREATE TABLE `log_company_group` (
-    `id` INT AUTO_INCREMENT,
-    `company_group_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_group_id`) REFERENCES company_group (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- customer table
 CREATE TABLE `customer` (
     `id` INT AUTO_INCREMENT,
@@ -209,20 +169,6 @@ CREATE TABLE `customer` (
     FOREIGN KEY (`company_id`) REFERENCES company (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-
-
--- log_customer table
-CREATE TABLE `log_customer` (
-    `id` INT AUTO_INCREMENT,
-    `customer_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
 
 
 -- company_apps table
@@ -239,20 +185,6 @@ CREATE TABLE `company_apps` (
 )  ENGINE=INNODB;
 
 
--- log_company_apps table
-CREATE TABLE `log_company_apps` (
-    `id` INT AUTO_INCREMENT,
-    `company_apps_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_apps_id`) REFERENCES company_apps (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- company_apps_restriction table
 CREATE TABLE `company_apps_restriction` (
     `id` INT AUTO_INCREMENT,
@@ -266,20 +198,6 @@ CREATE TABLE `company_apps_restriction` (
 )  ENGINE=INNODB;
 
 
--- log_company_apps_restriction table
-CREATE TABLE `log_company_apps_restriction` (
-    `id` INT AUTO_INCREMENT,
-    `company_apps_restriction_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_apps_restriction_id`) REFERENCES company_apps_restriction (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- company_api table
 CREATE TABLE `company_api` (
     `id` INT AUTO_INCREMENT,
@@ -291,20 +209,6 @@ CREATE TABLE `company_api` (
     FOREIGN KEY (`company_apps_id`) REFERENCES company_apps (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-
-
--- log_company_api table
-CREATE TABLE `log_company_api` (
-    `id` INT AUTO_INCREMENT,
-    `company_api_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_api_id`) REFERENCES company_api (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
 
 
 CREATE TABLE `users` (
@@ -322,19 +226,6 @@ CREATE TABLE `users` (
 )  ENGINE=INNODB;
 
 
--- what if a user deletes themselves??? (foreign key issue?)
--- log_users table
-CREATE TABLE `log_users` (
-    `id` INT AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- users_passwords table
 CREATE TABLE `users_passwords` (
     `id` INT AUTO_INCREMENT,
@@ -345,20 +236,6 @@ CREATE TABLE `users_passwords` (
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-
-
--- log_users_passwords table
-CREATE TABLE `log_users_passwords` (
-    `id` INT AUTO_INCREMENT,
-    `users_passwords_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`users_passwords_id`) REFERENCES users_passwords (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
 
 
 -- these need to be fleshed out, primarily for the UI of the system
@@ -375,20 +252,6 @@ CREATE TABLE `role` (
 )  ENGINE=INNODB;
 
 
--- log_role table
-CREATE TABLE `log_role` (
-    `id` INT AUTO_INCREMENT,
-    `role_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`role_id`) REFERENCES role (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- policy table
 CREATE TABLE `policy` (
     `id` INT AUTO_INCREMENT,
@@ -400,20 +263,6 @@ CREATE TABLE `policy` (
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-
-
--- log_policy table
-CREATE TABLE `log_policy` (
-    `id` INT AUTO_INCREMENT,
-    `policy_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`policy_id`) REFERENCES policy (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
 
 
 -- roles_policies table
@@ -429,21 +278,6 @@ CREATE TABLE `roles_policies` (
 )  ENGINE=INNODB;
 
 
--- log_roles_policies table
-CREATE TABLE `log_roles_policies` (
-    `id` INT AUTO_INCREMENT,
-    `roles_policies_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`roles_policies_id`) REFERENCES roles_policies (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
-
 -- user_role table
 CREATE TABLE `user_role` (
     `id` INT AUTO_INCREMENT,
@@ -455,20 +289,6 @@ CREATE TABLE `user_role` (
     FOREIGN KEY (`role_id`) REFERENCES role (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-
-
--- log_user_role table
-CREATE TABLE `log_user_role` (
-    `id` INT AUTO_INCREMENT,
-    `user_role_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`user_role_id`) REFERENCES roles_policies (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
 
 
 -- company_location table
@@ -488,20 +308,6 @@ CREATE TABLE `company_location` (
 )  ENGINE=INNODB;
 
 
--- log_company_location table
-CREATE TABLE `log_company_location` (
-    `id` INT AUTO_INCREMENT,
-    `company_location_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_location_id`) REFERENCES company_location (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- consider: what to do with additional data? overwrite / flush / append?
 -- data_ingest_source table
 CREATE TABLE `data_ingest_source` (
@@ -514,20 +320,6 @@ CREATE TABLE `data_ingest_source` (
 )  ENGINE=INNODB;
 
 
--- log_data_ingest_source table
-CREATE TABLE `log_data_ingest_source` (
-    `id` INT AUTO_INCREMENT,
-    `data_ingest_source_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`data_ingest_source_id`) REFERENCES data_ingest_source (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- data_ingest_stage table
 CREATE TABLE `data_ingest_stage` (
     `id` INT AUTO_INCREMENT,
@@ -538,19 +330,6 @@ CREATE TABLE `data_ingest_stage` (
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
-
--- log_data_ingest_stage table
-CREATE TABLE `log_data_ingest_stage` (
-    `id` INT AUTO_INCREMENT,
-    `data_ingest_stage_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`data_ingest_stage_id`) REFERENCES data_ingest_stage (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
 
 -- track the number of times we tried to load this file
 -- data_packet table
@@ -571,23 +350,6 @@ CREATE TABLE `data_packet` (
 )  ENGINE=INNODB;
 
 
--- this would be a more visible on the platform than other log tables?
--- log the stages a packet is in
-
--- log_data_ingest_stage table
-CREATE TABLE `log_data_packet` (
-    `id` INT AUTO_INCREMENT,
-    `data_packet_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- company_load_map table
 CREATE TABLE `company_load_map` (
     `id` INT AUTO_INCREMENT,
@@ -603,20 +365,6 @@ CREATE TABLE `company_load_map` (
 )  ENGINE=INNODB;
 
 
--- log_company_load_map table
-CREATE TABLE `log_company_load_map` (
-    `id` INT AUTO_INCREMENT,
-    `company_load_map_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_load_map_id`) REFERENCES company_load_map (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- contact_blocks table
 CREATE TABLE `contact_blocks` (
     `id` INT AUTO_INCREMENT,
@@ -627,20 +375,6 @@ CREATE TABLE `contact_blocks` (
     FOREIGN KEY (`company_id`) REFERENCES company (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-
-
--- log_contact_blocks table
-CREATE TABLE `log_contact_blocks` (
-    `id` INT AUTO_INCREMENT,
-    `contact_blocks_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`contact_blocks_id`) REFERENCES contact_blocks (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
 
 
 -- message_functions table
@@ -722,20 +456,6 @@ CREATE TABLE `messages` (
 )  ENGINE=MyISAM;
 
 
--- log_message table
-CREATE TABLE `log_messages` (
-    `id` INT AUTO_INCREMENT,
-    `message_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`message_id`) REFERENCES messages (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- this is just an example of history tables and how we'd use them
 -- deletes suck
 -- drops are quick.. once this table expires... drop it.
@@ -807,20 +527,6 @@ CREATE TABLE `sms_queue` (
 )  ENGINE=INNODB;
 
 
--- log_sms_queue table
-CREATE TABLE `log_sms_queue` (
-    `id` INT AUTO_INCREMENT,
-    `sms_queue_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`sms_queue_id`) REFERENCES sms_queue (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- phone_queue table
 CREATE TABLE `phone_queue` (
     `id` INT AUTO_INCREMENT,
@@ -835,20 +541,6 @@ CREATE TABLE `phone_queue` (
     FOREIGN KEY (`message_id`) REFERENCES messages (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-
-
--- log_phone_queue table
-CREATE TABLE `log_phone_queue` (
-    `id` INT AUTO_INCREMENT,
-    `phone_queue_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`phone_queue_id`) REFERENCES phone_queue (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
 
 
 -- email_queue table
@@ -868,20 +560,6 @@ CREATE TABLE `email_queue` (
 )  ENGINE=INNODB;
 
 
--- log_phone_queue table
-CREATE TABLE `log_email_queue` (
-    `id` INT AUTO_INCREMENT,
-    `email_queue_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`email_queue_id`) REFERENCES email_queue (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- products table
 CREATE TABLE `products` (
     `id` INT AUTO_INCREMENT,
@@ -894,20 +572,6 @@ CREATE TABLE `products` (
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-
-
--- log_products table
-CREATE TABLE `log_products` (
-    `id` INT AUTO_INCREMENT,
-    `product_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`product_id`) REFERENCES products (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
 
 
 -- all strings must have an english counterpart if there is a translation
@@ -923,17 +587,3 @@ CREATE TABLE `i18n_string` (
     FOREIGN KEY (`company_id`) REFERENCES company (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-
-
--- log_i18n_strings table
-CREATE TABLE `log_i18n_strings` (
-    `id` INT AUTO_INCREMENT,
-    `i18n_string_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`i18n_string_id`) REFERENCES i18n_string (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
