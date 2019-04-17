@@ -800,8 +800,8 @@ CREATE TABLE `messages` (
     `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
     `data` json NOT NULL DEFAULT '',
     `contact_date` DATETIME NOT NULL DEFAULT '',
-    `contact_status_description` VARCHAR(255) NOT NULL DEFAULT, -- {why it failed, etc}
-    `raw_response` VARCHAR(80) NOT NULL DEFAULT, -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
+    `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
+    `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
@@ -840,8 +840,8 @@ CREATE TABLE `messages_history` (
     `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
     `data` json NOT NULL DEFAULT '',
     `contact_date` DATETIME NOT NULL DEFAULT '',
-    `contact_status_description` VARCHAR(255) NOT NULL DEFAULT, -- {why it failed, etc}
-    `raw_response` VARCHAR(80) NOT NULL DEFAULT, -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
+    `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
+    `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
@@ -880,8 +880,8 @@ CREATE TABLE `messages_history_history` (
     `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
     `data` json NOT NULL DEFAULT '',
     `contact_date` DATETIME NOT NULL DEFAULT '',
-    `contact_status_description` VARCHAR(255) NOT NULL DEFAULT, -- {why it failed, etc}
-    `raw_response` VARCHAR(80) NOT NULL DEFAULT, -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
+    `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
+    `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
