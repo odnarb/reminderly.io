@@ -6,7 +6,21 @@ x- create node.js app to get messages from mysql db depending on run type
 x- flesh out db schema
 x- flesh out logging tables
 - plan better solution for storing logs
-	http://brian.moonspot.net/logging-with-mysql
+    http://brian.moonspot.net/logging-with-mysql
+
+-- DONE - need logging tables
+-- - need log offloader script
+    -- log tables can be dumped out after x days to a .sql file, and then rotate the table
+    -- simply use the mysqldump command for relevant tables
+-- TODO: figure role company restriction (or allow list) via role table
+-- proc moves data to history
+    --removes entries from log tables
+
+-- table of processed flags
+-- table of contact methods
+-- table of contact status / description
+-- figure out a shard method
+
 
 - flesh out ui supported features/actions
 - plan api gateway / api endpoints for supporting the platform

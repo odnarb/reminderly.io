@@ -98,23 +98,12 @@ DELIMITER ;
 
 
 ------------------------------------------------ 
--- DONE - need logging tables
--- - need log offloader script
-    -- log tables can be dumped out after x days to a .sql file, and then rotate the table
-    -- simply use the mysqldump command for relevant tables
--- TODO: figure role company restriction (or allow list) via role table
--- proc moves data to history
-    --removes entries from log tables
 
--- table of processed flags
--- table of contact methods
--- table of contact status / description
--- figure out a shard method
+/*
 shards
     id
     state
     zip
-
 
 customer_shard
     rule, not a table.. based on customer state and zip (if zip is available)
@@ -126,75 +115,6 @@ customer_xref
     external_customer_id
     updated_at
     created_at
-
-/*
-- use MyIsam for logging or tables that might deadlock
-- use table rotating for logs
-- use gearman for caching inserts https://lornajane.net/posts/2011/using-persistent-storage-with-gearman
-
-http://brian.moonspot.net/logging-with-mysql
-
-create table messages_new like messages;
-rename table messages to messages_history_2019041600001, messages_new to messages;
-
-
-can query the system for tables that are messages_history_*: show tables like 'messages_history_%'
-
-messages_history_2019041600001
-messages_history_2019051600001
-messages_history_2019061600001
-etc
-
-then union them for a complete poll of history
-*/
-
-/*
-other features to be built out
------------------
-survey -- who responded the most, and who's most likely to respond to a survey
-url shortener
-auto reminders / cancellations
-messae options - leave a different message on answering machine vs human
-
-*/
-
-/*
-data ingest / file ingest
-sources
--------------
-    UI -> Excel-to-csv (self-inspection, mapping fields) ?
-    excel-to-csv-to-s3
-    UI -> CSV upload
-    HTTPS->CSV->DB import
-    csv-to-s3
-    API
-        api-to-s3
-    Direct SQL
-        push or pull
-    Google Assistant?
-    Google Calendar?
-*/
-
-/*
-global_confirmation_templates
-    #this is for confirmations and whatnot
-    -- content for after clicking "confirm"/"cancel"/"reschedule"
-
-data cleaning
-    apply company rules based on field mapping
-    filter duplicates
-
-outbound rules
-    auto responses
-    days offset
-*/
-
-/*
--- wth is this?
-flags
-    id
-    flag
-    description
 */
 
 -- company table
@@ -668,14 +588,6 @@ CREATE TABLE `log_data_packet` (
 )  ENGINE=MyISAM;
 
 
--- allow client/cust support to reset stage?
-
--- is this necessary if we're using json for the data field?
-    -- this resolves the remote company data fields to fields mapped into the system
-    -- this also allows companies to have several load maps to be active
-        -- then each import (or data feed, or file) needs to reference a company_load_map.id
-    -- this can also remove the requirement of having a "customer_xref" table..?
-
 -- company_load_map table
 CREATE TABLE `company_load_map` (
     `id` INT AUTO_INCREMENT,
@@ -731,25 +643,6 @@ CREATE TABLE `log_contact_blocks` (
 )  ENGINE=MyISAM;
 
 
-messaging
-------------------
-
--- message functions are crude pointers to a mysql function.. ? (date, time, provider name)
--- as well as data (depends on the load map)
-/*
-- the '{}' brackets mark the beginning of template mode.. or template language
-- available template methods are:
-    {data.[property]}
-    {data.appointment_date|date|MM-DD-YYYY HH:MM:ss}
--You have an appointment on {data.appointment_date|date|MM-DD-YYYY HH:MM:ss} with {data.provider|name}
-- {data.first_name|name} - capitalize the first letter, this is a proper name
-- {data.last_name|name} - capitalize the first letter, this is a proper name
-- {data.location|name} - capitalize the first letter, this is a proper name
-- {company.name|name}
-- {company.phone_number}
-*/
-
-
 -- message_functions table
 CREATE TABLE `message_functions` (
     `id` INT AUTO_INCREMENT,
@@ -803,11 +696,6 @@ CREATE TABLE `company_templates` (
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
-
-
--- consider the limitation of the json column here..
-    -- maybe not a big deal
--- max size is server's max-allowed-packet size. defauly is 64MB
 
 -- message table
 CREATE TABLE `messages` (
@@ -903,6 +791,7 @@ CREATE TABLE `messages_history_5_1_2019` (
 )  ENGINE=MyISAM;
 
 
+-- sms_queue table
 CREATE TABLE `sms_queue` (
     `id` INT AUTO_INCREMENT,
     `message_id` INT NOT NULL,
