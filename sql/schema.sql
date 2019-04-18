@@ -404,7 +404,7 @@ CREATE TABLE `messages` (
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
     `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
     `data` json NOT NULL,
-    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL,
     `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -433,7 +433,7 @@ CREATE TABLE `messages_history_4_1_2019` (
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
     `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
     `data` json NOT NULL,
-    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL,
     `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -459,7 +459,7 @@ CREATE TABLE `messages_history_5_1_2019` (
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
     `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
     `data` json NOT NULL,
-    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL,
     `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -481,7 +481,7 @@ CREATE TABLE `sms_queue` (
     `to_phone` VARCHAR(20) NOT NULL DEFAULT '',
     `from_phone` VARCHAR(20) NOT NULL DEFAULT '',
     `data` json NOT NULL,
-    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL,
     `priority` INT NOT NULL DEFAULT 0,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -497,7 +497,7 @@ CREATE TABLE `phone_queue` (
     `to_phone` VARCHAR(20) NOT NULL DEFAULT '',
     `from_phone` VARCHAR(20) NOT NULL DEFAULT '',
     `data` json NOT NULL,
-    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL,
     `priority` INT NOT NULL DEFAULT 0,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -514,7 +514,7 @@ CREATE TABLE `email_queue` (
     `from_email` VARCHAR(255) NOT NULL DEFAULT '',
     `reply_to` VARCHAR(255) NOT NULL DEFAULT '',
     `data` json NOT NULL,
-    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL,
     `priority` INT NOT NULL DEFAULT 0,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
