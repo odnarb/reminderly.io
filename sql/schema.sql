@@ -429,7 +429,6 @@ CREATE TABLE `messages_history_4_1_2019` (
     `customer_id` INT NOT NULL,
     `contact_method_id` INT NOT NULL,
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
-    `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
     `data` json NOT NULL,
     `contact_date` DATETIME NOT NULL,
     `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
@@ -441,7 +440,6 @@ CREATE TABLE `messages_history_4_1_2019` (
     FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
     FOREIGN KEY (`contact_method_id`) REFERENCES contact_method (`id`),
     FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
-    FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
@@ -455,7 +453,6 @@ CREATE TABLE `messages_history_5_1_2019` (
     `customer_id` INT NOT NULL,
     `contact_method_id` INT NOT NULL,
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
-    `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
     `data` json NOT NULL,
     `contact_date` DATETIME NOT NULL,
     `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
@@ -467,7 +464,6 @@ CREATE TABLE `messages_history_5_1_2019` (
     FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
     FOREIGN KEY (`contact_method_id`) REFERENCES contact_method (`id`),
     FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
-    FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
