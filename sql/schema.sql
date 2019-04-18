@@ -34,6 +34,38 @@ CREATE TABLE `contact_status` (
 )  ENGINE=INNODB;
 
 
+-- 1 - API, 2 - UI
+-- data_ingest_source table
+CREATE TABLE `data_ingest_source` (
+    `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(80) NOT NULL DEFAULT '',
+    `description` VARCHAR(80) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+/*
+1-ingested - file is recorded to be "in the system", but data not loaded yet
+2-loaded - rows have been loaded into the system, no transformations made
+3-mapped - rows have been tagged with appropriate metadata, or transformed
+    -- message functions applied and built out
+4-queued / contacting - rows have been copied into appropriate contact queue tables
+    -- last chance to cancel contacts
+5-complete
+*/
+-- data_ingest_stage table
+CREATE TABLE `data_ingest_stage` (
+    `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(80) NOT NULL DEFAULT '',
+    `description` VARCHAR(80) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
 -- company table
 CREATE TABLE `company` (
     `id` INT AUTO_INCREMENT,
@@ -226,28 +258,6 @@ CREATE TABLE `company_location` (
 
 
 -- consider: what to do with additional data? overwrite / flush / append?
--- data_ingest_source table
-CREATE TABLE `data_ingest_source` (
-    `id` INT AUTO_INCREMENT,
-    `name` VARCHAR(80) NOT NULL DEFAULT '',
-    `description` VARCHAR(80) NOT NULL DEFAULT '',
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
--- data_ingest_stage table
-CREATE TABLE `data_ingest_stage` (
-    `id` INT AUTO_INCREMENT,
-    `name` VARCHAR(80) NOT NULL DEFAULT '',
-    `description` VARCHAR(80) NOT NULL DEFAULT '',
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
 -- track the number of times we tried to load this file
 -- data_packet table
 CREATE TABLE `data_packet` (

@@ -2,6 +2,35 @@
 -- 
 -- NOW BEGIN DATA ENTRY
 -- 
+
+-- 1 - API, 2 - UI
+-- data_ingest_source table
+    `name` VARCHAR(80) NOT NULL DEFAULT '',
+    `description` VARCHAR(80) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+INSERT INTO `data_ingest_source` (`name`,`description`) VALUES
+('API','This source means the data packet came from the API'),
+('UI','');
+
+
+/*
+1-ingested - file is recorded to be "in the system", but data not loaded yet
+2-loaded - rows have been loaded into the system, no transformations made
+3-mapped - rows have been tagged with appropriate metadata, or transformed
+    -- message functions applied and built out
+4-queued / contacting - rows have been copied into appropriate contact queue tables
+    -- last chance to cancel contacts
+5-complete
+*/
+-- data_ingest_stage table
+    `name` VARCHAR(80) NOT NULL DEFAULT '',
+    `description` VARCHAR(80) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+
+
+
 INSERT INTO `contact_status` (`contact_status`) VALUES
 ('not sent'),
 ('queue'),
