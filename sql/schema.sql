@@ -367,7 +367,7 @@ CREATE TABLE `message_functions` (
 -- global_templates table
 CREATE TABLE `global_templates` (
     `id` INT AUTO_INCREMENT,
-    `template_type_id` INT NOT NULL DEFAULT '',
+    `template_type_id` INT NOT NULL DEFAULT,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
     `message` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -380,7 +380,7 @@ CREATE TABLE `global_templates` (
 -- company_templates table
 CREATE TABLE `company_templates` (
     `id` INT AUTO_INCREMENT,
-    `template_type_id` INT NOT NULL DEFAULT '',
+    `template_type_id` INT NOT NULL DEFAULT,
     `customer_id` INT NOT NULL,
     `company_id` INT NOT NULL,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
