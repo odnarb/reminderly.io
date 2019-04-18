@@ -367,7 +367,7 @@ CREATE TABLE `message_functions` (
 -- global_templates table
 CREATE TABLE `global_templates` (
     `id` INT AUTO_INCREMENT,
-    `template_type_id` VARCHAR(80) NOT NULL DEFAULT '',
+    `template_type_id` INT NOT NULL DEFAULT '',
     `name` VARCHAR(80) NOT NULL DEFAULT '',
     `message` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -380,7 +380,7 @@ CREATE TABLE `global_templates` (
 -- company_templates table
 CREATE TABLE `company_templates` (
     `id` INT AUTO_INCREMENT,
-    `template_type_id` VARCHAR(80) NOT NULL DEFAULT '',
+    `template_type_id` INT NOT NULL DEFAULT '',
     `customer_id` INT NOT NULL,
     `company_id` INT NOT NULL,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
@@ -397,7 +397,7 @@ CREATE TABLE `company_templates` (
 -- message table
 CREATE TABLE `messages` (
     `id` INT AUTO_INCREMENT,
-    `data_packet_id` NOT NULL,
+    `data_packet_id` INT NOT NULL,
     `company_id` INT NOT NULL,
     `customer_id` INT NOT NULL,
     `contact_method_id` INT NOT NULL,
@@ -426,7 +426,7 @@ CREATE TABLE `messages` (
 CREATE TABLE `messages_history_4_1_2019` (
     `id` INT AUTO_INCREMENT,
     `message_id` INT NOT NULL,
-    `data_packet_id` NOT NULL,
+    `data_packet_id` INT NOT NULL,
     `company_id` INT NOT NULL,
     `customer_id` INT NOT NULL,
     `contact_method_id` INT NOT NULL,
@@ -452,7 +452,7 @@ CREATE TABLE `messages_history_4_1_2019` (
 CREATE TABLE `messages_history_5_1_2019` (
     `id` INT AUTO_INCREMENT,
     `message_id` INT NOT NULL,
-    `data_packet_id` NOT NULL,
+    `data_packet_id` INT NOT NULL,
     `company_id` INT NOT NULL,
     `customer_id` INT NOT NULL,
     `contact_method_id` INT NOT NULL,
