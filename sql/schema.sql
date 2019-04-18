@@ -416,7 +416,7 @@ CREATE TABLE `messages` (
     FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
     FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
+)  ENGINE=INNODB;
 
 
 -- this is just an example of history tables and how we'd use them
@@ -445,7 +445,7 @@ CREATE TABLE `messages_history_4_1_2019` (
     FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
     FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
+)  ENGINE=INNODB;
 
 
 -- messages_history_5_1_2019 table
@@ -471,7 +471,7 @@ CREATE TABLE `messages_history_5_1_2019` (
     FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
     FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
+)  ENGINE=INNODB;
 
 
 -- sms_queue table
