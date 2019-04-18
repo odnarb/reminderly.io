@@ -1,4 +1,4 @@
------------------------------------------------- 
+-- ---------------------------------------------- 
 
 /*
 shards
@@ -164,8 +164,8 @@ CREATE TABLE `company_apps_restriction` (
 CREATE TABLE `company_api` (
     `id` INT AUTO_INCREMENT,
     `company_apps_id` INT NOT NULL,
-    `api_id` VARCHAR(255) NOT NULL DEFAULT UUID(),
-    `api_key` VARCHAR(255) NOT NULL DEFAULT UUID(),
+    `api_id` VARCHAR(255) NOT NULL DEFAULT '',
+    `api_key` VARCHAR(255) NOT NULL DEFAULT '',
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`company_apps_id`) REFERENCES company_apps (`id`),
@@ -208,8 +208,6 @@ CREATE TABLE `roles` (
     `description` VARCHAR(255) NOT NULL DEFAULT '',
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`users_passwords_id`) REFERENCES users_passwords (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
@@ -316,14 +314,13 @@ CREATE TABLE `data_packet` (
     `data_ingest_source_id` INT NOT NULL,
     `data_ingest_stage_id` INT NOT NULL,
     `company_id` INT NOT NULL,
-    `tx_guid` VARCHAR(80) NOT NULL DEFAULT UUID(),
+    `tx_guid` VARCHAR(80) NOT NULL DEFAULT '',
     `num_tries` INT NOT NULL,
     `metadata` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`data_ingest_source_id`) REFERENCES data_ingest_source (`id`),
     FOREIGN KEY (`data_ingest_stage_id`) REFERENCES data_ingest_stage (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
@@ -372,7 +369,7 @@ CREATE TABLE `global_templates` (
     `id` INT AUTO_INCREMENT,
     `template_type_id` VARCHAR(80) NOT NULL DEFAULT '',
     `name` VARCHAR(80) NOT NULL DEFAULT '',
-    `message` json NOT NULL DEFAULT '',
+    `message` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`template_type_id`) REFERENCES template_types (`id`),
@@ -387,7 +384,7 @@ CREATE TABLE `company_templates` (
     `customer_id` INT NOT NULL,
     `company_id` INT NOT NULL,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
-    `message` json NOT NULL DEFAULT '',
+    `message` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`template_type_id`) REFERENCES template_types (`id`),
@@ -406,7 +403,7 @@ CREATE TABLE `messages` (
     `contact_method_id` INT NOT NULL,
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
     `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
-    `data` json NOT NULL DEFAULT '',
+    `data` json NOT NULL,
     `contact_date` DATETIME NOT NULL DEFAULT '',
     `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
@@ -435,7 +432,7 @@ CREATE TABLE `messages_history_4_1_2019` (
     `contact_method_id` INT NOT NULL,
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
     `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
-    `data` json NOT NULL DEFAULT '',
+    `data` json NOT NULL,
     `contact_date` DATETIME NOT NULL DEFAULT '',
     `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
@@ -461,7 +458,7 @@ CREATE TABLE `messages_history_5_1_2019` (
     `contact_method_id` INT NOT NULL,
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
     `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
-    `data` json NOT NULL DEFAULT '',
+    `data` json NOT NULL,
     `contact_date` DATETIME NOT NULL DEFAULT '',
     `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
@@ -483,7 +480,7 @@ CREATE TABLE `sms_queue` (
     `message_id` INT NOT NULL,
     `to_phone` VARCHAR(20) NOT NULL DEFAULT '',
     `from_phone` VARCHAR(20) NOT NULL DEFAULT '',
-    `data` json NOT NULL DEFAULT '',
+    `data` json NOT NULL,
     `contact_date` DATETIME NOT NULL DEFAULT '',
     `priority` INT NOT NULL DEFAULT 0,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -499,7 +496,7 @@ CREATE TABLE `phone_queue` (
     `message_id` INT NOT NULL,
     `to_phone` VARCHAR(20) NOT NULL DEFAULT '',
     `from_phone` VARCHAR(20) NOT NULL DEFAULT '',
-    `data` json NOT NULL DEFAULT '',
+    `data` json NOT NULL,
     `contact_date` DATETIME NOT NULL DEFAULT '',
     `priority` INT NOT NULL DEFAULT 0,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -516,7 +513,7 @@ CREATE TABLE `email_queue` (
     `to_email` VARCHAR(255) NOT NULL DEFAULT '',
     `from_email` VARCHAR(255) NOT NULL DEFAULT '',
     `reply_to` VARCHAR(255) NOT NULL DEFAULT '',
-    `data` json NOT NULL DEFAULT '',
+    `data` json NOT NULL,
     `contact_date` DATETIME NOT NULL DEFAULT '',
     `priority` INT NOT NULL DEFAULT 0,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
