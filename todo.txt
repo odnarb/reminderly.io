@@ -8,11 +8,14 @@ x- flesh out logging tables
 - plan better solution for storing logs
     http://brian.moonspot.net/logging-with-mysql
 
--- DONE - need logging tables
+x- DONE - need logging tables
 -- - need log offloader script
     -- log tables can be dumped out after x days to a .sql file, and then rotate the table
     -- simply use the mysqldump command for relevant tables
--- TODO: figure role company restriction (or allow list) via role table
+x -DONE -- TODO: figure role company restriction (or allow list) via role table
+		--NO.. this should be handled by using group access to allow access to many companies
+		-- otherwise, we'd be introducing "blacklist" vs "whitelist" which is dumb in a least-privs security system
+
 -- proc moves data to history
     --removes entries from log tables
 

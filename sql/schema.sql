@@ -18,6 +18,18 @@ customer_xref
     created_at
 */
 
+--  (HealthCare, School, Utilities, Commercial, etc)
+-- template_types table
+CREATE TABLE `template_types` (
+    `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(80) NOT NULL DEFAULT '',
+    `description` VARCHAR(255) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
 -- 1 - sms,2 - email, 3 - phone
 CREATE TABLE `contact_method` (
     `id` INT AUTO_INCREMENT,
@@ -84,6 +96,7 @@ CREATE TABLE `groups` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL DEFAULT '',
     `alias` VARCHAR(255) NOT NULL DEFAULT '',
+    `description` VARCHAR(255) NOT NULL DEFAULT '',
     `details` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -188,8 +201,8 @@ CREATE TABLE `users_passwords` (
 
 
 -- these need to be fleshed out, primarily for the UI of the system
--- role table
-CREATE TABLE `role` (
+-- roles table
+CREATE TABLE `roles` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL DEFAULT '',
     `description` VARCHAR(255) NOT NULL DEFAULT '',
@@ -221,7 +234,7 @@ CREATE TABLE `roles_policies` (
     `policy_id` INT NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`role_id`) REFERENCES role (`id`),
+    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
     FOREIGN KEY (`policy_id`) REFERENCES policy (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
@@ -234,11 +247,49 @@ CREATE TABLE `user_role` (
     `role_id` INT NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`user_id`) REFERENCES user (`id`),
-    FOREIGN KEY (`role_id`) REFERENCES role (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
+
+-- groups table
+CREATE TABLE `ui_groups` (
+    `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL DEFAULT '',
+    `alias` VARCHAR(255) NOT NULL DEFAULT '',
+    `description` VARCHAR(255) NOT NULL DEFAULT '',
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- roles_ui_groups table
+CREATE TABLE `roles_ui_groups` (
+    `id` INT AUTO_INCREMENT,
+    `ui_groups_id` INT NOT NULL,
+    `role_id` INT NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`ui_groups_id`) REFERENCES ui_groups (`id`),
+    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- users_ui_groups table
+CREATE TABLE `users_ui_groups` (
+    `id` INT AUTO_INCREMENT,
+    `ui_groups_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`ui_groups_id`) REFERENCES ui_groups (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 -- company_location table
 CREATE TABLE `company_location` (
@@ -306,18 +357,6 @@ CREATE TABLE `contact_blocks` (
 
 -- message_functions table
 CREATE TABLE `message_functions` (
-    `id` INT AUTO_INCREMENT,
-    `name` VARCHAR(80) NOT NULL DEFAULT '',
-    `description` VARCHAR(255) NOT NULL DEFAULT '',
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
---  (HealthCare, School, Utilities, Commercial, etc)
--- template_types table
-CREATE TABLE `template_types` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
     `description` VARCHAR(255) NOT NULL DEFAULT '',
