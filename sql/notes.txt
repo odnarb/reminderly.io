@@ -89,7 +89,7 @@ other features to be built out
 survey -- who responded the most, and who's most likely to respond to a survey
 url shortener
 auto reminders / cancellations
-messae options - leave a different message on answering machine vs human
+message options - leave a different message on answering machine vs human
 
 
 data ingest / file ingest sources

@@ -1,4 +1,4 @@
------------------------------------------------- 
+-- ---------------------------------------------- 
 
 /*
 shards
@@ -17,6 +17,18 @@ customer_xref
     updated_at
     created_at
 */
+
+--  (HealthCare, School, Utilities, Commercial, etc)
+-- template_types table
+CREATE TABLE `template_types` (
+    `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(80) NOT NULL DEFAULT '',
+    `description` VARCHAR(255) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
 
 -- 1 - sms,2 - email, 3 - phone
 CREATE TABLE `contact_method` (
@@ -84,6 +96,7 @@ CREATE TABLE `groups` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL DEFAULT '',
     `alias` VARCHAR(255) NOT NULL DEFAULT '',
+    `description` VARCHAR(255) NOT NULL DEFAULT '',
     `details` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -151,8 +164,8 @@ CREATE TABLE `company_apps_restriction` (
 CREATE TABLE `company_api` (
     `id` INT AUTO_INCREMENT,
     `company_apps_id` INT NOT NULL,
-    `api_id` VARCHAR(255) NOT NULL DEFAULT UUID(),
-    `api_key` VARCHAR(255) NOT NULL DEFAULT UUID(),
+    `api_id` VARCHAR(255) NOT NULL DEFAULT '',
+    `api_key` VARCHAR(255) NOT NULL DEFAULT '',
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`company_apps_id`) REFERENCES company_apps (`id`),
@@ -188,15 +201,13 @@ CREATE TABLE `users_passwords` (
 
 
 -- these need to be fleshed out, primarily for the UI of the system
--- role table
-CREATE TABLE `role` (
+-- roles table
+CREATE TABLE `roles` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL DEFAULT '',
     `description` VARCHAR(255) NOT NULL DEFAULT '',
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`users_passwords_id`) REFERENCES users_passwords (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
@@ -221,7 +232,7 @@ CREATE TABLE `roles_policies` (
     `policy_id` INT NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`role_id`) REFERENCES role (`id`),
+    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
     FOREIGN KEY (`policy_id`) REFERENCES policy (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
@@ -234,11 +245,49 @@ CREATE TABLE `user_role` (
     `role_id` INT NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`user_id`) REFERENCES user (`id`),
-    FOREIGN KEY (`role_id`) REFERENCES role (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
+
+-- groups table
+CREATE TABLE `ui_groups` (
+    `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL DEFAULT '',
+    `alias` VARCHAR(255) NOT NULL DEFAULT '',
+    `description` VARCHAR(255) NOT NULL DEFAULT '',
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- roles_ui_groups table
+CREATE TABLE `roles_ui_groups` (
+    `id` INT AUTO_INCREMENT,
+    `ui_groups_id` INT NOT NULL,
+    `role_id` INT NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`ui_groups_id`) REFERENCES ui_groups (`id`),
+    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- users_ui_groups table
+CREATE TABLE `users_ui_groups` (
+    `id` INT AUTO_INCREMENT,
+    `ui_groups_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`ui_groups_id`) REFERENCES ui_groups (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
 -- company_location table
 CREATE TABLE `company_location` (
@@ -317,25 +366,13 @@ CREATE TABLE `message_functions` (
 )  ENGINE=INNODB;
 
 
---  (HealthCare, School, Utilities, Commercial, etc)
--- template_types table
-CREATE TABLE `template_types` (
-    `id` INT AUTO_INCREMENT,
-    `name` VARCHAR(80) NOT NULL DEFAULT '',
-    `description` VARCHAR(255) NOT NULL DEFAULT '',
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
 -- template types just help one identify what it's useful for
 -- global_templates table
 CREATE TABLE `global_templates` (
     `id` INT AUTO_INCREMENT,
-    `template_type_id` VARCHAR(80) NOT NULL DEFAULT '',
+    `template_type_id` INT NOT NULL,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
-    `message` json NOT NULL DEFAULT '',
+    `message` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`template_type_id`) REFERENCES template_types (`id`),
@@ -346,11 +383,11 @@ CREATE TABLE `global_templates` (
 -- company_templates table
 CREATE TABLE `company_templates` (
     `id` INT AUTO_INCREMENT,
-    `template_type_id` VARCHAR(80) NOT NULL DEFAULT '',
+    `template_type_id` INT NOT NULL,
     `customer_id` INT NOT NULL,
     `company_id` INT NOT NULL,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
-    `message` json NOT NULL DEFAULT '',
+    `message` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`template_type_id`) REFERENCES template_types (`id`),
@@ -363,14 +400,13 @@ CREATE TABLE `company_templates` (
 -- message table
 CREATE TABLE `messages` (
     `id` INT AUTO_INCREMENT,
-    `data_packet_id` NOT NULL,
+    `data_packet_id` INT NOT NULL,
     `company_id` INT NOT NULL,
     `customer_id` INT NOT NULL,
     `contact_method_id` INT NOT NULL,
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
-    `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
-    `data` json NOT NULL DEFAULT '',
-    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `data` json NOT NULL,
+    `contact_date` DATETIME NOT NULL,
     `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -380,9 +416,8 @@ CREATE TABLE `messages` (
     FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
     FOREIGN KEY (`contact_method_id`) REFERENCES contact_method (`id`),
     FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
-    FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
+)  ENGINE=INNODB;
 
 
 -- this is just an example of history tables and how we'd use them
@@ -392,14 +427,13 @@ CREATE TABLE `messages` (
 CREATE TABLE `messages_history_4_1_2019` (
     `id` INT AUTO_INCREMENT,
     `message_id` INT NOT NULL,
-    `data_packet_id` NOT NULL,
+    `data_packet_id` INT NOT NULL,
     `company_id` INT NOT NULL,
     `customer_id` INT NOT NULL,
     `contact_method_id` INT NOT NULL,
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
-    `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
-    `data` json NOT NULL DEFAULT '',
-    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `data` json NOT NULL,
+    `contact_date` DATETIME NOT NULL,
     `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -409,23 +443,21 @@ CREATE TABLE `messages_history_4_1_2019` (
     FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
     FOREIGN KEY (`contact_method_id`) REFERENCES contact_method (`id`),
     FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
-    FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
+)  ENGINE=INNODB;
 
 
 -- messages_history_5_1_2019 table
 CREATE TABLE `messages_history_5_1_2019` (
     `id` INT AUTO_INCREMENT,
     `message_id` INT NOT NULL,
-    `data_packet_id` NOT NULL,
+    `data_packet_id` INT NOT NULL,
     `company_id` INT NOT NULL,
     `customer_id` INT NOT NULL,
     `contact_method_id` INT NOT NULL,
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
-    `processed_id` INT NOT NULL, -- (various flags/states of contacting in system queueing)
-    `data` json NOT NULL DEFAULT '',
-    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `data` json NOT NULL,
+    `contact_date` DATETIME NOT NULL,
     `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -435,9 +467,8 @@ CREATE TABLE `messages_history_5_1_2019` (
     FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
     FOREIGN KEY (`contact_method_id`) REFERENCES contact_method (`id`),
     FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
-    FOREIGN KEY (`processed_id`) REFERENCES processed (`id`),
     PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
+)  ENGINE=INNODB;
 
 
 -- sms_queue table
@@ -446,8 +477,8 @@ CREATE TABLE `sms_queue` (
     `message_id` INT NOT NULL,
     `to_phone` VARCHAR(20) NOT NULL DEFAULT '',
     `from_phone` VARCHAR(20) NOT NULL DEFAULT '',
-    `data` json NOT NULL DEFAULT '',
-    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `data` json NOT NULL,
+    `contact_date` DATETIME NOT NULL,
     `priority` INT NOT NULL DEFAULT 0,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -462,8 +493,8 @@ CREATE TABLE `phone_queue` (
     `message_id` INT NOT NULL,
     `to_phone` VARCHAR(20) NOT NULL DEFAULT '',
     `from_phone` VARCHAR(20) NOT NULL DEFAULT '',
-    `data` json NOT NULL DEFAULT '',
-    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `data` json NOT NULL,
+    `contact_date` DATETIME NOT NULL,
     `priority` INT NOT NULL DEFAULT 0,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -479,8 +510,8 @@ CREATE TABLE `email_queue` (
     `to_email` VARCHAR(255) NOT NULL DEFAULT '',
     `from_email` VARCHAR(255) NOT NULL DEFAULT '',
     `reply_to` VARCHAR(255) NOT NULL DEFAULT '',
-    `data` json NOT NULL DEFAULT '',
-    `contact_date` DATETIME NOT NULL DEFAULT '',
+    `data` json NOT NULL,
+    `contact_date` DATETIME NOT NULL,
     `priority` INT NOT NULL DEFAULT 0,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),

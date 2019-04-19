@@ -1,3 +1,46 @@
+-- log_ui_groups table
+CREATE TABLE `log_ui_groups` (
+    `id` INT AUTO_INCREMENT,
+    `ui_groups_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`ui_groups_id`) REFERENCES ui_groups (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_role_ui_groups table
+CREATE TABLE `log_role_ui_groups` (
+    `id` INT AUTO_INCREMENT,
+    `role_ui_groups_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`role_ui_groups_id`) REFERENCES role_ui_groups (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+
+-- log_users_ui_groups table
+CREATE TABLE `log_users_ui_groups` (
+    `id` INT AUTO_INCREMENT,
+    `users_ui_groups_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`users_ui_groups_id`) REFERENCES users_ui_groups (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
 -- log_groups table
 CREATE TABLE `log_groups` (
     `id` INT AUTO_INCREMENT,
