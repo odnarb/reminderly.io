@@ -12,15 +12,15 @@ CREATE TABLE `log_ui_groups` (
 )  ENGINE=MyISAM;
 
 
--- log_role_ui_groups table
-CREATE TABLE `log_role_ui_groups` (
+-- log_roles_ui_groups table
+CREATE TABLE `log_roles_ui_groups` (
     `id` INT AUTO_INCREMENT,
-    `role_ui_groups_id` INT NOT NULL,
+    `roles_ui_groups_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `details` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`role_ui_groups_id`) REFERENCES role_ui_groups (`id`),
+    FOREIGN KEY (`roles_ui_groups_id`) REFERENCES roles_ui_groups (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;
@@ -111,15 +111,15 @@ CREATE TABLE `log_company_group` (
 )  ENGINE=MyISAM;
 
 
--- log_role table
-CREATE TABLE `log_role` (
+-- log_roles table
+CREATE TABLE `log_roles` (
     `id` INT AUTO_INCREMENT,
     `role_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `details` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`role_id`) REFERENCES role (`id`),
+    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;
@@ -180,15 +180,15 @@ CREATE TABLE `log_company_apps_restriction` (
 )  ENGINE=MyISAM;
 
 
--- log_user_role table
-CREATE TABLE `log_user_role` (
+-- log_users_roles table
+CREATE TABLE `log_users_roles` (
     `id` INT AUTO_INCREMENT,
-    `user_role_id` INT NOT NULL,
+    `users_roles_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `details` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`user_role_id`) REFERENCES roles_policies (`id`),
+    FOREIGN KEY (`users_roles_id`) REFERENCES roles_policies (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;

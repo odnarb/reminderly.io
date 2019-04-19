@@ -238,14 +238,18 @@ CREATE TABLE `roles_policies` (
 )  ENGINE=INNODB;
 
 
--- user_role table
-CREATE TABLE `user_role` (
+-- users_roles table
+CREATE TABLE `users_roles` (
     `id` INT AUTO_INCREMENT,
     `user_id` INT NOT NULL,
+    `company_id` INT NOT NULL,
+    `customer_id` INT NOT NULL,
     `role_id` INT NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
     FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
