@@ -265,6 +265,7 @@ CREATE TABLE `data_packet` (
     `data_ingest_source_id` INT NOT NULL,
     `data_ingest_stage_id` INT NOT NULL,
     `company_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
     `tx_guid` VARCHAR(80) NOT NULL DEFAULT UUID(),
     `num_tries` INT NOT NULL,
     `metadata` json NOT NULL,
@@ -272,6 +273,7 @@ CREATE TABLE `data_packet` (
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`data_ingest_source_id`) REFERENCES data_ingest_source (`id`),
     FOREIGN KEY (`data_ingest_stage_id`) REFERENCES data_ingest_stage (`id`),
+    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
