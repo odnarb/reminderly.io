@@ -17,7 +17,8 @@ x- need log offloader script
     x- log tables can be dumped out after x days to a .sql file, and then rotate the table
     x- simply use the mysqldump command for relevant tables
 
-- TODO: figure role company restriction (or allow list) via role table
+x- TODO: figure role company restriction (or allow list) via role table
+
 - proc moves data to history
     --removes entries from log tables
 
