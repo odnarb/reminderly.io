@@ -11,7 +11,7 @@
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
 INSERT INTO `data_ingest_source` (`name`,`description`) VALUES
 ('API','This source means the data packet came from the API'),
-('UI','');
+('UI','This source means the data packet came from someone uploading it via our web portal');
 
 
 /*
@@ -24,11 +24,12 @@ INSERT INTO `data_ingest_source` (`name`,`description`) VALUES
 5-complete
 */
 -- data_ingest_stage table
-    `name` VARCHAR(80) NOT NULL DEFAULT '',
-    `description` VARCHAR(80) NOT NULL DEFAULT '',
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-
+INSERT INTO `data_ingest_stage` (`name`,`description`) VALUES
+('Ingested', 'The data packet sent to our system has been saved into our general area.'),
+('Loaded', 'The data packet sent to our system has been loaded into the system.'),
+('Mapped', 'The data packet sent to our system has been mapped according to your load map.'),
+('Queued', 'The data packet sent to our system has been queued and is out for delivery.'),
+('Complete', 'The data packet sent to our system has been completed.');
 
 
 INSERT INTO `contact_status` (`contact_status`) VALUES
