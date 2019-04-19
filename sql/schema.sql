@@ -315,7 +315,7 @@ CREATE TABLE `data_packet` (
     `data_ingest_stage_id` INT NOT NULL,
     `company_id` INT NOT NULL,
     `user_id` INT NOT NULL,
-    `tx_guid` VARCHAR(80) NOT NULL DEFAULT UUID(),
+    `tx_guid` VARCHAR(80) NOT NULL DEFAULT '',
     `num_tries` INT NOT NULL,
     `metadata` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
