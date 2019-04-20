@@ -427,50 +427,12 @@ CREATE TABLE `messages` (
 -- this is just an example of history tables and how we'd use them
 -- deletes suck
 -- drops are quick.. once this table expires... drop it.
--- messages_history_4_1_2019 table
-CREATE TABLE `messages_history_4_1_2019` (
+-- messages_hist_tracking table
+CREATE TABLE `messages_hist_tracking` (
     `id` INT AUTO_INCREMENT,
-    `message_id` INT NOT NULL,
-    `data_packet_id` INT NOT NULL,
-    `company_id` INT NOT NULL,
-    `customer_id` INT NOT NULL,
-    `contact_method_id` INT NOT NULL,
-    `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
-    `data` json NOT NULL,
-    `contact_date` DATETIME NOT NULL,
-    `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
-    `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
+    `table_name` VARCHAR(80) NOT NULL DEFAULT '',
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
-    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
-    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
-    FOREIGN KEY (`contact_method_id`) REFERENCES contact_method (`id`),
-    FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
--- messages_history_5_1_2019 table
-CREATE TABLE `messages_history_5_1_2019` (
-    `id` INT AUTO_INCREMENT,
-    `message_id` INT NOT NULL,
-    `data_packet_id` INT NOT NULL,
-    `company_id` INT NOT NULL,
-    `customer_id` INT NOT NULL,
-    `contact_method_id` INT NOT NULL,
-    `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
-    `data` json NOT NULL,
-    `contact_date` DATETIME NOT NULL,
-    `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
-    `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
-    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
-    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
-    FOREIGN KEY (`contact_method_id`) REFERENCES contact_method (`id`),
-    FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
