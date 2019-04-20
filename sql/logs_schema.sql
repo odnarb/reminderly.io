@@ -377,15 +377,43 @@ CREATE TABLE `log_sms_queue` (
 )  ENGINE=MyISAM;
 
 
--- log_message table
-CREATE TABLE `log_messages` (
+-- log_messages_hist_tracking table
+CREATE TABLE `log_messages_hist_tracking` (
     `id` INT AUTO_INCREMENT,
-    `message_id` INT NOT NULL,
+    `messages_hist_tracking_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `details` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`message_id`) REFERENCES messages (`id`),
+    FOREIGN KEY (`messages_hist_tracking_id`) REFERENCES messages_hist_tracking (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_messages_contact_status table
+CREATE TABLE `log_messages_contact_status` (
+    `id` INT AUTO_INCREMENT,
+    `messages_contact_status_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`messages_contact_status_id`) REFERENCES messages_contact_status (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_message_types table
+CREATE TABLE `log_message_types` (
+    `id` INT AUTO_INCREMENT,
+    `message_types_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`message_types_id`) REFERENCES message_types (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;

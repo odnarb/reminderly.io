@@ -56,8 +56,8 @@ BEGIN
 
     -- SET @group_tx_guid='7566e977-5e23-11e9-9f1d-000c2988b5a1';
 
-    UPDATE `messages` m
-    INNER JOIN `contact_status` cs
+    UPDATE messages m
+    INNER JOIN contact_status cs
     ON m.contact_status = cs.id
     SET m.contact_status_id = 3
     WHERE

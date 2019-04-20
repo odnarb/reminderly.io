@@ -17,6 +17,16 @@ customer_xref
     updated_at
     created_at
 */
+-- message_types table
+CREATE TABLE `message_types` (
+    `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(80) NOT NULL DEFAULT '',
+    `description` VARCHAR(255) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
 
 --  (HealthCare, School, Utilities, Commercial, etc)
 -- template_types table
@@ -41,6 +51,7 @@ CREATE TABLE `contact_method` (
 -- 0 - not sent,1 - in queue,2 - sent, 3 - error
 CREATE TABLE `contact_status` (
     `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(80) NOT NULL,
     `contact_status` VARCHAR(255) NOT NULL,
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
@@ -401,17 +412,15 @@ CREATE TABLE `company_templates` (
 )  ENGINE=INNODB;
 
 
--- message table
+-- messages table
 CREATE TABLE `messages` (
     `id` INT AUTO_INCREMENT,
     `data_packet_id` INT NOT NULL,
     `company_id` INT NOT NULL,
     `customer_id` INT NOT NULL,
     `contact_method_id` INT NOT NULL,
-    `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
     `data` json NOT NULL,
     `contact_date` DATETIME NOT NULL,
-    `contact_status_description` VARCHAR(255) NOT NULL DEFAULT '', -- {why it failed, etc}
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -419,6 +428,18 @@ CREATE TABLE `messages` (
     FOREIGN KEY (`company_id`) REFERENCES company (`id`),
     FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
     FOREIGN KEY (`contact_method_id`) REFERENCES contact_method (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- messages_contact_status table
+CREATE TABLE `messages_contact_status` (
+    `id` INT AUTO_INCREMENT,
+    `message_id` INT NOT NULL,
+    `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`message_id`) REFERENCES messages (`id`),
     FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;

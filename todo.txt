@@ -22,21 +22,30 @@ x- TODO: figure role company restriction (or allow list) via role table
 x- proc moves data to history
     x--removes entries from log tables
 
-- table of processed flags
-- table of contact methods
-- table of contact status / description
-- figure out a shard method
+x- table of contact methods
+x- table of contact status / description
 
+- figure out a shard method
+    - and how it works into the db design
+
+last consideration:
+    -I split messages and messages_contact_status tables.. now we need to maintain history for both tables and rotate both?
 
 - flesh out ui supported features/actions
 - plan api gateway / api endpoints for supporting the platform
 - write with swagger
 
+- review stored procs already created, may need corrections based on changes to the db design
 - stored procs for maintenance fleshed out
 - stored procs fleshed out: temp tables, where clauses
 - write stored procs
+
 
 - plan indices
 - write indices
 - create tests for failures ..?
 - create tests
+
+----------------------------------------------------
+consider:
+track user interactions with the system -- users most likely to respond and respond postively to surveys and reviews
