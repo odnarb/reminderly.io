@@ -19,8 +19,8 @@ x- need log offloader script
 
 x- TODO: figure role company restriction (or allow list) via role table
 
-IN PROGRESS: - proc moves data to history
-    --removes entries from log tables
+x- proc moves data to history
+    x--removes entries from log tables
 
 - table of processed flags
 - table of contact methods

@@ -99,9 +99,30 @@ BEGIN
 
     -- now drop older messages tables.. anything older than 90 days, drop it
     -- TODO:
-        -- get table names where `messages_hist_tracking`.`createdat` older than 90 days
-        -- drop em
 
-    -- done with table maint
+        -- get table names where `messages_hist_tracking`.`createdat` older than 90 days
+        --put them into a temp table
+        CREATE TEMPORARY TABLE IF NOT EXISTS temp_hist_tables AS (
+            SELECT
+                *
+            FROM
+                messages_hist_tracking
+            WHERE
+                created_at < date_add(now(), INTERVAL -90 DAY)
+        );
+
+        -- drop em
+        SET @tables = NULL;
+        SELECT GROUP_CONCAT('`', table_name,'`') INTO @tables FROM temp_hist_tables;
+        SET @tables = CONCAT('DROP TABLE IF EXISTS ', @tables);
+        PREPARE stmt1 FROM @tables;
+        EXECUTE stmt1;
+        DEALLOCATE PREPARE stmt1;
+
+        -- drop from the tracking table
+        DELETE FROM messages_hist_tracking WHERE id IN (SELECT id FROM temp_hist_tables);
+
+        DROP TEMPORARY TABLE temp_hist_tables;
+        -- done with table maint
  END //
 DELIMITER ;
