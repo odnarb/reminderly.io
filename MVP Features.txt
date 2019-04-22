@@ -1,0 +1,56 @@
+MVP Features
+-------------------------
+xClient Setup
+
+Request Types (or "Campaigns")
+    Message Schedules
+        - set this in the campaign
+
+    Unsubscribe page
+        - need global unsubscribe verbage
+        - support custom client message
+        - support customer override
+
+    Confirmation page
+        - need global confirmation verbage
+        - support custom unsubscribe message
+        - support customer override
+
+    Rule sets for delivery
+        - this is set in the campaign settings
+        - per rules set the contact date
+
+    Require message review before queueing data?
+        - feature not supported in MVP
+
+x-Incoming Data
+    - data packet tracking
+
+x-Data Loading
+    - this is supported by data_packet and data_packet_rows
+
+x-Field Mapping
+    - load data into initial area via load maps table
+    - supported by load map table
+
+    -Cleaning / Field Manipulation
+        - perform operations against the data
+        - this is supported by sprocs and field mapping
+
+    - Message Assembly
+        - this is supported by sprocs and field mapping
+
+Message Review
+    - allow client to view messages as they will be delivered
+    - sms, email and phone message
+
+End-user subscription settings
+    TODO
+
+2FA -- supported by phone number and email address in user table
+
+
+x-Message Queuing - queue tables
+x-Delivery Dispositions - messages_contact_status table
+x-Billing - billing table
+x-Reporting - supported by message history
