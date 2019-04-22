@@ -2,6 +2,8 @@ MVP Features
 -------------------------
 xClient Setup
 
+    Customer Block
+
 Request Types (or "Campaigns")
     Message Schedules
         - set this in the campaign
@@ -19,9 +21,14 @@ Request Types (or "Campaigns")
     Rule sets for delivery
         - this is set in the campaign settings
         - per rules set the contact date
+        - support high-level logic? contact method is x if data.phone is blank
 
     Require message review before queueing data?
         - feature not supported in MVP
+
+    Throttle Settings
+        (Phone Calls only?)
+
 
 x-Incoming Data
     - data packet tracking
