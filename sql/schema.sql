@@ -17,11 +17,13 @@ customer_xref
     updated_at
     created_at
 */
--- message_types table
-CREATE TABLE `message_types` (
+
+-- message_campaigns table
+CREATE TABLE `message_campaigns` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
     `description` VARCHAR(255) NOT NULL DEFAULT '',
+    `data` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`)
@@ -339,6 +341,20 @@ CREATE TABLE `data_packet` (
     FOREIGN KEY (`data_ingest_stage_id`) REFERENCES data_ingest_stage (`id`),
     FOREIGN KEY (`company_id`) REFERENCES company (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+--raw row data, unfiltered and un manipulated
+-- data_packet_rows table
+CREATE TABLE `data_packet_rows` (
+    `id` INT AUTO_INCREMENT,
+    `data_packet_id` INT NOT NULL,
+    `row_num` INT NOT NULL,
+    `data` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 

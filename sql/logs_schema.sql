@@ -405,15 +405,29 @@ CREATE TABLE `log_messages_contact_status` (
 )  ENGINE=MyISAM;
 
 
--- log_message_types table
-CREATE TABLE `log_message_types` (
+-- log_message_campaigns table
+CREATE TABLE `log_message_campaigns` (
     `id` INT AUTO_INCREMENT,
-    `message_types_id` INT NOT NULL,
+    `message_campaign_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `details` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`message_types_id`) REFERENCES message_types (`id`),
+    FOREIGN KEY (`message_campaign_id`) REFERENCES message_campaigns (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_data_packet_rows table
+CREATE TABLE `log_data_packet_rows` (
+    `id` INT AUTO_INCREMENT,
+    `data_packet_row_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`data_packet_row_id`) REFERENCES data_packet_rows (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;

@@ -25,8 +25,14 @@ x- proc moves data to history
 x- table of contact methods
 x- table of contact status / description
 
-- figure out a shard method
-    - and how it works into the db design
+x- figure out a shard method or clustering
+    x- and how it works into the db design
+    Decision: sharding from the get go might be unnecessary effort in early stages.. I just want to make the db design solid.
+    x- Before really considering clustering/replication tests need to be made...tuning the db, data offloading from queue tables, log tables, etc...
+    x- Read replication is the next easy step to consider.. just have the application deci
+    x- Consider ProxySQL
+
+- review current schema, compare against MVP outline
 
 last consideration:
     -I split messages and messages_contact_status tables.. now we need to maintain history for both tables and rotate both?
