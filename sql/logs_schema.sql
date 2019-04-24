@@ -139,6 +139,48 @@ CREATE TABLE `log_users_passwords` (
 )  ENGINE=MyISAM;
 
 
+-- log_email_unsubscribe table
+CREATE TABLE `log_email_unsubscribe` (
+    `id` INT AUTO_INCREMENT,
+    `email_unsubscribe_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`email_unsubscribe_id`) REFERENCES email_unsubscribe (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_sms_unsubscribe table
+CREATE TABLE `log_sms_unsubscribe` (
+    `id` INT AUTO_INCREMENT,
+    `sms_unsubscribe_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`sms_unsubscribe_id`) REFERENCES sms_unsubscribe (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_phone_unsubscribe table
+CREATE TABLE `log_phone_unsubscribe` (
+    `id` INT AUTO_INCREMENT,
+    `phone_unsubscribe_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`phone_unsubscribe_id`) REFERENCES phone_unsubscribe (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
 -- what if a user deletes themselves??? (foreign key issue?)
 -- log_users table
 CREATE TABLE `log_users` (

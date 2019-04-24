@@ -1,10 +1,17 @@
 MVP Features
 -------------------------
+xMissed Contacts
+    -performed by queries
+
+xTime for data packet to get into system
+    -steps are logged in tables
+
 xClient Setup
 
     Customer Block
 
-Request Types (or "Campaigns")
+Campaigns
+    details managed by json col in campaign
     Message Schedules
         - set this in the campaign
 
@@ -26,9 +33,21 @@ Request Types (or "Campaigns")
     Require message review before queueing data?
         - feature not supported in MVP
 
-    Throttle Settings
-        (Phone Calls only?)
+    Message Types
+        -Appointment Reminder
+        -Announcement
+        -Home For sale
+        -Home Shortsale
+        -Home Auction
+        -No Show
+        -Reschedule
+        -Lab
+        -Immunization
+        etc
 
+Throttle Settings
+    - Phone Calls only?
+    - Not slated for MVP
 
 x-Incoming Data
     - data packet tracking
@@ -47,15 +66,15 @@ x-Field Mapping
     - Message Assembly
         - this is supported by sprocs and field mapping
 
-Message Review
-    - allow client to view messages as they will be delivered
-    - sms, email and phone message
+xMessage Review
+    x- allow client to view messages as they will be delivered
+    x- sms, email and phone message
 
-End-user subscription settings
-    TODO
+x-End-user subscription settings
+    x-manage subscription settings
 
 2FA -- supported by phone number and email address in user table
-
+    other portion of the process is exterior to the db
 
 x-Message Queuing - queue tables
 x-Delivery Dispositions - messages_contact_status table
