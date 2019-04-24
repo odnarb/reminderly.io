@@ -32,7 +32,7 @@ x- figure out a shard method or clustering
     x- Read replication is the next easy step to consider.. just have the application deci
     x- Consider ProxySQL
 
-- review current schema, compare against MVP outline
+x- review current schema, compare against MVP outline
 
 last consideration:
     -I split messages and messages_contact_status tables.. now we need to maintain history for both tables and rotate both?
