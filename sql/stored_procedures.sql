@@ -98,8 +98,6 @@ BEGIN
     RENAME TABLE `reminderly`.`messages_new` TO `reminderly`.`messages`;
 
     -- now drop older messages tables.. anything older than 90 days, drop it
-    -- TODO:
-
         -- get table names where `messages_hist_tracking`.`createdat` older than 90 days
         --put them into a temp table
         CREATE TEMPORARY TABLE IF NOT EXISTS temp_hist_tables AS (
