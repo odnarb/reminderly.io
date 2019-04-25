@@ -1,15 +1,4 @@
--- ---------------------------------------------- 
-
 /*
-shards
-    id
-    state
-    zip
-
-customer_shard
-    rule, not a table.. based on customer state and zip (if zip is available)
-    --need a zip code - to region lookup or algo
-
 ##redundant? does company_load_map remove this requirement?
 customer_xref
     customer_id
@@ -43,18 +32,35 @@ CREATE TABLE `template_types` (
 
 
 -- 1 - sms,2 - email, 3 - phone
-CREATE TABLE `contact_method` (
+-- contact_methods table
+CREATE TABLE `contact_methods` (
     `id` INT AUTO_INCREMENT,
-    `contact_method` VARCHAR(80) NOT NULL,
+    `name` VARCHAR(80) NOT NULL,
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
 
+-- this is for the status of the message in the system, before it goes out
 -- 0 - not sent,1 - in queue,2 - sent, 3 - error
+-- contact_status table
 CREATE TABLE `contact_status` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(80) NOT NULL,
     `contact_status` VARCHAR(255) NOT NULL,
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- contact_method_providers table
+CREATE TABLE `contact_method_providers` (
+    `id` INT AUTO_INCREMENT,
+    `contact_method_id` INT NOT NULL,
+    `name` VARCHAR(80) NOT NULL DEFAULT '',
+    `description` VARCHAR(255) NOT NULL DEFAULT '',
+    `url` VARCHAR(255) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`contact_method_id`) REFERENCES contact_methods (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
@@ -473,22 +479,25 @@ CREATE TABLE `messages` (
     `contact_method_id` INT NOT NULL,
     `data` json NOT NULL,
     `contact_date` DATETIME NOT NULL,
-    `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't campture anything but phone calls
+    `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't capture anything but phone calls
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
     FOREIGN KEY (`company_id`) REFERENCES company (`id`),
     FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
-    FOREIGN KEY (`contact_method_id`) REFERENCES contact_method (`id`),
+    FOREIGN KEY (`contact_method_id`) REFERENCES contact_methods (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
 
+-- this is for sanitized sms/email/phone dispositions
 -- messages_contact_status table
-CREATE TABLE `messages_contact_status` (
+CREATE TABLE `messages_status_updates` (
     `id` INT AUTO_INCREMENT,
     `message_id` INT NOT NULL,
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
+    `message_guid` VARCHAR(80) NOT NULL DEFAULT '',
+    `data` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`message_id`) REFERENCES messages (`id`),
@@ -497,9 +506,7 @@ CREATE TABLE `messages_contact_status` (
 )  ENGINE=INNODB;
 
 
--- this is just an example of history tables and how we'd use them
--- deletes suck
--- drops are quick.. once this table expires... drop it.
+-- this is for tracking the history tables we have in order to manage them, perform unions, etc
 -- messages_hist_tracking table
 CREATE TABLE `messages_hist_tracking` (
     `id` INT AUTO_INCREMENT,

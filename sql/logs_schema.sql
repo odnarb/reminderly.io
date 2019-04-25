@@ -1,3 +1,17 @@
+-- log_contact_method_providers table
+CREATE TABLE `log_contact_method_providers` (
+    `id` INT AUTO_INCREMENT,
+    `contact_method_provider_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`contact_method_provider_id`) REFERENCES contact_method_providers (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
 -- log_ui_groups table
 CREATE TABLE `log_ui_groups` (
     `id` INT AUTO_INCREMENT,
@@ -294,7 +308,7 @@ CREATE TABLE `log_company_load_map` (
 
 -- this would be a more visible on the platform than other log tables?
 -- log the stages a packet is in
--- log_data_ingest_stage table
+-- log_data_packet table
 CREATE TABLE `log_data_packet` (
     `id` INT AUTO_INCREMENT,
     `data_packet_id` INT NOT NULL,
@@ -377,7 +391,7 @@ CREATE TABLE `log_products` (
 )  ENGINE=MyISAM;
 
 
--- log_phone_queue table
+-- log_email_queue table
 CREATE TABLE `log_email_queue` (
     `id` INT AUTO_INCREMENT,
     `email_queue_id` INT NOT NULL,
@@ -433,15 +447,15 @@ CREATE TABLE `log_messages_hist_tracking` (
 )  ENGINE=MyISAM;
 
 
--- log_messages_contact_status table
-CREATE TABLE `log_messages_contact_status` (
+-- log_messages_status_updates table
+CREATE TABLE `log_messages_status_updates` (
     `id` INT AUTO_INCREMENT,
-    `messages_contact_status_id` INT NOT NULL,
+    `messages_status_update_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `details` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`messages_contact_status_id`) REFERENCES messages_contact_status (`id`),
+    FOREIGN KEY (`messages_status_update_id`) REFERENCES messages_status_updates (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;

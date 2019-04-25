@@ -34,6 +34,8 @@ x- figure out a shard method or clustering
 
 x- review current schema, compare against MVP outline
 
+x- will need a status update xref table for email, sms, phone and other
+
 last consideration:
     -I split messages and messages_contact_status tables.. now we need to maintain history for both tables and rotate both?
 
