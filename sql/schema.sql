@@ -491,7 +491,7 @@ CREATE TABLE `messages` (
 
 
 -- this is for sanitized sms/email/phone dispositions
--- messages_contact_status table
+-- messages_status_updates table
 CREATE TABLE `messages_status_updates` (
     `id` INT AUTO_INCREMENT,
     `message_id` INT NOT NULL,
