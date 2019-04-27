@@ -1,8 +1,8 @@
 
-DROP PROCEDURE IF EXISTS GetMessagesReady;
+DROP PROCEDURE IF EXISTS GetMessages;
 
 DELIMITER //
-CREATE PROCEDURE GetMessagesReady(IN v_contact_method VARCHAR(80))
+CREATE PROCEDURE GetMessages(IN v_contact_method VARCHAR(80))
 BEGIN
 
     -- get a guid for this group
@@ -64,6 +64,14 @@ CREATE PROCEDURE SetMessagesProcessed(IN p_tx_guid VARCHAR(80))
 BEGIN
 
     -- SET @group_tx_guid='7566e977-5e23-11e9-9f1d-000c2988b5a1';
+--get messages with this tx_guid from status updates table
+
+messages_status_updates
+    INSERT INTO messages_status_updates
+        (message_id, tx_guid, contact_status_id, created_at, updated_at)
+    FROM
+       tmp_msgs;
+
 
     UPDATE messages m
     INNER JOIN contact_status cs
