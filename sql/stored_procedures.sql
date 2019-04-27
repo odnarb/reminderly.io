@@ -9,13 +9,17 @@ BEGIN
     SET @new_tx_guid=UUID();
 
      CREATE TEMPORARY TABLE tmp_msgs(
-        `id` INT NOT NULL AUTO_INCREMENT,
+        `message_id` INT NOT NULL,
         `contact_method_id` INT NOT NULL,
         `contact_status_id` INT NOT NULL,
+        `tx_guid` VARCHAR(80) NOT NULL DEFAULT '',
         `data` json NOT NULL,
         PRIMARY KEY (`id`), KEY(`id`)
     )  ENGINE=INNODB SELECT
             msgs.id,
+            msgs.contact_method_id,
+            cs.id,
+            @new_tx_guid,
             msgs.data
         FROM
             messages msgs
@@ -29,22 +33,24 @@ BEGIN
             --text match here: sms, email, phone. etc..maybe weak?
             cm.contact_method = v_contact_method
             AND ISNULL(cs.contact_status)
-            --AND tx_guid = ''
         ORDER BY contact_date DESC
         LIMIT 1000;
 
     -- insert an entry for each msg to contain a guid
-    -- TODO: use inner join on contact status
     INSERT INTO messages_status_updates
-    (message_id, tx_guid, contact_status_id)
-    VALUES
-    ( @new_tx_guid, contact_status_id)
-    WHERE id IN (SELECT id FROM tmp_msgs);
+        (message_id, tx_guid, contact_status_id, created_at, updated_at)
+    SELECT
+        ( message_id, @new_tx_guid, contact_status_id, getdate(), getdate() )
+    FROM
+       tmp_msgs;
+
+
+    --select from tmp_msgs insert into messages_status_updates
 
     -- SELECT @new_tx_guid;
     -- SELECT id FROM tmp_msgs;
     -- SELECT * from messages WHERE id IN (SELECT id FROM tmp_msgs);
-    SELECT *,@new_tx_guid AS tx_guid FROM tmp_msgs;
+    SELECT * FROM tmp_msgs;
 
     DROP TEMPORARY TABLE tmp_msgs;
  END //
