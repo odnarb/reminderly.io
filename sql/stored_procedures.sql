@@ -30,7 +30,7 @@ BEGIN
         INNER JOIN contact_status cs
             ON msu.contact_status_id = cs.id
         WHERE
-            --text match here: sms, email, phone. etc..maybe weak?
+            -- text match here: sms, email, phone. etc..maybe weak?
             cm.contact_method = v_contact_method
             AND ISNULL(cs.contact_status)
         ORDER BY contact_date DESC
