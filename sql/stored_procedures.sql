@@ -26,7 +26,7 @@ BEGIN
         INNER JOIN contact_method cm
             ON msgs.contact_method_id = cm.id
         INNER JOIN messages_status_updates msu
-            ON msgs.id = msu.message_id
+            ON msu.message_id = msgs.id
         INNER JOIN contact_status cs
             ON msu.contact_status_id = cs.id
         WHERE
