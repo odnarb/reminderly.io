@@ -32,6 +32,14 @@ x- figure out a shard method or clustering
     x- Read replication is the next easy step to consider.. just have the application deci
     x- Consider ProxySQL
 
+    - The best way might be to make sure the db is designed for in[serts and selects rather than updates
+       https://medium.com/@benmorel/high-speed-inserts-with-mysql-9d3dcd76f723
+       Then also make sure db inserts are tuned
+
+Maybe integrate a real queueing system like RabbitMQ
+    https://www.engineyard.com/blog/5-subtle-ways-youre-using-mysql-as-a-queue-and-why-itll-bite-you
+    instead of making the db into one.. but what about
+
 x- review current schema, compare against MVP outline
 
 x- will need a status update xref table for email, sms, phone and other
