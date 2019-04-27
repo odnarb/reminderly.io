@@ -507,8 +507,8 @@ CREATE TABLE `messages_status_updates` (
 
 
 -- this is for tracking the history tables we have in order to manage them, perform unions, etc
--- messages_hist_tracking table
-CREATE TABLE `messages_hist_tracking` (
+-- history_table_tracking table
+CREATE TABLE `history_table_tracking` (
     `id` INT AUTO_INCREMENT,
     `table_name` VARCHAR(80) NOT NULL DEFAULT '',
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),

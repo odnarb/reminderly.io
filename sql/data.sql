@@ -3,9 +3,9 @@
 -- NOW BEGIN DATA ENTRY
 -- 
 
--- messages_hist_tracking table
+-- history_table_tracking table
 
-INSERT INTO `messages_hist_tracking` (`table_name`, `created_at`, `updated_at`) VALUES
+INSERT INTO `history_table_tracking` (`table_name`, `created_at`, `updated_at`) VALUES
 ('messages_history_1', now(), now() ),
 ('messages_history_2', date_add(now(), INTERVAL -3 DAY), date_add(now(), INTERVAL -3 DAY) ),
 ('messages_history_3', date_add(now(), INTERVAL -10 DAY), date_add(now(), INTERVAL -10 DAY) ),
@@ -14,6 +14,7 @@ INSERT INTO `messages_hist_tracking` (`table_name`, `created_at`, `updated_at`) 
 ('messages_history_6', date_add(now(), INTERVAL -89 DAY), date_add(now(), INTERVAL -89 DAY) ),
 ('messages_history_7', date_add(now(), INTERVAL -90 DAY), date_add(now(), INTERVAL -90 DAY) ),
 ('messages_history_8', date_add(now(), INTERVAL -91 DAY), date_add(now(), INTERVAL -91 DAY) );
+('messages_status_updates_history_1', date_add(now(), INTERVAL -91 DAY), date_add(now(), INTERVAL -91 DAY) );
 
 -- 1 - API, 2 - UI
 -- data_ingest_source table

@@ -82,7 +82,7 @@ BEGIN
     PREPARE stmt1 FROM "RENAME TABLE `reminderly`.`messages` TO `reminderly`.`messages_history_?`";
 
     -- get the next number we're to use for messages_history_# table name
-    SET @current_history_num = select max(id)+1 from messages_hist_tracking
+    SET @current_history_num = select max(id)+1 from history_table_tracking where table_name like 'messages_history%'
 
     -- further prepping
     PREPARE stmt FROM @current_history_num;
@@ -92,19 +92,59 @@ BEGIN
     DEALLOCATE PREPARE stmt1;
 
     -- add our entry
-    INSERT into messages_hist_tracking (`table_name`) VALUES ( CONCAT('messages_history_', @current_history_num ));
+    INSERT into history_table_tracking (`table_name`) VALUES ( CONCAT('messages_history_', @current_history_num ));
 
     -- bring the new table into production use
     RENAME TABLE `reminderly`.`messages_new` TO `reminderly`.`messages`;
 
-    -- now drop older messages tables.. anything older than 90 days, drop it
-        -- get table names where `messages_hist_tracking`.`createdat` older than 90 days
+ END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS RotateMessageStatusUpdatesTable;
+
+DELIMITER //
+CREATE PROCEDURE RotateMessageStatusUpdatesTable()
+BEGIN
+
+    -- prepare a new messages_status_updates table, based on the structure of the current one
+    CREATE TABLE `messages_status_updates_new` like `messages_status_updates`;
+
+    -- prep the statement
+    PREPARE stmt1 FROM "RENAME TABLE `reminderly`.`messages_status_updates` TO `reminderly`.`messages_status_updates_history_?`";
+
+    -- get the next number we're to use for messages_status_updates_history_# table name
+    SET @current_history_num = select max(id)+1 from history_table_tracking where table_name like 'messages_status_updates_history%'
+
+    -- further prepping
+    PREPARE stmt FROM @current_history_num;
+
+    -- do it.. move the current to be a backup
+    EXECUTE stmt1;
+    DEALLOCATE PREPARE stmt1;
+
+    -- add our entry
+    INSERT into history_table_tracking (`table_name`) VALUES ( CONCAT('messages_status_updates_history_', @current_history_num ));
+
+    -- bring the new table into production use
+    RENAME TABLE `reminderly`.`messages_status_updates_new` TO `reminderly`.`messages_status_updates`;
+
+ END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS CleanupHistoryTables;
+
+DELIMITER //
+CREATE PROCEDURE CleanupHistoryTables()
+BEGIN
+
+    -- drop older %_history tables.. anything older than 90 days, drop it
+        -- get table names where `history_table_tracking`.`createdat` older than 90 days
         --put them into a temp table
         CREATE TEMPORARY TABLE IF NOT EXISTS temp_hist_tables AS (
             SELECT
                 *
             FROM
-                messages_hist_tracking
+                history_table_tracking
             WHERE
                 created_at < date_add(now(), INTERVAL -90 DAY)
         );
@@ -118,9 +158,10 @@ BEGIN
         DEALLOCATE PREPARE stmt1;
 
         -- drop from the tracking table
-        DELETE FROM messages_hist_tracking WHERE id IN (SELECT id FROM temp_hist_tables);
+        DELETE FROM history_table_tracking WHERE id IN (SELECT id FROM temp_hist_tables);
 
         DROP TEMPORARY TABLE temp_hist_tables;
         -- done with table maint
+
  END //
 DELIMITER ;

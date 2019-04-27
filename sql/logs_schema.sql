@@ -433,15 +433,15 @@ CREATE TABLE `log_sms_queue` (
 )  ENGINE=MyISAM;
 
 
--- log_messages_hist_tracking table
-CREATE TABLE `log_messages_hist_tracking` (
+-- log_history_table_tracking table
+CREATE TABLE `log_history_table_tracking` (
     `id` INT AUTO_INCREMENT,
-    `messages_hist_tracking_id` INT NOT NULL,
+    `history_table_tracking_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `details` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`messages_hist_tracking_id`) REFERENCES messages_hist_tracking (`id`),
+    FOREIGN KEY (`history_table_tracking_id`) REFERENCES history_table_tracking (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;
