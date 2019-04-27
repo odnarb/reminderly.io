@@ -8,7 +8,7 @@ BEGIN
     -- get a guid for this group
     SET @new_tx_guid=UUID();
 
-    CREATE TEMPORARY TABLE tmp_msgs(
+     CREATE TEMPORARY TABLE tmp_msgs(
         `id` INT NOT NULL AUTO_INCREMENT,
         `contact_method_id` INT NOT NULL,
         `contact_status_id` INT NOT NULL,
@@ -16,26 +16,29 @@ BEGIN
         PRIMARY KEY (`id`), KEY(`id`)
     )  ENGINE=INNODB SELECT
             msgs.id,
-            msgs.contact_method_id,
-            msgs.contact_status_id,
             msgs.data
         FROM
             messages msgs
-        INNER JOIN contact_method cm ON msgs.contact_method_id = cm.id
-        INNER JOIN contact_status cs ON msgs.contact_status_id = cs.id
+        INNER JOIN contact_method cm
+            ON msgs.contact_method_id = cm.id
+        INNER JOIN messages_status_updates msu
+            ON msgs.id = msu.message_id
+        INNER JOIN contact_status cs
+            ON msu.contact_status_id = cs.id
         WHERE
+            --text match here: sms, email, phone. etc..maybe weak?
             cm.contact_method = v_contact_method
-            AND cs.contact_status = 'not sent'
-            AND tx_guid = ''
+            AND ISNULL(cs.contact_status)
+            --AND tx_guid = ''
         ORDER BY contact_date DESC
         LIMIT 1000;
 
-    -- update each msg to contain a tx guid
+    -- insert an entry for each msg to contain a guid
     -- TODO: use inner join on contact status
-    UPDATE messages
-    SET
-        tx_guid = @new_tx_guid,
-        contact_status_id = 2
+    INSERT INTO messages_status_updates
+    (message_id, tx_guid, contact_status_id)
+    VALUES
+    ( @new_tx_guid, contact_status_id)
     WHERE id IN (SELECT id FROM tmp_msgs);
 
     -- SELECT @new_tx_guid;

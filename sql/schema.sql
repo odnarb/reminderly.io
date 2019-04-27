@@ -496,7 +496,7 @@ CREATE TABLE `messages_status_updates` (
     `id` INT AUTO_INCREMENT,
     `message_id` INT NOT NULL,
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
-    `message_guid` VARCHAR(80) NOT NULL DEFAULT '',
+    `tx_guid` VARCHAR(80) NOT NULL DEFAULT '',
     `data` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
