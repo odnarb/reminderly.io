@@ -45,7 +45,7 @@ BEGIN
        tmp_msgs;
 
 
-    --select from tmp_msgs insert into messages_status_updates
+    -- select from tmp_msgs insert into messages_status_updates
 
     -- SELECT @new_tx_guid;
     -- SELECT id FROM tmp_msgs;
@@ -64,7 +64,7 @@ CREATE PROCEDURE SetMessagesProcessed(IN p_tx_guid VARCHAR(80))
 BEGIN
 
     -- SET @group_tx_guid='7566e977-5e23-11e9-9f1d-000c2988b5a1';
---get messages with this tx_guid from status updates table
+-- get messages with this tx_guid from status updates table
 
 messages_status_updates
     INSERT INTO messages_status_updates
@@ -156,7 +156,7 @@ BEGIN
 
     -- drop older %_history tables.. anything older than 90 days, drop it
         -- get table names where `history_table_tracking`.`createdat` older than 90 days
-        --put them into a temp table
+        -- put them into a temp table
         CREATE TEMPORARY TABLE IF NOT EXISTS temp_hist_tables AS (
             SELECT
                 *
