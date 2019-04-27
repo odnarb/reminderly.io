@@ -99,7 +99,7 @@ BEGIN
     PREPARE stmt1 FROM "RENAME TABLE `reminderly`.`messages` TO `reminderly`.`messages_history_?`";
 
     -- get the next number we're to use for messages_history_# table name
-    SET @current_history_num = select max(id)+1 from history_table_tracking where table_name like 'messages_history%'
+    SET @current_history_num = select max(id)+1 from history_table_tracking where table_name like 'messages_history%';
 
     -- further prepping
     PREPARE stmt FROM @current_history_num;
@@ -130,7 +130,7 @@ BEGIN
     PREPARE stmt1 FROM "RENAME TABLE `reminderly`.`messages_status_updates` TO `reminderly`.`messages_status_updates_history_?`";
 
     -- get the next number we're to use for messages_status_updates_history_# table name
-    SET @current_history_num = select max(id)+1 from history_table_tracking where table_name like 'messages_status_updates_history%'
+    SET @current_history_num = select max(id)+1 from history_table_tracking where table_name like 'messages_status_updates_history%';
 
     -- further prepping
     PREPARE stmt FROM @current_history_num;
