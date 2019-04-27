@@ -351,7 +351,7 @@ CREATE TABLE `data_packet` (
 )  ENGINE=INNODB;
 
 
---raw row data, unfiltered and un manipulated
+-- raw row data, unfiltered and un manipulated
 -- data_packet_rows table
 CREATE TABLE `data_packet_rows` (
     `id` INT AUTO_INCREMENT,
