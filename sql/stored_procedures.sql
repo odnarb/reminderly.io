@@ -63,7 +63,7 @@ DELIMITER //
 CREATE PROCEDURE SetMessagesProcessed(IN p_tx_guid VARCHAR(80))
 BEGIN
 
-    -- SET @group_tx_guid='7566e977-5e23-11e9-9f1d-000c2988b5a1';
+    -- SET @tx_guid='7566e977-5e23-11e9-9f1d-000c2988b5a1';
 -- get messages with this tx_guid from status updates table
 
     INSERT INTO messages_status_updates
@@ -85,7 +85,6 @@ BEGIN
  END //
 DELIMITER ;
 
-
 DROP PROCEDURE IF EXISTS RotateMessagesTable;
 
 DELIMITER //
@@ -98,18 +97,20 @@ BEGIN
     -- prep the statement
     PREPARE stmt1 FROM "RENAME TABLE `reminderly`.`messages` TO `reminderly`.`messages_history_?`";
 
-    DECLARE @current_history_num INT DEFAULT 0;
+    SET @current_history_num=0;
 
     -- get the next number we're to use for messages_history_# table name
-    SELECT
-        @current_history_num = max(id)+1
+    -- SELECT @group := `group` FROM user WHERE user = @user;
+
+    SET @current_history_num = (SELECT
+        max(id)+1
     FROM
         history_table_tracking
     WHERE
-        table_name like 'messages_history%';
+        table_name like 'messages_history%');
 
     -- further prepping
-    PREPARE stmt FROM current_history_num;
+    PREPARE stmt FROM @current_history_num;
 
     -- do it.. move the current to be a backup
     EXECUTE stmt1;
@@ -136,15 +137,15 @@ BEGIN
     -- prep the statement
     PREPARE stmt1 FROM "RENAME TABLE `reminderly`.`messages_status_updates` TO `reminderly`.`messages_status_updates_history_?`";
 
-    DECLARE @current_history_num INT DEFAULT 0;
+    SET @current_history_num=0;
 
     -- get the next number we're to use for messages_status_updates_history_# table name
-    SELECT
-        @current_history_num = max(id)+1
+    SET @current_history_num = (SELECT
+        max(id)+1
     FROM
         history_table_tracking
     WHERE
-        table_name like 'messages_status_updates_history%';
+        table_name like 'messages_status_updates_history%');
 
     -- further prepping
     PREPARE stmt FROM current_history_num;
