@@ -54,7 +54,7 @@ x-last consideration:
 - plan api gateway / api endpoints for supporting the platform
 - write with swagger
 
-- review stored procs already created, may need corrections based on changes to the db design
+x- review stored procs already created, may need corrections based on changes to the db design
 - stored procs for maintenance fleshed out
 - stored procs fleshed out: temp tables, where clauses
 - write stored procs
