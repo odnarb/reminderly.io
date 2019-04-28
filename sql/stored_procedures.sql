@@ -148,7 +148,7 @@ BEGIN
         table_name like 'messages_status_updates_history%');
 
     -- further prepping
-    PREPARE stmt FROM current_history_num;
+    PREPARE stmt FROM @current_history_num;
 
     -- do it.. move the current to be a backup
     EXECUTE stmt1;
