@@ -46,8 +46,9 @@ x- will need a status update xref table for email, sms, phone and other
 
 x-need to add offloader for messages_status_updates
 
-last consideration:
-    -I split messages and messages_contact_status tables.. now we need to maintain history for both tables and rotate both?
+x-last consideration:
+    x-I split messages and messages_contact_status tables.. now we need to maintain history for both tables and rotate both?
+    --yes, split history offloading too
 
 - flesh out ui supported features/actions
 - plan api gateway / api endpoints for supporting the platform
