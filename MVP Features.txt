@@ -1,14 +1,71 @@
-MVP Features
--------------------------
-xMissed Contacts
-    -performed by queries
+Marketing website (Wordpress?)
+----------------------------
+Free - otherwise paid-for if we host and support
+Chatbot / CRM integration
+Landing pages / Google Ads / Facebook Ads
+API documentation - swagger
 
-xTime for data packet to get into system
-    -steps are logged in tables
 
-xClient Setup
+Ultra Lightweight MVP
+----------------------------------
+1) Client Setup
 
-    Customer Block
+6) Campaign Setup
+    --START SIMPLE
+        --build out according to examples of more complex setups
+
+    details managed by json col in campaign
+    Message Schedules
+        - set this in the campaign
+
+    Unsubscribe page
+        - need global unsubscribe verbage
+        - support custom client message
+        - support customer override
+
+    Confirmation page
+        - need global confirmation verbage
+        - support custom unsubscribe message
+        - support customer override
+
+    Rule sets for delivery
+        - this is set in the campaign settings
+        - per rules set the contact date
+        - support high-level logic? contact method is x if data.phone is blank
+
+    Require message review before queueing data?
+        - feature not supported in MVP
+
+    Message Types
+        -Appointment Reminder
+        -Announcement
+        -Home For sale
+        -Home Shortsale
+        -Home Auction
+        -No Show
+        -Reschedule
+        -Lab
+        -Immunization
+        etc
+
+2) Data upload / packet progress
+
+3) Billing
+    -buy credits
+    -see transaction history
+
+4) Client Dashboard
+    -see balance of credits
+    -see numbers of notifications delivered (24hr rotating, 3/7/30 days)
+    -end user response %
+    -alert/alarm for x% credits left
+
+5) Report
+    -contacts per data packet
+
+Back-end Platform MVP Features
+----------------------------------
+Client Setup
 
 Campaigns
     details managed by json col in campaign
@@ -45,17 +102,28 @@ Campaigns
         -Immunization
         etc
 
+Missed Contacts
+    -need UI for this -- support ONLY
+
+Time for data packet to get into system
+    -steps are logged in tables
+
 Throttle Settings
     - Phone Calls only?
     - Not slated for MVP
 
-x-Incoming Data
+Customer Block
+    -also show unsubscribed
+        -can work some kind of follow-up for patient
+
+-Incoming Data
     - data packet tracking
 
-x-Data Loading
+-Data Loading
     - this is supported by data_packet and data_packet_rows
+    -ENTERPRISE: support better transaction assuredness -- client reports an md5sum of the data packet as do we, else the transaction reports an incomplete packet transmission
 
-x-Field Mapping
+-Field Mapping
     - load data into initial area via load maps table
     - supported by load map table
 
@@ -66,17 +134,35 @@ x-Field Mapping
     - Message Assembly
         - this is supported by sprocs and field mapping
 
-xMessage Review
-    x- allow client to view messages as they will be delivered
-    x- sms, email and phone message
+Message Review
+    - allow client to view messages as they will be delivered
+    - sms, email and phone message
 
-x-End-user subscription settings
-    x-manage subscription settings
+-End-user subscription settings
+    -manage subscription settings
 
-2FA -- supported by phone number and email address in user table
-    other portion of the process is exterior to the db
+-Billing - billing table
+    --billing is a purchase process
+    --purchase history
 
-x-Message Queuing - queue tables
-x-Delivery Dispositions - messages_contact_status table
-x-Billing - billing table
-x-Reporting - supported by message history
+-Reporting - supported by message history
+
+
+Support
+    FAQ
+    User Guide / Knowledgebase
+    Online chat
+    Contact Us
+    --hook into ticketing system (CRM?)
+
+Security
+Users
+    lost password
+    password expiration
+    2FA -- supported by phone number and email address in user table
+        other portion of the process is exterior to the db
+    backup email
+
+Policies
+Roles
+Groups

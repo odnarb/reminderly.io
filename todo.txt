@@ -50,7 +50,7 @@ x-last consideration:
     x-I split messages and messages_contact_status tables.. now we need to maintain history for both tables and rotate both?
     --yes, split history offloading too
 
-- flesh out ui supported features/actions
+x- flesh out ui supported features/actions
 - plan api gateway / api endpoints for supporting the platform
 - write with swagger
 
