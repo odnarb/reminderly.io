@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: "1.0.0-s4"
+  version: "1.0.0"
   title: Reminderly.io UI
   description: This is the reminderly.io UI API
 security:
@@ -40,7 +40,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of client to fetch
           required: true
           schema:
             type: integer
@@ -58,7 +58,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of client to update
           required: true
           schema:
             type: integer
@@ -76,7 +76,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of client to fetch
           required: true
           schema:
             type: integer
@@ -84,6 +84,25 @@ paths:
       responses:
         '200':
           description: OK
+  '/client/checkout/{id}':
+    get:
+      summary: Change client context
+      description: >-
+        This updates the user's context as to what client (company) is currently being used/worked.
+      tags:
+        - client
+      parameters:
+        - name: id
+          in: path
+          description: ID of client to checkout
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
+
   /campaign:
     get:
       summary: Get campaigns for current company
@@ -116,7 +135,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of campaign to fetch
           required: true
           schema:
             type: integer
@@ -134,7 +153,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of campaign to update
           required: true
           schema:
             type: integer
@@ -152,7 +171,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of campaign to delete
           required: true
           schema:
             type: integer
@@ -192,7 +211,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of packet to fetch
           required: true
           schema:
             type: integer
@@ -229,7 +248,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of packet to delete
           required: true
           schema:
             type: integer
@@ -245,14 +264,6 @@ paths:
         call.
       tags:
         - billing
-      parameters:
-        - name: id
-          in: path
-          description: ID of pet to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
       responses:
         '200':
           description: OK
@@ -263,14 +274,6 @@ paths:
         call.
       tags:
         - billing
-      parameters:
-        - name: id
-          in: path
-          description: ID of pet to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
       responses:
         '200':
           description: OK
@@ -285,7 +288,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of purchase to fetch
           required: true
           schema:
             type: integer
@@ -355,6 +358,7 @@ paths:
           schema:
             type: string
           required: false
+          description: Search string to use
       responses:
         '200':
           description: OK
@@ -443,6 +447,24 @@ paths:
       responses:
         '200':
           description: OK
+  '/user/simulate/{id}':
+    get:
+      summary: Simulate another user.
+      description: >-
+          Simulate your experience as if you were logged in as that user.
+      tags:
+        - user
+      parameters:
+        - name: id
+          in: path
+          description: ID of user to simulate
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
   '/user/{id}':
     get:
       summary: Server example operation
@@ -454,7 +476,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of user to fetch
           required: true
           schema:
             type: integer
@@ -472,7 +494,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of user to update
           required: true
           schema:
             type: integer
@@ -490,7 +512,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of user to delete
           required: true
           schema:
             type: integer
@@ -511,7 +533,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of policy to fetch
           required: true
           schema:
             type: integer
@@ -529,7 +551,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of policy to update
           required: true
           schema:
             type: integer
@@ -547,7 +569,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of policy to delete
           required: true
           schema:
             type: integer
@@ -578,6 +600,7 @@ paths:
           schema:
             type: string
           required: false
+          description: Search string to use
       responses:
         '200':
           description: OK
@@ -602,7 +625,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of role to fetch
           required: true
           schema:
             type: integer
@@ -611,16 +634,16 @@ paths:
         '200':
           description: OK
     put:
-      summary: Server example operation
+      summary: Update a role and its attributes.
       description: >-
-          This is an example operation to show how security is applied to the
-          call.
+          This supports assigning policies and users to a role.
+          Other attrs are to be included in the POST data
       tags:
         - roles
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of role to update
           required: true
           schema:
             type: integer
@@ -638,7 +661,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: ID of pet to fetch
+          description: ID of role to delete
           required: true
           schema:
             type: integer
@@ -669,6 +692,7 @@ paths:
           schema:
             type: string
           required: false
+          description: Search string to use
       responses:
         '200':
           description: OK
@@ -682,48 +706,6 @@ paths:
       responses:
         '200':
           description: OK
-  /role/assign/user:
-    post:
-        summary: Create a role-user assignment
-        description: >-
-            This is an example operation to show how security is applied to the
-            call.
-        tags:
-          - role assignment
-        responses:
-          '200':
-            description: OK
-    delete:
-        summary: Remove a role-user assignment
-        description: >-
-            This is an example operation to show how security is applied to the
-            call.
-        tags:
-          - role assignment
-        responses:
-          '200':
-            description: OK
-  /role/assign/policy:
-    post:
-        summary: Create a role-policy assignment
-        description: >-
-            This is an example operation to show how security is applied to the
-            call.
-        tags:
-          - role assignment
-        responses:
-          '200':
-            description: OK
-    delete:
-        summary: Remove a role-policy assignment
-        description: >-
-            This is an example operation to show how security is applied to the
-            call.
-        tags:
-          - role assignment
-        responses:
-          '200':
-            description: OK
   /ping:
     get:
       summary: Server heartbeat operation
@@ -738,6 +720,8 @@ paths:
           description: OK
 
 servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/reminderly/reminderly-ui/1.0.0
   - url: 'https://virtserver.swaggerhub.com/reminderly/reminderly-ui/v1'
 components:
   securitySchemes:
