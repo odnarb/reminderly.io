@@ -134,6 +134,15 @@ Ultra Lightweight MVP
 Security
     Users
 
+    /user/{action} ?? not sure about this
+        GET /user/login
+        POST /user/login
+        GET /user/logout
+        GET /user/timeout
+        GET /user/ping
+        GET /user/forgotpassword
+        POST /user/forgotpassword
+
         --get, id is optional so to return a list
         GET /user/?{id}
 
@@ -151,12 +160,6 @@ Security
 
         --remove
         DELETE /user/{id}
-
-
-    lost password
-
-    GET /user/forgotpassword
-    POST /user/forgotpassword
 
     Policies
 
@@ -198,7 +201,10 @@ Security
         --remove
         DELETE /role/{id}
 
+        POST /role/assign/user
+            assign to list of user id's
 
+        POST /role/assign/policy
 
 Back-end Platform MVP Features
 ----------------------------------

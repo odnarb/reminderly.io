@@ -51,7 +51,7 @@ x-last consideration:
     --yes, split history offloading too
 
 x- flesh out ui supported features/actions
-- plan api gateway / api endpoints for supporting the platform
+x- plan api gateway / api endpoints for supporting the platform
 - write with swagger
 
 x- review stored procs already created, may need corrections based on changes to the db design
