@@ -15,6 +15,14 @@ paths:
         Gets a reminder based on id
       tags:
         - reminders
+      parameters:
+        - name: id
+          in: path
+          description: ID of reminder to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
@@ -24,6 +32,14 @@ paths:
         Update a reminder's status (confirm,cancel,reschedule,unsubscribe,etc)
       tags:
         - reminders
+      parameters:
+        - name: id
+          in: path
+          description: ID of reminder to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
       responses:
         '200':
           description: OK
