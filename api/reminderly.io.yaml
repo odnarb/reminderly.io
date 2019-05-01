@@ -16,13 +16,7 @@ paths:
       tags:
         - reminders
       parameters:
-        - name: id
-          in: path
-          description: ID of reminder to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -37,13 +31,7 @@ paths:
       tags:
         - reminders
       parameters:
-        - name: id
-          in: path
-          description: ID of reminder to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -59,22 +47,9 @@ paths:
       tags:
         - company
       parameters:
-        - in: query
-          name: offset
-          schema:
-            type: integer
-          description: The number of items to skip before starting to collect the result set
-        - in: query
-          name: limit
-          schema:
-            type: integer
-          description: The numbers of items to return
-        - in: query
-          name: search
-          schema:
-            type: string
-          required: false
-          description: Search string to use
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
           description: OK
@@ -91,13 +66,7 @@ paths:
       tags:
         - company
       parameters:
-        - name: id
-          in: path
-          description: ID of company to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -112,13 +81,7 @@ paths:
       tags:
         - company
       parameters:
-        - name: id
-          in: path
-          description: ID of company to update
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -134,13 +97,7 @@ paths:
       tags:
         - company
       parameters:
-        - name: id
-          in: path
-          description: ID of company to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -156,13 +113,7 @@ paths:
       tags:
         - company
       parameters:
-        - name: id
-          in: path
-          description: ID of company to checkout
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -208,13 +159,7 @@ paths:
       tags:
         - campaigns
       parameters:
-        - name: id
-          in: path
-          description: ID of campaign to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -230,13 +175,7 @@ paths:
       tags:
         - campaigns
       parameters:
-        - name: id
-          in: path
-          description: ID of campaign to update
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -252,13 +191,7 @@ paths:
       tags:
         - campaigns
       parameters:
-        - name: id
-          in: path
-          description: ID of campaign to delete
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -304,13 +237,7 @@ paths:
       tags:
         - packet
       parameters:
-        - name: id
-          in: path
-          description: ID of packet to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -325,13 +252,7 @@ paths:
       tags:
         - packet
       parameters:
-        - name: id
-          in: path
-          description: ID of pet to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -347,13 +268,7 @@ paths:
       tags:
         - packet
       parameters:
-        - name: id
-          in: path
-          description: ID of packet to delete
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -399,13 +314,7 @@ paths:
       tags:
         - billing
       parameters:
-        - name: id
-          in: path
-          description: ID of purchase to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -472,22 +381,9 @@ paths:
       tags:
         - user
       parameters:
-        - in: query
-          name: offset
-          schema:
-            type: integer
-          description: The number of items to skip before starting to collect the result set
-        - in: query
-          name: limit
-          schema:
-            type: integer
-          description: The numbers of items to return
-        - in: query
-          name: search
-          schema:
-            type: string
-          required: false
-          description: Search string to use
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
           description: OK
@@ -617,13 +513,7 @@ paths:
       tags:
         - user
       parameters:
-        - name: id
-          in: path
-          description: ID of user to simulate
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -640,13 +530,7 @@ paths:
       tags:
         - user
       parameters:
-        - name: id
-          in: path
-          description: ID of user to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -662,13 +546,7 @@ paths:
       tags:
         - user
       parameters:
-        - name: id
-          in: path
-          description: ID of user to update
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -684,13 +562,7 @@ paths:
       tags:
         - user
       parameters:
-        - name: id
-          in: path
-          description: ID of user to delete
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -707,13 +579,7 @@ paths:
       tags:
         - policies
       parameters:
-        - name: id
-          in: path
-          description: ID of policy to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -729,13 +595,7 @@ paths:
       tags:
         - policies
       parameters:
-        - name: id
-          in: path
-          description: ID of policy to update
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -751,13 +611,7 @@ paths:
       tags:
         - policies
       parameters:
-        - name: id
-          in: path
-          description: ID of policy to delete
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -773,22 +627,9 @@ paths:
       tags:
         - policies
       parameters:
-        - in: query
-          name: offset
-          schema:
-            type: integer
-          description: The number of items to skip before starting to collect the result set
-        - in: query
-          name: limit
-          schema:
-            type: integer
-          description: The numbers of items to return
-        - in: query
-          name: search
-          schema:
-            type: string
-          required: false
-          description: Search string to use
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
           description: OK
@@ -819,13 +660,7 @@ paths:
       tags:
         - roles
       parameters:
-        - name: id
-          in: path
-          description: ID of role to fetch
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -841,13 +676,7 @@ paths:
       tags:
         - roles
       parameters:
-        - name: id
-          in: path
-          description: ID of role to update
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -863,13 +692,7 @@ paths:
       tags:
         - roles
       parameters:
-        - name: id
-          in: path
-          description: ID of role to delete
-          required: true
-          schema:
-            type: integer
-            format: int64
+        - $ref: '#/components/parameters/id'
       responses:
         '200':
           description: OK
@@ -885,29 +708,18 @@ paths:
       tags:
         - roles
       parameters:
-        - in: query
-          name: offset
-          schema:
-            type: integer
-          description: The number of items to skip before starting to collect the result set
-        - in: query
-          name: limit
-          schema:
-            type: integer
-          description: The numbers of items to return
-        - in: query
-          name: search
-          schema:
-            type: string
-          required: false
-          description: Search string to use
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/OK'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+        #'5xx':
+          #$ref: '#/components/responses/ServerError'
     post:
       summary: Server example operation
       description: >-
@@ -944,30 +756,80 @@ servers:
     url: https://virtserver.swaggerhub.com/reminderly/reminderly-ui/1.0.0
   - url: 'https://virtserver.swaggerhub.com/reminderly/reminderly-ui/v1'
 components:
+  parameters:
+    id:
+      name: id
+      in: path
+      description: ID of resource to interact with.
+      required: true
+      schema:
+        type: integer
+        format: int64
+    offsetParam:
+      name: offset
+      in: query
+      description: Number of items to skip before returning the results.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 0
+        default: 0
+    limitParam:
+      name: limit
+      in: query
+      description: Maximum number of items to return.
+      required: false
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        maximum: 100
+        default: 20
+    searchParam:
+      name: search
+      in: query
+      description: Search string for filtering results.
+      required: false
+      schema:
+        type: string
   responses:
-    # '200':
-    #   description: OK
-    # '400':
-    #   description: Bad request. User ID must be an integer and larger than 0.
-    # '401':
-    #   description: Authorization information is missing or invalid.
-    # '404':
-    #   description: A user with the specified ID was not found.
-    # '5XX':
-    #   description: Unexpected error.
-    NotFound:
-      description: The specified resource was not found
+    OK:
+      description: OK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/OK'
+    BadRequest:
+      description: Bad request.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
     Unauthorized:
-      description: Unauthorized
+      description: Authorization information is missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    NotFound:
+      description: A user with the specified ID was not found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    ServerError:
+      description: Unexpected server error.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
+    OK:
+      type: object
+      properties:
+        response:
+          type: string
     # Schema for error response body
     Error:
       type: object
