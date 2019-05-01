@@ -10,44 +10,9 @@ Ultra Lightweight MVP
 ----------------------------------
 1) Client Setup
     --get, id is optional so to return a list
-    GET /client/?{id}
-
-    define pagination?
-        &limit=10,20,50,100
-        &page=1,2,3,4...
-
-    --create
-    POST /client
-    +json body
-
-    --update
-    PUT /client/{id}
-    +json body
-
-    --remove
-    DELETE /client/{id}
-
 
 6) Campaign Setup
     --get, id is optional so to return a list
-    GET /campaign/?{id}
-
-    define pagination?
-        &limit=10,20,50,100
-        &page=1,2,3,4...
-
-    --create
-    POST /campaign
-    +json body
-
-    --update
-    PUT /campaign/{id}
-    +json body
-
-    --remove
-    DELETE /campaign/{id}
-
-
 
     --START SIMPLE
         --build out according to examples of more complex setups
@@ -86,37 +51,14 @@ Ultra Lightweight MVP
         -Immunization
         etc
 
+    Language Preferences
+
 2) Data upload / packet progress
     --get, id is optional so to return a list
-    GET /packet/?{id}
-
-    define pagination?
-        &limit=10,20,50,100
-        &page=1,2,3,4...
-
-    --create
-    POST /packet
-    +json body
-
-    --update
-    PUT /packet/{id}
-    +json body
-
-    --remove
-    DELETE /packet/{id}
-
 
 3) Billing
     -buy credits
     -see transaction history
-
-    GET /purchase
-        --purchase credits
-    POST /purchase
-        --purchase via Swipe?
-
-    GET /credits
-
 
 4) Client Dashboard
     -see balance of credits
@@ -124,87 +66,13 @@ Ultra Lightweight MVP
     -end user response %
     -alert/alarm for x% credits left
 
-    GET /dashboard
-
 5) Report
     -contacts per data packet
 
-    GET /report/delivered
-    GET /report/response
-Security
+7) Security
     Users
-
-    /user/{action} ?? not sure about this
-        GET /user/login
-        POST /user/login
-        GET /user/logout
-        GET /user/timeout
-        GET /user/ping
-        GET /user/forgotpassword
-        POST /user/forgotpassword
-
-        --get, id is optional so to return a list
-        GET /user/?{id}
-
-        define pagination?
-            &limit=10,20,50,100
-            &page=1,2,3,4...
-
-        --create
-        POST /user
-        +json body
-
-        --update
-        PUT /user/{id}
-        +json body
-
-        --remove
-        DELETE /user/{id}
-
     Policies
-
-        --get, id is optional so to return a list
-        GET /policy/?{id}
-
-        define pagination?
-            &limit=10,20,50,100
-            &page=1,2,3,4...
-
-        --create
-        POST /policy
-        +json body
-
-        --update
-        PUT /policy/{id}
-        +json body
-
-        --remove
-        DELETE /policy/{id}
-
     Roles
-
-        --get, id is optional so to return a list
-        GET /role/?{id}
-
-        define pagination?
-            &limit=10,20,50,100
-            &page=1,2,3,4...
-
-        --create
-        POST /role
-        +json body
-
-        --update
-        PUT /role/{id}
-        +json body
-
-        --remove
-        DELETE /role/{id}
-
-        POST /role/assign/user
-            assign to list of user id's
-
-        POST /role/assign/policy
 
 Back-end Platform MVP Features
 ----------------------------------
@@ -244,6 +112,8 @@ Campaigns
         -Lab
         -Immunization
         etc
+
+    Language Preferences
 
 Missed Contacts
     -need UI for this -- support ONLY
