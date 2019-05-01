@@ -8,39 +8,64 @@ security:
       - read
       - write
 paths:
-  /client:
+  '/reminder/{id}':
     get:
-      summary: Get all clients listed
+      summary: Get a reminder
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        Gets a reminder based on id
       tags:
-        - client
+        - reminders
       responses:
         '200':
           description: OK
-    delete:
-      summary: Delete a client (company)
+    put:
+      summary: Update a reminder based on id
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        Update a reminder's status (confirm,cancel,reschedule,unsubscribe,etc)
       tags:
-        - client
+        - reminders
       responses:
         '200':
           description: OK
-  '/client/{id}':
+  /company:
     get:
-      summary: Get a client's information
+      summary: Get all companies listed
+      description: >-
+        This gets all companies
+      tags:
+        - company
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+          description: The number of items to skip before starting to collect the result set
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          description: The numbers of items to return
+        - in: query
+          name: search
+          schema:
+            type: string
+          required: false
+          description: Search string to use
+      responses:
+        '200':
+          description: OK
+  '/company/{id}':
+    get:
+      summary: Get a company's information
       description: >-
         This is an example operation to show how security is applied to the
         call.
       tags:
-        - client
+        - company
       parameters:
         - name: id
           in: path
-          description: ID of client to fetch
+          description: ID of company to fetch
           required: true
           schema:
             type: integer
@@ -49,16 +74,15 @@ paths:
         '200':
           description: OK
     put:
-      summary: Update client (company) information
+      summary: Update company information
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        Add locations, customers, etc to the company
       tags:
-        - client
+        - company
       parameters:
         - name: id
           in: path
-          description: ID of client to update
+          description: ID of company to update
           required: true
           schema:
             type: integer
@@ -67,16 +91,16 @@ paths:
         '200':
           description: OK
     delete:
-      summary: Delete a client from the system
+      summary: Delete a company from the system
       description: >-
         This is an example operation to show how security is applied to the
         call.
       tags:
-        - client
+        - company
       parameters:
         - name: id
           in: path
-          description: ID of client to fetch
+          description: ID of company to fetch
           required: true
           schema:
             type: integer
@@ -85,17 +109,17 @@ paths:
         '200':
           description: OK
 
-  '/client/checkout/{id}':
+  '/company/checkout/{id}':
     get:
-      summary: Change client context
+      summary: Change company context
       description: >-
-        This updates the user's context as to what client (company) is currently being used/worked.
+        This updates the user's context as to what company is currently being used/worked.
       tags:
-        - client
+        - company
       parameters:
         - name: id
           in: path
-          description: ID of client to checkout
+          description: ID of company to checkout
           required: true
           schema:
             type: integer
@@ -220,25 +244,23 @@ paths:
       responses:
         '200':
           description: OK
-    # DO NOT SUPPORT UPDATING A DATA PACKET
-    # put:
-    #   summary: Server example operation
-    #   description: >-
-    #     This is an example operation to show how security is applied to the
-    #     call.
-    #   tags:
-    #     - packet
-    #   parameters:
-    #     - name: id
-    #       in: path
-    #       description: ID of pet to fetch
-    #       required: true
-    #       schema:
-    #         type: integer
-    #         format: int64
-    #   responses:
-    #     '200':
-    #       description: OK
+    put:
+      summary: Update the state of a packet
+      description: >-
+        This call allows the state of a packet to be changed.
+      tags:
+        - packet
+      parameters:
+        - name: id
+          in: path
+          description: ID of pet to fetch
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: OK
     delete:
       summary: Remove a data packet
       description: >-
@@ -364,10 +386,9 @@ paths:
         '200':
           description: OK
     post:
-      summary: Server example operation
+      summary: Create a user
       description: >-
-          This is an example operation to show how security is applied to the
-          call.
+          This action creates a user
       tags:
         - user
       responses:
@@ -375,20 +396,18 @@ paths:
           description: OK
   /user/login:
     get:
-      summary: Server example operation
+      summary: Show the login page
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        This action shows the login page
       tags:
         - user
       responses:
         '200':
           description: OK
     post:
-      summary: Server example operation
+      summary: User login
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        This action authenticates a user in the system
       tags:
         - user
       responses:
