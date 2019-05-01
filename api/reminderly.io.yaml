@@ -813,7 +813,7 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
     NotFound:
-      description: A user with the specified ID was not found.
+      description: The resource with the specified ID was not found.
       content:
         application/json:
           schema:
