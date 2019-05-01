@@ -53,6 +53,9 @@ x-last consideration:
 x- flesh out ui supported features/actions
 x- plan api gateway / api endpoints for supporting the platform
 - write with swagger
+    - need to build out responses, error codes, response body, request body requirements
+    - might be good to create a folder structure to organize the yaml definition, since a single yaml file is quite large to manage
+
 
 x- review stored procs already created, may need corrections based on changes to the db design
 - stored procs for maintenance fleshed out
