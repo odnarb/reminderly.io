@@ -26,6 +26,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     put:
       summary: Update a reminder based on id
       description: >-
@@ -43,6 +47,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /company:
     get:
       summary: Get all companies listed
@@ -70,6 +78,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   '/company/{id}':
     get:
       summary: Get a company's information
@@ -89,6 +101,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     put:
       summary: Update company information
       description: >-
@@ -106,6 +122,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       summary: Delete a company from the system
       description: >-
@@ -124,7 +144,10 @@ paths:
       responses:
         '200':
           description: OK
-
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   '/company/checkout/{id}':
     get:
       summary: Change company context
@@ -143,7 +166,10 @@ paths:
       responses:
         '200':
           description: OK
-
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /campaign:
     get:
       summary: Get campaigns for current company
@@ -155,6 +181,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       summary: Create a campaign
       description: >-
@@ -165,6 +195,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   '/campaign/{id}':
     get:
       summary: Get a campaign by id
@@ -184,6 +218,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     put:
       summary: Update a campaign
       description: >-
@@ -202,6 +240,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       summary: Delete a campaign
       description: >-
@@ -220,6 +262,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /packet:
     get:
       summary: Get data packets for the current company
@@ -231,6 +277,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       summary: Create a packet for the current company
       description: >-
@@ -241,6 +291,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   '/packet/{id}':
     get:
       summary: Get a packet by id
@@ -260,6 +314,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     put:
       summary: Update the state of a packet
       description: >-
@@ -277,6 +335,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       summary: Remove a data packet
       description: >-
@@ -295,6 +357,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /purchase:
     get:
       summary: Server example operation
@@ -306,6 +372,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       summary: Server example operation
       description: >-
@@ -316,6 +386,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   '/purchase/{id}':
     get:
       summary: Server example operation
@@ -335,6 +409,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /credits:
     get:
       summary: Server example operation
@@ -346,6 +424,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /dashboard:
     get:
       summary: Server example operation
@@ -357,6 +439,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   '/report/{name}':
     get:
       summary: Server example operation
@@ -374,6 +460,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /user:
     get:
       summary: Get list of users
@@ -401,6 +491,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       summary: Create a user
       description: >-
@@ -410,6 +504,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /user/login:
     get:
       summary: Show the login page
@@ -420,6 +518,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       summary: User login
       description: >-
@@ -429,6 +531,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /user/logout:
     get:
       summary: Server example operation
@@ -440,6 +546,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /user/timeout:
     get:
       summary: Server example operation
@@ -451,6 +561,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /user/ping:
     get:
       summary: Server example operation
@@ -462,6 +576,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /user/forgotpassword:
     get:
       summary: Server example operation
@@ -473,6 +591,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       summary: Server example operation
       description: >-
@@ -483,6 +605,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   '/user/simulate/{id}':
     get:
       summary: Simulate another user.
@@ -501,6 +627,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   '/user/{id}':
     get:
       summary: Server example operation
@@ -520,6 +650,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     put:
       summary: Server example operation
       description: >-
@@ -538,6 +672,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       summary: Server example operation
       description: >-
@@ -556,8 +694,10 @@ paths:
       responses:
         '200':
           description: OK
-
-    #Policies
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   '/policy/{id}':
     get:
       summary: Server example operation
@@ -577,6 +717,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     put:
       summary: Server example operation
       description: >-
@@ -595,6 +739,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       summary: Server example operation
       description: >-
@@ -613,6 +761,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /policy:
     get:
       summary: Get list of policies
@@ -640,6 +792,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       summary: Server example operation
       description: >-
@@ -650,6 +806,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   '/role/{id}':
     get:
       summary: Server example operation
@@ -669,6 +829,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     put:
       summary: Update a role and its attributes.
       description: >-
@@ -687,6 +851,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     delete:
       summary: Server example operation
       description: >-
@@ -705,6 +873,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /role:
     get:
       summary: Get list of roles
@@ -732,6 +904,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
     post:
       summary: Server example operation
       description: >-
@@ -742,6 +918,10 @@ paths:
       responses:
         '200':
           description: OK
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /ping:
     get:
       summary: Server heartbeat operation
@@ -754,13 +934,51 @@ paths:
       responses:
         '200':
           description: OK
-
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
 servers:
 # Added by API Auto Mocking Plugin
   - description: SwaggerHub API Auto Mocking
     url: https://virtserver.swaggerhub.com/reminderly/reminderly-ui/1.0.0
   - url: 'https://virtserver.swaggerhub.com/reminderly/reminderly-ui/v1'
 components:
+  responses:
+    # '200':
+    #   description: OK
+    # '400':
+    #   description: Bad request. User ID must be an integer and larger than 0.
+    # '401':
+    #   description: Authorization information is missing or invalid.
+    # '404':
+    #   description: A user with the specified ID was not found.
+    # '5XX':
+    #   description: Unexpected error.
+    NotFound:
+      description: The specified resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+  schemas:
+    # Schema for error response body
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+      required:
+        - code
+        - message
   securitySchemes:
     accessCode:
       type: oauth2
