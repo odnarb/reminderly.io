@@ -47,7 +47,7 @@ paths:
       description: >-
         This gets all companies
       tags:
-        - company
+        - companies
       parameters:
         - $ref: '#/components/parameters/offsetParam'
         - $ref: '#/components/parameters/limitParam'
@@ -59,6 +59,21 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+    post:
+      summary: Create a company
+      description: >-
+        This endpoint creates a company
+      tags:
+        - companies
+      requestBody:
+        $ref: '#/components/requestBodies/Company'
+      responses:
+        '201':
+          $ref: '#/components/responses/Company'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
   '/company/{id}':
     get:
       summary: Get a company's information
@@ -66,7 +81,7 @@ paths:
         This is an example operation to show how security is applied to the
         call.
       tags:
-        - company
+        - companies
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
@@ -81,7 +96,7 @@ paths:
       description: >-
         Add locations, customers, etc to the company
       tags:
-        - company
+        - companies
       parameters:
         - $ref: '#/components/parameters/id'
       requestBody:
@@ -99,7 +114,7 @@ paths:
         This is an example operation to show how security is applied to the
         call.
       tags:
-        - company
+        - companies
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
@@ -115,7 +130,7 @@ paths:
       description: >-
         This updates the user's context as to what company is currently being used/worked.
       tags:
-        - company
+        - companies
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
@@ -150,7 +165,7 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/Campaign'
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/Campaign'
         '401':
           $ref: '#/components/responses/Unauthorized'
@@ -232,7 +247,7 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/Packet'
       responses:
-        '200':
+        '201':
           $ref: '#/components/responses/Packet'
         '401':
           $ref: '#/components/responses/Unauthorized'
@@ -311,7 +326,7 @@ paths:
       tags:
         - billing
       responses:
-        '200':
+        '201':
           description: OK
         '401':
           $ref: '#/components/responses/Unauthorized'
@@ -410,7 +425,7 @@ paths:
       tags:
         - user
       responses:
-        '200':
+        '201':
           description: OK
         '401':
           $ref: '#/components/responses/Unauthorized'
@@ -657,7 +672,7 @@ paths:
       tags:
         - policies
       responses:
-        '200':
+        '201':
           description: OK
         '401':
           $ref: '#/components/responses/Unauthorized'
@@ -740,7 +755,7 @@ paths:
       tags:
         - roles
       responses:
-        '200':
+        '201':
           description: OK
         '401':
           $ref: '#/components/responses/Unauthorized'
