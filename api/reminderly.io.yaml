@@ -879,6 +879,18 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
+    GenericObject:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        body:
+          type: object
+      required:
+        - id
+        - body
     ArrayOfPackets:
       type: array
       items:
@@ -892,41 +904,11 @@ components:
       items:
         $ref: '#/components/schemas/Company'
     Packet:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          readOnly: true
-        body:
-          type: object
-      required:
-        - id
-        - body
+      $ref: '#/components/schemas/GenericObject'
     Campaign:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          readOnly: true
-        body:
-          type: object
-      required:
-        - id
-        - body
+      $ref: '#/components/schemas/GenericObject'
     Company:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-          readOnly: true
-        body:
-          type: object
-      required:
-        - id
-        - body
+      $ref: '#/components/schemas/GenericObject'
     Reminder:
       type: object
       properties:
