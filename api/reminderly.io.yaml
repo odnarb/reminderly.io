@@ -10,7 +10,7 @@ security:
 paths:
   '/reminder/{id}':
     get:
-      summary: Get a reminder
+      summary: Get a reminder for viewing its page.
       description: >-
         Gets a reminder based on id
       tags:
@@ -19,7 +19,7 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Reminder'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -32,9 +32,11 @@ paths:
         - reminders
       parameters:
         - $ref: '#/components/parameters/id'
+      requestBody:
+        $ref: '#/components/requestBodies/ReminderUpdate'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/OK'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -52,7 +54,7 @@ paths:
         - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Company'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -82,6 +84,8 @@ paths:
         - company
       parameters:
         - $ref: '#/components/parameters/id'
+      requestBody:
+        $ref: '#/components/requestBodies/Company'
       responses:
         '200':
           description: OK
@@ -794,6 +798,18 @@ components:
       schema:
         type: string
   responses:
+    Company:
+      description: A company
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Company'
+    Reminder:
+      description: A reminder
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Reminder'
     OK:
       description: OK
       content:
@@ -825,6 +841,43 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
+    Company:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        body:
+          type: object
+      required:
+        - id
+        - body
+    ReminderUpdate:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        action:
+          type: string
+          enum: [confirm,cancel,reschedule,unsubscribe]
+      required:
+        - id
+        - action
+    Reminder:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        appt_date:
+          type: string
+        body:
+          type: object
+      required:
+        - id
+        - appt_date
+        - body
     OK:
       type: object
       properties:
@@ -841,6 +894,17 @@ components:
       required:
         - code
         - message
+  requestBodies:
+    Company:
+      content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Company'
+    ReminderUpdate:
+      content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderUpdate'
   securitySchemes:
     accessCode:
       type: oauth2
