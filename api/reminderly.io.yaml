@@ -36,7 +36,7 @@ paths:
         $ref: '#/components/requestBodies/Reminder'
       responses:
         '200':
-          $ref: '#/components/responses/OK'
+          $ref: '#/components/responses/Reminder'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -54,7 +54,7 @@ paths:
         - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
-          $ref: '#/components/responses/ArrayofCompanies'
+          $ref: '#/components/responses/ArrayOfCompanies'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -71,7 +71,7 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Company'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -88,7 +88,7 @@ paths:
         $ref: '#/components/requestBodies/Company'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Company'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -104,7 +104,7 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Company'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -120,7 +120,7 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/OK'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -135,7 +135,7 @@ paths:
         - campaigns
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/ArrayOfCampaigns'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -147,9 +147,11 @@ paths:
         call.
       tags:
         - campaigns
+      requestBody:
+        $ref: '#/components/requestBodies/Campaign'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Campaign'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -166,7 +168,7 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Campaign'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -180,9 +182,11 @@ paths:
         - campaigns
       parameters:
         - $ref: '#/components/parameters/id'
+      requestBody:
+        $ref: '#/components/requestBodies/Campaign'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Campaign'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -198,7 +202,7 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Campaign'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -213,7 +217,7 @@ paths:
         - packet
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/ArrayOfPackets'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -225,9 +229,11 @@ paths:
         call.
       tags:
         - packet
+      requestBody:
+        $ref: '#/components/requestBodies/Packet'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Packet'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -244,7 +250,7 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Packet'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -257,9 +263,11 @@ paths:
         - packet
       parameters:
         - $ref: '#/components/parameters/id'
+      requestBody:
+        $ref: '#/components/requestBodies/Packet'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Packet'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -275,7 +283,7 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Packet'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -798,12 +806,36 @@ components:
       schema:
         type: string
   responses:
-    ArrayofCompanies:
-      description: A company
+    ArrayOfCampaigns:
+      description: An array of campaign objects
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfCampaigns'
+    ArrayOfCompanies:
+      description: An array of company objects
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfCompanies'
+    ArrayOfPackets:
+      description: An array of packet objects
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfPackets'
+    Packet:
+      description: A data packet
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Packet'
+    Campaign:
+      description: A campaign
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Campaign'
     Company:
       description: A company
       content:
@@ -847,10 +879,42 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
   schemas:
+    ArrayOfPackets:
+      type: array
+      items:
+        $ref: '#/components/schemas/Packet'
+    ArrayOfCampaigns:
+      type: array
+      items:
+        $ref: '#/components/schemas/Campaign'
     ArrayOfCompanies:
       type: array
       items:
         $ref: '#/components/schemas/Company'
+    Packet:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        body:
+          type: object
+      required:
+        - id
+        - body
+    Campaign:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          readOnly: true
+        body:
+          type: object
+      required:
+        - id
+        - body
     Company:
       type: object
       properties:
@@ -900,6 +964,16 @@ components:
         - code
         - message
   requestBodies:
+    Packet:
+      content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Packet'
+    Campaign:
+      content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Campaign'
     Company:
       content:
           application/json:
