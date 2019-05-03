@@ -45,7 +45,7 @@ paths:
     get:
       summary: Get all companies listed
       description: >-
-        This gets all companies
+        This gets all companies, with pagination supported
       tags:
         - companies
       parameters:
@@ -76,10 +76,9 @@ paths:
           $ref: '#/components/responses/NotFound'
   '/company/{id}':
     get:
-      summary: Get a company's information
+      summary: Returns a company object
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        This gets the company information by id
       tags:
         - companies
       parameters:
@@ -109,10 +108,9 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      summary: Delete a company from the system
+      summary: Delete a company by id
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        Deletes a company from the system
       tags:
         - companies
       parameters:
@@ -128,7 +126,7 @@ paths:
     get:
       summary: Change company context
       description: >-
-        This updates the user's context as to what company is currently being used/worked.
+        This checks out a company for the user currently logged in
       tags:
         - companies
       parameters:
@@ -175,8 +173,7 @@ paths:
     get:
       summary: Get a campaign by id
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        This gets a campaign for the company currently checked out
       tags:
         - campaigns
       parameters:
@@ -189,10 +186,9 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     put:
-      summary: Update a campaign
+      summary: Update a campaign by id
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        Update campaign information by id
       tags:
         - campaigns
       parameters:
@@ -207,10 +203,9 @@ paths:
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      summary: Delete a campaign
+      summary: Delete a campaign by id
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        Delete a campaign by id for the company currently checked out
       tags:
         - campaigns
       parameters:
@@ -224,10 +219,9 @@ paths:
           $ref: '#/components/responses/NotFound'
   /packet:
     get:
-      summary: Get data packets for the current company
+      summary: List data packets
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        This lists all data packets for the company currently checked out
       tags:
         - packet
       responses:
@@ -240,8 +234,7 @@ paths:
     post:
       summary: Create a packet for the current company
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        Create a data packet for the company currently checked out
       tags:
         - packet
       requestBody:
@@ -257,8 +250,7 @@ paths:
     get:
       summary: Get a packet by id
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        Get a packet by id for the company currently checked out
       tags:
         - packet
       parameters:
@@ -290,8 +282,7 @@ paths:
     delete:
       summary: Remove a data packet
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        Delete a data packet by id
       tags:
         - packet
       parameters:
