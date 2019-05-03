@@ -146,6 +146,10 @@ paths:
         call.
       tags:
         - campaigns
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfCampaigns'
@@ -156,8 +160,7 @@ paths:
     post:
       summary: Create a campaign
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        This endpoint creates a campaign
       tags:
         - campaigns
       requestBody:
@@ -224,6 +227,10 @@ paths:
         This lists all data packets for the company currently checked out
       tags:
         - packet
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
           $ref: '#/components/responses/ArrayOfPackets'
@@ -296,15 +303,19 @@ paths:
           $ref: '#/components/responses/NotFound'
   /purchase:
     get:
-      summary: Server example operation
+      summary: Show purchases for this company
       description: >-
         This is an example operation to show how security is applied to the
         call.
       tags:
         - billing
+      parameters:
+        - $ref: '#/components/parameters/offsetParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/ArrayOfPurchases'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -316,9 +327,11 @@ paths:
         call.
       tags:
         - billing
+      requestBody:
+        $ref: '#/components/requestBodies/Purchase'
       responses:
         '201':
-          description: OK
+          $ref: '#/components/responses/Purchase'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -335,7 +348,7 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Purchase'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -350,7 +363,7 @@ paths:
         - billing
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Credits'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -365,7 +378,7 @@ paths:
         - reports
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Dashboard'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -386,7 +399,7 @@ paths:
             type: string
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Reports'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -404,7 +417,7 @@ paths:
         - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/ArrayOfUsers'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -417,7 +430,7 @@ paths:
         - user
       responses:
         '201':
-          description: OK
+         $ref: '#/components/responses/User'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -431,94 +444,90 @@ paths:
         - user
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/OK'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
     post:
-      summary: User login
+      summary: Authenticate a login request
       description: >-
         This action authenticates a user in the system
       tags:
         - user
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/OK'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
   /user/logout:
     get:
-      summary: Server example operation
+      summary: Log out a user
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        This action logs out a user from the system
       tags:
         - user
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/OK'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
   /user/timeout:
     get:
-      summary: Server example operation
+      summary: Timeout a user
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        This gets called when a user session has timed out.
       tags:
         - user
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/OK'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
   /user/ping:
     get:
-      summary: Server example operation
+      summary: Detect user activity
       description: >-
-          This is an example operation to show how security is applied to the
-          call.
+          This action is called when user acitivty is detected on the front-end,
+          but no other server calls are made.
       tags:
         - user
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/OK'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
   /user/forgotpassword:
     get:
-      summary: Server example operation
+      summary: Password recovery
       description: >-
-          This is an example operation to show how security is applied to the
-          call.
+          This starts the password recovery process for a user.
       tags:
         - user
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/OK'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
     post:
-      summary: Server example operation
+      summary: Request password recovery
       description: >-
-          This is an example operation to show how security is applied to the
-          call.
+          This captures the email address for password recovery to be performed on.
       tags:
         - user
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/OK'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -534,105 +543,115 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-  '/user/{id}':
-    get:
-      summary: Server example operation
-      description: >-
-          This is an example operation to show how security is applied to the
-          call.
-      tags:
-        - user
-      parameters:
-        - $ref: '#/components/parameters/id'
-      responses:
-        '200':
-          description: OK
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    put:
-      summary: Server example operation
-      description: >-
-          This is an example operation to show how security is applied to the
-          call.
-      tags:
-        - user
-      parameters:
-        - $ref: '#/components/parameters/id'
-      responses:
-        '200':
-          description: OK
+          $ref: '#/components/responses/OK'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      summary: Server example operation
+      summary: Stop simulating another user
       description: >-
-          This is an example operation to show how security is applied to the
-          call.
+          This stops the simulation of a user and reverts back to the previous logged in user.
       tags:
         - user
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  '/user/{id}':
+    get:
+      summary: Get a user by id
+      description: >-
+          This returns a user object
+      tags:
+        - user
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          $ref: '#/components/responses/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    put:
+      summary: Update a user by id
+      description: >-
+          This action updates a user by id
+      tags:
+        - user
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          $ref: '#/components/responses/OK'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    delete:
+      summary: Remove a user by id
+      description: >-
+          This action removes a user from the system
+      tags:
+        - user
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        '200':
+          $ref: '#/components/responses/User'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
   '/policy/{id}':
     get:
-      summary: Server example operation
+      summary: Get a policy by id
       description: >-
-          This is an example operation to show how security is applied to the
-          call.
+          This action gets a policy object by id
       tags:
         - policies
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Policy'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
     put:
-      summary: Server example operation
+      summary: Update a policy by id
       description: >-
-          This is an example operation to show how security is applied to the
-          call.
+          This action updates a policy by id
       tags:
         - policies
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Policy'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      summary: Server example operation
+      summary: Remove a policy from the system
       description: >-
-          This is an example operation to show how security is applied to the
-          call.
+          This action removes a policy from the system.
       tags:
         - policies
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Policy'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -650,38 +669,36 @@ paths:
         - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/ArrayOfPolicies'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
     post:
-      summary: Server example operation
+      summary: Create a policy
       description: >-
-          This is an example operation to show how security is applied to the
-          call.
+          This action creates a policy
       tags:
         - policies
       responses:
         '201':
-          description: OK
+          $ref: '#/components/responses/Policy'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
   '/role/{id}':
     get:
-      summary: Server example operation
+      summary: Get a role by id
       description: >-
-          This is an example operation to show how security is applied to the
-          call.
+          This action gets a role object by id
       tags:
         - roles
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Role'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -697,23 +714,22 @@ paths:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Role'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
     delete:
-      summary: Server example operation
+      summary: Remove a role by id
       description: >-
-          This is an example operation to show how security is applied to the
-          call.
+          This action removes a role from the system (and its related content)
       tags:
         - roles
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Role'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -731,7 +747,7 @@ paths:
         - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
-          $ref: '#/components/responses/OK'
+          $ref: '#/components/responses/ArrayOfRoles'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -739,15 +755,14 @@ paths:
         #'5xx':
           #$ref: '#/components/responses/ServerError'
     post:
-      summary: Server example operation
+      summary: Create a role object
       description: >-
-          This is an example operation to show how security is applied to the
-          call.
+          This action creates a role object
       tags:
         - roles
       responses:
         '201':
-          description: OK
+          $ref: '#/components/responses/Role'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -763,7 +778,7 @@ paths:
       security: []
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/OK'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -812,6 +827,30 @@ components:
       schema:
         type: string
   responses:
+    ArrayOfPurchases:
+      description: An array of purchases
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfPurchases'
+    ArrayOfUsers:
+      description: An array of users
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfUsers'
+    ArrayOfRoles:
+      description: An array of roles
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfRoles'
+    ArrayOfPolicies:
+      description: An array of policies
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ArrayOfPolicies'
     ArrayOfCampaigns:
       description: An array of campaign objects
       content:
@@ -830,6 +869,48 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/ArrayOfPackets'
+    Purchase:
+      description: A purchase object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Purchase'
+    Credits:
+      description: A credit object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Credit'
+    Dashboard:
+      description: A dashboard object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Dashboard'
+    Reports:
+      description: A report object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Report'
+    User:
+      description: A user object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+    Policy:
+      description: A policy object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Policy'
+    Role:
+      description: A role object
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Role'
     Packet:
       description: A data packet
       content:
@@ -897,6 +978,22 @@ components:
       required:
         - id
         - body
+    ArrayOfPurchases:
+      type: array
+      items:
+        $ref: '#/components/schemas/Purchase'
+    ArrayOfUsers:
+      type: array
+      items:
+        $ref: '#/components/schemas/User'
+    ArrayOfRoles:
+      type: array
+      items:
+        $ref: '#/components/schemas/Role'
+    ArrayOfPolicies:
+      type: array
+      items:
+        $ref: '#/components/schemas/Policy'
     ArrayOfPackets:
       type: array
       items:
@@ -909,11 +1006,25 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/Company'
+    Credit:
+      $ref: '#/components/schemas/GenericObject'
+    Purchase:
+      $ref: '#/components/schemas/GenericObject'
+    User:
+      $ref: '#/components/schemas/GenericObject'
+    Role:
+      $ref: '#/components/schemas/GenericObject'
+    Policy:
+      $ref: '#/components/schemas/GenericObject'
     Packet:
       $ref: '#/components/schemas/GenericObject'
     Campaign:
       $ref: '#/components/schemas/GenericObject'
     Company:
+      $ref: '#/components/schemas/GenericObject'
+    Dashboard:
+      $ref: '#/components/schemas/GenericObject'
+    Report:
       $ref: '#/components/schemas/GenericObject'
     Reminder:
       type: object
@@ -952,6 +1063,11 @@ components:
         - code
         - message
   requestBodies:
+    Purchase:
+      content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Purchase'
     Packet:
       content:
           application/json:
