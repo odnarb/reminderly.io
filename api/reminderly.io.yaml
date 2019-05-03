@@ -355,10 +355,9 @@ paths:
           $ref: '#/components/responses/NotFound'
   /credits:
     get:
-      summary: Server example operation
+      summary: Get the credit count
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        Get the number of credits for the current account.
       tags:
         - billing
       responses:
@@ -370,10 +369,9 @@ paths:
           $ref: '#/components/responses/NotFound'
   /dashboard:
     get:
-      summary: Server example operation
+      summary: Get the dashboard
       description: >-
-        This is an example operation to show how security is applied to the
-        call.
+        This action gets the dashboard for the currently checked out company
       tags:
         - reports
       responses:
@@ -428,6 +426,8 @@ paths:
           This action creates a user
       tags:
         - user
+      requestBody:
+        $ref: '#/components/requestBodies/User'
       responses:
         '201':
          $ref: '#/components/responses/User'
@@ -455,6 +455,8 @@ paths:
         This action authenticates a user in the system
       tags:
         - user
+      requestBody:
+        $ref: '#/components/requestBodies/Login'
       responses:
         '200':
           $ref: '#/components/responses/OK'
@@ -525,6 +527,8 @@ paths:
           This captures the email address for password recovery to be performed on.
       tags:
         - user
+      requestBody:
+        $ref: '#/components/requestBodies/ForgotPassword'
       responses:
         '200':
           $ref: '#/components/responses/OK'
@@ -563,7 +567,6 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-
   '/user/{id}':
     get:
       summary: Get a user by id
@@ -586,6 +589,8 @@ paths:
           This action updates a user by id
       tags:
         - user
+      requestBody:
+        $ref: '#/components/requestBodies/User'
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
@@ -632,6 +637,8 @@ paths:
           This action updates a policy by id
       tags:
         - policies
+      requestBody:
+        $ref: '#/components/requestBodies/Policy'
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
@@ -680,6 +687,8 @@ paths:
           This action creates a policy
       tags:
         - policies
+      requestBody:
+        $ref: '#/components/requestBodies/Policy'
       responses:
         '201':
           $ref: '#/components/responses/Policy'
@@ -710,6 +719,8 @@ paths:
           Other attrs are to be included in the POST data
       tags:
         - roles
+      requestBody:
+        $ref: '#/components/requestBodies/Role'
       parameters:
         - $ref: '#/components/parameters/id'
       responses:
@@ -760,6 +771,8 @@ paths:
           This action creates a role object
       tags:
         - roles
+      requestBody:
+        $ref: '#/components/requestBodies/Role'
       responses:
         '201':
           $ref: '#/components/responses/Role'
@@ -978,6 +991,23 @@ components:
       required:
         - id
         - body
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+    ForgotPassword:
+      type: object
+      properties:
+        email:
+          type: string
+      required:
+        - email
     ArrayOfPurchases:
       type: array
       items:
@@ -1063,6 +1093,31 @@ components:
         - code
         - message
   requestBodies:
+    Role:
+      content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Role'
+    Policy:
+      content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Policy'
+    User:
+      content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+    Login:
+      content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+    ForgotPassword:
+      content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPassword'
     Purchase:
       content:
           application/json:
