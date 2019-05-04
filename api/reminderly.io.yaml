@@ -801,11 +801,14 @@ servers:
     url: https://virtserver.swaggerhub.com/reminderly/reminderly-ui/1.0.0
   - url: 'https://virtserver.swaggerhub.com/reminderly/reminderly-ui/v1'
 
-  - url: http://api.reminderly.io/v1
-    description: Production server for reminderly.io
-
-  - url: http://deviapi.reminderly.io/v1
-    description: Staging server for reminderly.io
+  - url: https://{environment}.reminderly.io/v1
+    variables:
+      environment:
+        default: api    # Production server
+        enum:
+          - api         # Production server
+          - api-dev     # Development server
+          - api-staging # Staging server
 components:
   parameters:
     id:
