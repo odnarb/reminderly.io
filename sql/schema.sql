@@ -8,6 +8,10 @@ customer_xref
 */
 
 -- message_campaigns table
+-- a campaign should define a data source..?
+-- a campaign should have contact methods
+-- a campaign should have messages
+-- a campaign should have a schedule of contact windows.. or now..
 CREATE TABLE `message_campaigns` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
@@ -381,6 +385,7 @@ CREATE TABLE `company_load_map` (
 
 
 -- contact_blocks table
+----like a patient contact cancellation..? What about unsubscribe? maybe this is more for a temp block?
 CREATE TABLE `contact_blocks` (
     `id` INT AUTO_INCREMENT,
     `company_id` INT NOT NULL,
@@ -429,6 +434,11 @@ CREATE TABLE `phone_unsubscribe` (
 
 
 -- message_functions table
+----when building a message, one can apply functions to a message such as:
+--    {data.appointment_date|date|MM-DD-YYYY HH:MM A} - format date string
+--    {data.first_name|name} - capitalize the first letter, this is a proper name
+--    {data.last_name|name} - capitalize the first letter, this is a proper name
+--    {data.phone_number|phone} - try to format into a phone number
 CREATE TABLE `message_functions` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
