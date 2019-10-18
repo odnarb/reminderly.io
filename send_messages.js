@@ -17,6 +17,10 @@ let emailCFG = {
     authToken: 'your_auth_token'
 };
 
+//we should create a CloudWatch Event (cron) to poll the db every x mins
+//then grab msgs from db, and put into a queue
+//then create another lambda for polling from queue and send using whatever scheme necessary
+
 //get data from DB
 let contacts = 0;
 let sms = new r.ReminderlySMS(db_config, twilioCFG);
