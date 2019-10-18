@@ -18,26 +18,18 @@ Ultra Lightweight MVP
         --build out according to examples of more complex setups
 
     details managed by json col in campaign
+
     Message Schedules
         - set this in the campaign
 
     Unsubscribe page
         - need global unsubscribe verbage
-        - support custom client message
-        - support customer override
 
     Confirmation page
         - need global confirmation verbage
-        - support custom unsubscribe message
-        - support customer override
 
     Rule sets for delivery
-        - this is set in the campaign settings
         - per rules set the contact date
-        - support high-level logic? contact method is x if data.phone is blank
-
-    Require message review before queueing data?
-        - feature not supported in MVP
 
     Message Types
         -Appointment Reminder
@@ -51,8 +43,6 @@ Ultra Lightweight MVP
         -Immunization
         etc
 
-    Language Preferences
-
 2) Data upload / packet progress
     --get, id is optional so to return a list
 
@@ -62,9 +52,10 @@ Ultra Lightweight MVP
 
 4) Client Dashboard
     -see balance of credits
-    -see numbers of notifications delivered (24hr rotating, 3/7/30 days)
+    -see numbers of notifications delivered (customizable date range) per campaign
+        --alow drill-down into campaign
     -end user response %
-    -alert/alarm for x% credits left
+
 
 5) Report
     -contacts per data packet
