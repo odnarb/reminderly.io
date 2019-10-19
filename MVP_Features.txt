@@ -1,71 +1,4 @@
-Marketing website (Wordpress?)
-----------------------------
-Free - otherwise paid-for if we host and support
-Chatbot / CRM integration
-Landing pages / Google Ads / Facebook Ads
-API documentation - swagger
-
-
-Ultra Lightweight MVP
-----------------------------------
-1) Client Setup
-    --get, id is optional so to return a list
-
-6) Campaign Setup
-    --get, id is optional so to return a list
-
-    --START SIMPLE
-        --build out according to examples of more complex setups
-
-    details managed by json col in campaign
-
-    Message Schedules
-        - set this in the campaign
-
-    Unsubscribe page
-        - need global unsubscribe verbage
-
-    Confirmation page
-        - need global confirmation verbage
-
-    Rule sets for delivery
-        - per rules set the contact date
-
-    Message Types
-        -Appointment Reminder
-        -Announcement
-        -Home For sale
-        -Home Shortsale
-        -Home Auction
-        -No Show
-        -Reschedule
-        -Lab
-        -Immunization
-        etc
-
-2) Data upload / packet progress
-    --get, id is optional so to return a list
-
-3) Billing
-    -buy credits
-    -see transaction history
-
-4) Client Dashboard
-    -see balance of credits
-    -see numbers of notifications delivered (customizable date range) per campaign
-        --alow drill-down into campaign
-    -end user response %
-
-
-5) Report
-    -contacts per data packet
-
-7) Security
-    Users
-    Policies
-    Roles
-
-Back-end Platform MVP Features
+MVP Features
 ----------------------------------
 Client Setup
 
@@ -74,83 +7,55 @@ Campaigns
     Message Schedules
         - set this in the campaign
 
-    Unsubscribe page
-        - need global unsubscribe verbage
-        - support custom client message
-        - support customer override
-
-    Confirmation page
-        - need global confirmation verbage
-        - support custom unsubscribe message
-        - support customer override
-
-    Rule sets for delivery
-        - this is set in the campaign settings
-        - per rules set the contact date
-        - support high-level logic? contact method is x if data.phone is blank
-
-    Require message review before queueing data?
-        - feature not supported in MVP
-
-    Message Types
-        -Appointment Reminder
-        -Announcement
-        -Home For sale
-        -Home Shortsale
-        -Home Auction
-        -No Show
-        -Reschedule
-        -Lab
-        -Immunization
-        etc
-
-    Language Preferences
-
-Missed Contacts
-    -need UI for this -- support ONLY
-
-Time for data packet to get into system
-    -steps are logged in tables
-
-Throttle Settings
-    - Phone Calls only?
-    - Not slated for MVP
-
-Customer Block
-    -also show unsubscribed
-        -can work some kind of follow-up for patient
-
--Incoming Data
+Incoming Data
     - data packet tracking
 
--Data Loading
-    - this is supported by data_packet and data_packet_rows
-    -ENTERPRISE: support better transaction assuredness -- client reports an md5sum of the data packet as do we, else the transaction reports an incomplete packet transmission
+Validation / Formatting
 
--Field Mapping
+Pre-Ingest: Field Mapping
     - load data into initial area via load maps table
     - supported by load map table
 
-    -Cleaning / Field Manipulation
-        - perform operations against the data
-        - this is supported by sprocs and field mapping
+Message Types
+    --per company settings.. ?
+    -Appointment Reminder
+    -Announcement
+    -Home For sale
+    -Home Shortsale
+    -Home Auction
+    -No Show
+    -Reschedule
+    -Lab
+    -Immunization
+    etc
 
-    - Message Assembly
-        - this is supported by sprocs and field mapping
+Data Loading
+    - this is supported by data_packet and data_packet_rows
+    -ENTERPRISE: support better transaction assuredness -- client reports an md5sum of the data packet as do we, else the transaction reports an incomplete packet transmission
+
+Message Assembly
+    - Create rule sets for delivery / Message Schedules
+
+Confirmation / unsubscribe pages
+    - if any needed - per campaign settings
+    - need global confirmation verbage
+
+Rule sets for delivery / Message sorting
+    - this is set in the campaign settings
+    - per rules set the contact date
+    - support high-level logic? contact method is x if data.phone is blank
+
+Message Queueing
 
 Message Review
     - allow client to view messages as they will be delivered
     - sms, email and phone message
 
--End-user subscription settings
-    -manage subscription settings
-
--Billing - billing table
+Billing - billing table
     --billing is a purchase process
     --purchase history
 
--Reporting - supported by message history
-
+Reporting
 
 Support
     FAQ
@@ -161,6 +66,8 @@ Support
 
 Security
     Users
+        signup
+        login
         lost password
         password expiration
         2FA -- supported by phone number and email address in user table
@@ -170,3 +77,5 @@ Security
     Policies
     Roles
     Groups
+
+NPA/NXX
