@@ -1,5 +1,14 @@
 MVP Features
 ----------------------------------
+Security
+    Users
+        signup
+        login
+        lost password
+    Policies
+    Roles
+    Groups
+
 Client Setup
 
 Campaigns
@@ -63,19 +72,5 @@ Support
     Online chat
     Contact Us
     --hook into ticketing system (CRM?)
-
-Security
-    Users
-        signup
-        login
-        lost password
-        password expiration
-        2FA -- supported by phone number and email address in user table
-            other portion of the process is exterior to the db
-        backup email
-
-    Policies
-    Roles
-    Groups
 
 NPA/NXX
