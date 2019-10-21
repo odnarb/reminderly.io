@@ -1,3 +1,142 @@
+-- log_company table
+CREATE TABLE `log_company` (
+    `id` INT AUTO_INCREMENT,
+    `company_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_company_location table
+CREATE TABLE `log_company_location` (
+    `id` INT AUTO_INCREMENT,
+    `company_location_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`company_location_id`) REFERENCES company_location (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_customer table
+CREATE TABLE `log_customer` (
+    `id` INT AUTO_INCREMENT,
+    `customer_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- what if a user deletes themselves??? (foreign key issue?)
+-- log_users table
+CREATE TABLE `log_users` (
+    `id` INT AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_users_passwords table
+CREATE TABLE `log_users_passwords` (
+    `id` INT AUTO_INCREMENT,
+    `users_passwords_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`users_passwords_id`) REFERENCES users_passwords (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_roles table
+CREATE TABLE `log_roles` (
+    `id` INT AUTO_INCREMENT,
+    `role_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_policies table
+CREATE TABLE `log_policies` (
+    `id` INT AUTO_INCREMENT,
+    `policy_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`policy_id`) REFERENCES policies (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_roles_policies table
+CREATE TABLE `log_roles_policies` (
+    `id` INT AUTO_INCREMENT,
+    `roles_policies_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`roles_policies_id`) REFERENCES roles_policies (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_users_roles table
+CREATE TABLE `log_users_roles` (
+    `id` INT AUTO_INCREMENT,
+    `users_roles_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`users_roles_id`) REFERENCES roles_policies (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_company_campaigns table
+CREATE TABLE `log_company_campaigns` (
+    `id` INT AUTO_INCREMENT,
+    `company_campaign_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`company_campaign_id`) REFERENCES company_campaigns (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
 -- log_contact_method_providers table
 CREATE TABLE `log_contact_method_providers` (
     `id` INT AUTO_INCREMENT,
@@ -11,6 +150,137 @@ CREATE TABLE `log_contact_method_providers` (
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;
 
+
+-- log_data_ingest_source table
+CREATE TABLE `log_data_ingest_source` (
+    `id` INT AUTO_INCREMENT,
+    `data_ingest_source_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`data_ingest_source_id`) REFERENCES data_ingest_source (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_data_ingest_stage table
+CREATE TABLE `log_data_ingest_stage` (
+    `id` INT AUTO_INCREMENT,
+    `data_ingest_stage_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`data_ingest_stage_id`) REFERENCES data_ingest_stage (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- this would be a more visible on the platform than other log tables?
+-- log the stages a packet is in
+-- log_data_packet table
+CREATE TABLE `log_data_packet` (
+    `id` INT AUTO_INCREMENT,
+    `data_packet_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_data_packet_rows table
+CREATE TABLE `log_data_packet_rows` (
+    `id` INT AUTO_INCREMENT,
+    `data_packet_row_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`data_packet_row_id`) REFERENCES data_packet_rows (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_company_load_map table
+CREATE TABLE `log_company_load_map` (
+    `id` INT AUTO_INCREMENT,
+    `company_load_map_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`company_load_map_id`) REFERENCES company_load_map (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_messages_status_updates table
+CREATE TABLE `log_messages_status_updates` (
+    `id` INT AUTO_INCREMENT,
+    `messages_status_update_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`messages_status_update_id`) REFERENCES messages_status_updates (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_history_table_tracking table
+CREATE TABLE `log_history_table_tracking` (
+    `id` INT AUTO_INCREMENT,
+    `history_table_tracking_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`history_table_tracking_id`) REFERENCES history_table_tracking (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_sms_queue table
+CREATE TABLE `log_sms_queue` (
+    `id` INT AUTO_INCREMENT,
+    `sms_queue_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`sms_queue_id`) REFERENCES sms_queue (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_sms_unsubscribe table
+CREATE TABLE `log_sms_unsubscribe` (
+    `id` INT AUTO_INCREMENT,
+    `sms_unsubscribe_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`sms_unsubscribe_id`) REFERENCES sms_unsubscribe (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+/*
+Not slated for MVP
 
 -- log_ui_groups table
 CREATE TABLE `log_ui_groups` (
@@ -38,7 +308,6 @@ CREATE TABLE `log_roles_ui_groups` (
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;
-
 
 
 -- log_users_ui_groups table
@@ -69,20 +338,6 @@ CREATE TABLE `log_groups` (
 )  ENGINE=MyISAM;
 
 
--- log_company table
-CREATE TABLE `log_company` (
-    `id` INT AUTO_INCREMENT,
-    `company_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- log_company_apps table
 CREATE TABLE `log_company_apps` (
     `id` INT AUTO_INCREMENT,
@@ -92,20 +347,6 @@ CREATE TABLE `log_company_apps` (
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`company_apps_id`) REFERENCES company_apps (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_customer table
-CREATE TABLE `log_customer` (
-    `id` INT AUTO_INCREMENT,
-    `customer_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;
@@ -125,34 +366,6 @@ CREATE TABLE `log_company_group` (
 )  ENGINE=MyISAM;
 
 
--- log_roles table
-CREATE TABLE `log_roles` (
-    `id` INT AUTO_INCREMENT,
-    `role_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_users_passwords table
-CREATE TABLE `log_users_passwords` (
-    `id` INT AUTO_INCREMENT,
-    `users_passwords_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`users_passwords_id`) REFERENCES users_passwords (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- log_email_unsubscribe table
 CREATE TABLE `log_email_unsubscribe` (
     `id` INT AUTO_INCREMENT,
@@ -167,20 +380,6 @@ CREATE TABLE `log_email_unsubscribe` (
 )  ENGINE=MyISAM;
 
 
--- log_sms_unsubscribe table
-CREATE TABLE `log_sms_unsubscribe` (
-    `id` INT AUTO_INCREMENT,
-    `sms_unsubscribe_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`sms_unsubscribe_id`) REFERENCES sms_unsubscribe (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- log_phone_unsubscribe table
 CREATE TABLE `log_phone_unsubscribe` (
     `id` INT AUTO_INCREMENT,
@@ -190,19 +389,6 @@ CREATE TABLE `log_phone_unsubscribe` (
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`phone_unsubscribe_id`) REFERENCES phone_unsubscribe (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- what if a user deletes themselves??? (foreign key issue?)
--- log_users table
-CREATE TABLE `log_users` (
-    `id` INT AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;
@@ -236,48 +422,6 @@ CREATE TABLE `log_company_apps_restriction` (
 )  ENGINE=MyISAM;
 
 
--- log_users_roles table
-CREATE TABLE `log_users_roles` (
-    `id` INT AUTO_INCREMENT,
-    `users_roles_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`users_roles_id`) REFERENCES roles_policies (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_roles_policies table
-CREATE TABLE `log_roles_policies` (
-    `id` INT AUTO_INCREMENT,
-    `roles_policies_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`roles_policies_id`) REFERENCES roles_policies (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_policy table
-CREATE TABLE `log_policy` (
-    `id` INT AUTO_INCREMENT,
-    `policy_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`policy_id`) REFERENCES policy (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- log_contact_blocks table
 CREATE TABLE `log_contact_blocks` (
     `id` INT AUTO_INCREMENT,
@@ -291,77 +435,6 @@ CREATE TABLE `log_contact_blocks` (
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;
 
-
--- log_company_load_map table
-CREATE TABLE `log_company_load_map` (
-    `id` INT AUTO_INCREMENT,
-    `company_load_map_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_load_map_id`) REFERENCES company_load_map (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- this would be a more visible on the platform than other log tables?
--- log the stages a packet is in
--- log_data_packet table
-CREATE TABLE `log_data_packet` (
-    `id` INT AUTO_INCREMENT,
-    `data_packet_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_data_ingest_stage table
-CREATE TABLE `log_data_ingest_stage` (
-    `id` INT AUTO_INCREMENT,
-    `data_ingest_stage_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`data_ingest_stage_id`) REFERENCES data_ingest_stage (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_data_ingest_source table
-CREATE TABLE `log_data_ingest_source` (
-    `id` INT AUTO_INCREMENT,
-    `data_ingest_source_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`data_ingest_source_id`) REFERENCES data_ingest_source (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_company_location table
-CREATE TABLE `log_company_location` (
-    `id` INT AUTO_INCREMENT,
-    `company_location_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_location_id`) REFERENCES company_location (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
 
 -- log_i18n_strings table
 CREATE TABLE `log_i18n_strings` (
@@ -414,76 +487,6 @@ CREATE TABLE `log_phone_queue` (
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`phone_queue_id`) REFERENCES phone_queue (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_sms_queue table
-CREATE TABLE `log_sms_queue` (
-    `id` INT AUTO_INCREMENT,
-    `sms_queue_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`sms_queue_id`) REFERENCES sms_queue (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_history_table_tracking table
-CREATE TABLE `log_history_table_tracking` (
-    `id` INT AUTO_INCREMENT,
-    `history_table_tracking_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`history_table_tracking_id`) REFERENCES history_table_tracking (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_messages_status_updates table
-CREATE TABLE `log_messages_status_updates` (
-    `id` INT AUTO_INCREMENT,
-    `messages_status_update_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`messages_status_update_id`) REFERENCES messages_status_updates (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_message_campaigns table
-CREATE TABLE `log_message_campaigns` (
-    `id` INT AUTO_INCREMENT,
-    `message_campaign_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`message_campaign_id`) REFERENCES message_campaigns (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_data_packet_rows table
-CREATE TABLE `log_data_packet_rows` (
-    `id` INT AUTO_INCREMENT,
-    `data_packet_row_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`data_packet_row_id`) REFERENCES data_packet_rows (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;

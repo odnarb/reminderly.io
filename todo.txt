@@ -36,10 +36,6 @@ x- figure out a shard method or clustering
        https://medium.com/@benmorel/high-speed-inserts-with-mysql-9d3dcd76f723
        Then also make sure db inserts are tuned
 
-Maybe integrate a real queueing system like RabbitMQ
-    https://www.engineyard.com/blog/5-subtle-ways-youre-using-mysql-as-a-queue-and-why-itll-bite-you
-    instead of making the db into one.. but what about
-
 x- review current schema, compare against MVP outline
 
 x- will need a status update xref table for email, sms, phone and other
@@ -71,3 +67,20 @@ x- review stored procs already created, may need corrections based on changes to
 ----------------------------------------------------
 consider:
 track user interactions with the system -- users most likely to respond and respond postively to surveys and reviews
+
+----------------------------------------------------
+
+phase 2:
+    metrics and alarms
+
+----------------------------------------------------
+
+phase 3:
+    unit testing
+    ci/cd
+        dev/qa/integration pipeline
+    engineering issue tracking
+    disaster recovery
+
+phase 4:
+    cloud formation

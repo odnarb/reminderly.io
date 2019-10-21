@@ -60,7 +60,7 @@ data types
 -------------------------------
 - consider the limitation of the json column..
     - maybe not a big deal
-- max size is server's max-allowed-packet size. defauly is 64MB
+- max size is server's max-allowed-packet size. default is 64MB
 
 
 logging / log offloading
