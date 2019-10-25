@@ -9,7 +9,7 @@ Security
     Roles
     Groups
 
-Client Setup
+Client / Company Setup
 
 Campaigns
     details managed by json col in campaign
@@ -17,6 +17,7 @@ Campaigns
         - set this in the campaign
 
 Incoming Data
+    - upload packet inside campaign
     - data packet tracking
 
 Validation / Formatting
