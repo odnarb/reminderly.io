@@ -7,7 +7,6 @@ Security
         lost password
     Policies
     Roles
-    Groups
 
 Client / Company Setup
 
@@ -20,9 +19,7 @@ Incoming Data
     - upload packet inside campaign
     - data packet tracking
 
-Validation / Formatting
-
-Pre-Ingest: Field Mapping
+Pre-Ingest: Field/Load Mapping
     - load data into initial area via load maps table
     - supported by load map table
 
