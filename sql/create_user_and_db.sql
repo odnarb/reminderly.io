@@ -1,3 +1,4 @@
+DROP USER IF EXISTS reminderly;
 DROP DATABASE IF EXISTS reminderly;
 CREATE DATABASE reminderly;
 CREATE USER 'reminderly'@'%' IDENTIFIED BY 'Rem!nDerly123!$';

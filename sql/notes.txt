@@ -55,6 +55,9 @@ data packets / data loading
         -- then each import (or data feed, or file) needs to reference a company_load_map.id
     -- this can also remove the requirement of having a "customer_xref" table..?
 
+--each data packet is loaded as its own table and subsequent alterations of the data will be contained in that table
+--so then reporting will be based on each campaign
+
 
 data types
 -------------------------------

@@ -23,7 +23,7 @@ let emailCFG = {
 
 //get data from DB
 let contacts = 0;
-let sms = new r.ReminderlySMS(db_config, twilioCFG);
+let sms = new r.SMS(db_config, twilioCFG);
 sms.send(function(err, status){
     // if(err) console.error(err);
     // else console.log(err)
@@ -36,7 +36,7 @@ sms.send(function(err, status){
     }
 });
 
-let email = new r.ReminderlyEmail(db_config, emailCFG);
+let email = new r.Email(db_config, emailCFG);
 email.send(function(err, status){
     // if(err) console.error(err);
     // else console.log(err)
@@ -50,7 +50,7 @@ email.send(function(err, status){
 
 });
 
-let phone = new r.ReminderlyPhoneCall(db_config, twilioCFG);
+let phone = new r.PhoneCall(db_config, twilioCFG);
 phone.send(function(err, status){
     // if(err) console.error(err);
     // else console.log(err)

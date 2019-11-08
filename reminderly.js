@@ -1,4 +1,81 @@
-class ReminderlyMessage {
+class Company {
+    constructor(){}
+    //company has locations
+    //company has customers
+    //company has campaigns
+
+}
+
+class CompanyLocation {
+    constructor(){}
+    //a location has address information
+    //a location has timezone information
+}
+
+class Campaign {
+    constructor(){}
+    //campaign has data packets\
+
+    //a campaign should define a data source..?
+    //a campaign should have contact methods
+    //a campaign should have messages defined
+    //a campaign should have a schedule of contact windows.. or now..
+    //a campaign should define if confirm, cancel, reschedule options available
+    //a campaign should define locations affected (timezone)
+}
+class Customer {
+    constructor(){}
+}
+class User {
+    constructor(){}
+    //user has passwords
+    //user has roles
+}
+class Role {
+    constructor(){}
+    //role has policies
+}
+class Policy {
+    constructor(){}
+}
+class CompanyLoadMap{
+    constructor(){}
+}
+class DataPacket{
+    constructor(){}
+}
+
+//semi-constant data
+class MessageFunctions {
+    constructor(){}
+}
+
+//semi-constant data
+class ContactMethods {
+    constructor(){}
+}
+
+//semi-constant data
+class ContactStatus {
+    constructor(){}
+}
+
+//semi-constant data
+class ContactMethodProviders {
+    constructor(){}
+}
+
+//semi-constant data
+class DataIngestSource {
+    constructor(){}
+}
+
+//semi-constant data
+class DataIngestStage {
+    constructor(){}
+}
+
+class Message {
     constructor(db_config, cfg) {
         this.cfg = cfg;
         let mysql = require('mysql');
@@ -17,7 +94,7 @@ class ReminderlyMessage {
 }
 
 // Creating a new class from the parent
-class ReminderlySMS extends ReminderlyMessage {
+class SMS extends Message {
     constructor(db_config, cfg) {
         // Chain constructor with super
         super(db_config, cfg);
@@ -51,9 +128,9 @@ class ReminderlySMS extends ReminderlyMessage {
          });
 
     }
-} //end ReminderlySMS()
+} //end SMS()
 
-class ReminderlyPhoneCall extends ReminderlyMessage {
+class PhoneCall extends Message {
     constructor(db_config, cfg) {
         // Chain constructor with super
         super(db_config, cfg);
@@ -96,9 +173,9 @@ class ReminderlyPhoneCall extends ReminderlyMessage {
             } //endif
         });
     }
-} //end ReminderlyPhoneCall()
+} //end PhoneCall()
 
-class ReminderlyEmail extends ReminderlyMessage {
+class Email extends Message {
     constructor(db_config, cfg) {
         // Chain constructor with super
         super(db_config, cfg);
@@ -113,7 +190,7 @@ class ReminderlyEmail extends ReminderlyMessage {
                 cb(null,'nothing to process..');
             } else {
                 msgs.forEach(function(msg){
-                    console.log("ReminderlyEmail: ", msg);
+                    console.log("Email: ", msg);
                 });
 
                 let tx_guid = msgs[0].tx_guid;
@@ -170,10 +247,10 @@ class ReminderlyEmail extends ReminderlyMessage {
         //   });
 
     }
-} //end ReminderlyEmail
+} //end Email
 
 module.exports = {
-    ReminderlySMS: ReminderlySMS,
-    ReminderlyEmail: ReminderlyEmail,
-    ReminderlyPhoneCall: ReminderlyPhoneCall
+    SMS: SMS,
+    Email: Email,
+    PhoneCall: PhoneCall
 }

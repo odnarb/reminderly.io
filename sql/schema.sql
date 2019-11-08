@@ -246,10 +246,30 @@ CREATE TABLE `data_packet` (
 )  ENGINE=INNODB;
 
 
--- later we'll split data packets by campaign_id -- and generate a new table per packet for tracking and reporting purposes..
+-- we split data packets by id -- and generate a new table per packet for tracking and reporting purposes..
 -- raw row data, unfiltered and un manipulated
--- data_packet_rows table
-CREATE TABLE `data_packet_rows` (
+/*
+    reports are generated on a per-table basis
+
+    --might be useful to store the db shard or server that's hosting the campaign data
+    -- or our middleware takes care of asking all the db servers where a table is located
+
+    show tables like campaign_`${campaign_id}`_data
+        if a row is returned we're safe to continue
+    select * from campaign_`${campaign_id}`_data
+
+
+    --rendering data with company load map will show things like:
+        -contact method per row
+        -rendered message
+        -actual message delivered
+        -which customer this is for (if mixed)
+
+    some basic validation here would be good for MVP.. even if it's just checking against the load map for the company
+        -flag with error if our system detected an issue?
+        -need a table of errors pertaining to campaign_id
+*/
+CREATE TABLE `packet_[packet_id]_[date]_[version]_data` (
     `id` INT AUTO_INCREMENT,
     `data_packet_id` INT NOT NULL,
     `row_num` INT NOT NULL,
@@ -257,6 +277,36 @@ CREATE TABLE `data_packet_rows` (
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+CREATE TABLE `packet_1337_110882019_1_data` (
+    `id` INT AUTO_INCREMENT,
+    `data_packet_id` INT NOT NULL,
+    `contact_method_id` INT NOT NULL, --fill this after contact made?
+    `row_num` INT NOT NULL,
+    `data` json NOT NULL,
+    `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't capture anything but phone calls
+    `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
+    `tx_guid` VARCHAR(80) NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL, -- fill this after contact made?
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
+    FOREIGN KEY (`contact_method_id`) REFERENCES contact_methods (`id`),
+    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- this is for tracking the data packet tables we have in order to manage them, perform unions, etc
+-- packet_table_tracking table
+CREATE TABLE `packet_table_tracking` (
+    `id` INT AUTO_INCREMENT,
+    `server_name` VARCHAR(255) NOT NULL DEFAULT '',
+    `table_name` VARCHAR(255) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
@@ -285,7 +335,7 @@ CREATE TABLE `company_load_map` (
 
 
 -- message_functions table
-----when building a message, one can apply functions to a message such as:
+-- when building a message, one can apply functions to a message such as:
 --    {data.appointment_date|date|MM-DD-YYYY HH:MM A} - format date string
 --    {data.first_name|name} - capitalize the first letter, this is a proper name
 --    {data.last_name|name} - capitalize the first letter, this is a proper name
@@ -296,28 +346,6 @@ CREATE TABLE `message_functions` (
     `description` VARCHAR(255) NOT NULL DEFAULT '',
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-/*
-some basic validation here would be good for MVP.. even if it's just checking against the load map for the company
-*/
--- messages table
-CREATE TABLE `messages` (
-    `id` INT AUTO_INCREMENT,
-    `data_packet_id` INT NOT NULL,
-    `company_id` INT NOT NULL,
-    `customer_id` INT NOT NULL,
-    `contact_method_id` INT NOT NULL,
-    `data` json NOT NULL,
-    `contact_date` DATETIME NOT NULL,
-    `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't capture anything but phone calls
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
-    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
-    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
-    FOREIGN KEY (`contact_method_id`) REFERENCES contact_methods (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
@@ -337,16 +365,6 @@ CREATE TABLE `messages_status_updates` (
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
-
--- this is for tracking the history tables we have in order to manage them, perform unions, etc
--- history_table_tracking table
-CREATE TABLE `history_table_tracking` (
-    `id` INT AUTO_INCREMENT,
-    `table_name` VARCHAR(80) NOT NULL DEFAULT '',
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
 
 
 -- sms_queue table
