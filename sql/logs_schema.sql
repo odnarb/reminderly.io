@@ -224,19 +224,6 @@ CREATE TABLE `log_history_table_tracking` (
 )  ENGINE=MyISAM;
 
 
--- log_sms_queue table
-CREATE TABLE `log_sms_queue` (
-    `id` INT AUTO_INCREMENT,
-    `sms_queue_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`sms_queue_id`) REFERENCES sms_queue (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
 
 -- log_sms_unsubscribe table
 CREATE TABLE `log_sms_unsubscribe` (

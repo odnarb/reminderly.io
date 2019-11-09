@@ -1,31 +1,241 @@
-class Company {
-    constructor(){}
-    //company has locations
-    //company has customers
-    //company has campaigns
+/*We want this layer to be tightly coupled with the DB defintion.
+This is where most business logic resides as well as DB operations
 
+Classes have: fields, field validation, and other functions for the lambdas to invoke:
+
+    get(params,cb){}
+    getById(params,cb){}
+    updateById(params, cb){}
+    create(params, cb){}
+    removeById(params, cb){}
+
+
+    In the end, we want objects that are sent via the UI, then API GW, then lambda, then here
+    and be able to perform operations such as getting lists, and other atomic-level CRUD operations
+    however, those operations need validation as they're going into the DB or being updated
+
+    I want to be able to create an object, have it inherit the db config and connectivity.
+    let acme = new Company(db_config);
+    acme.set(fields);
+    if( acme.valid() ){
+        acme.create((error,dbResult){
+            if(error || !dbResult){
+                //do something
+            }
+
+            console.log(dbResult)
+        });
+    }
+*/
+
+class Reminderly {
+    constructor(db_config) {
+        let mysql = require('mysql');
+        this.connection = mysql.createConnection(db_config);
+        this.connection.connect();
+        this.valid = false;
+    }
+
+    // get(params,cb){}
+    // getById(params,cb){}
+    // updateById(params, cb){}
+    // create(params, cb){}
+    // removeById(params, cb){}
+
+    create(sqlQuery, cb){
+        //!!!brandon: maybe need to incorporate some MySQL safety measures...!!!
+
+        console.log("SUPER: This is the super create() ");
+
+        //just need to make sure the proc name has an xref 
+
+        this.connection.query(sqlQuery, function (error, res, fields) {
+
+            // console.log("--THIS.CONNECTION..?: ",this._connection);
+
+            this._connection.destroy();
+            if(error) {
+                cb(error);
+            } else {
+                res.affectedRows;
+                cb(null,res);
+            }
+        });
+    }
 }
 
+class Company extends Reminderly {
+    constructor(db_config) {
+        // Chain constructor with super
+        super(db_config);
+    }
+
+    create(fields, cb){
+        // `name` VARCHAR(255) NOT NULL DEFAULT '',
+        // `alias` VARCHAR(255) NOT NULL DEFAULT '',
+        // `details` json NOT NULL,
+        // `active` INT NOT NULL,
+
+        //grab our allowed fields
+        let company = {
+            name: fields.name,
+            alias: fields.alias,
+            details: fields.details
+        };
+
+        let errors = [];
+        let valid = true;
+
+        if( !company.name || company.name === "" || !(typeof company.name === "string") ) {
+            errors.push("name must be a string");
+            valid = false;
+        }
+        if( !company.alias || company.alias === "" || !(typeof company.alias === "string") ) {
+            errors.push("alias must be a string");
+            valid = false;
+        }
+        if( !(company.details instanceof Object) ) {
+            errors.push("details must be an object");
+            valid = false;
+        }
+        // console.log("Details in this object: ", this);
+
+        // //company has locations
+        // this.locations = details.locations.map((loc) => {new CompanyLocation(loc)});
+        // //company has customers
+        // this.customers = details.customers.map((cust) => {new Customer(loc)});
+        // //company has campaigns
+        // this.campaigns = details.campaigns.map((campaign) => {new Campaign(campaign)});
+
+        if( valid ) {
+            let sqlQuery = "CALL createCompany('"+JSON.stringify(company)+"');";
+
+            super.create(sqlQuery, function(err,res){
+                return cb(err,res);
+            });
+        } else {
+            return cb(errors);
+        }
+    } //end set()
+}
+
+
 class CompanyLocation {
-    constructor(){}
-    //a location has address information
-    //a location has timezone information
+    constructor(){
+        // `company_id` INT NOT NULL,
+        // `name` VARCHAR(80) NOT NULL DEFAULT '',
+        // `address_1` VARCHAR(80) NOT NULL DEFAULT '',
+        // `address_2` VARCHAR(80) NOT NULL DEFAULT '',
+        // `city` VARCHAR(80) NOT NULL DEFAULT '',
+        // `state` VARCHAR(80) NOT NULL DEFAULT '',
+        // `zip` VARCHAR(20) NOT NULL DEFAULT '',
+        // `timezone` VARCHAR(80) NOT NULL DEFAULT '',
+
+        //grab our allowed fields
+        let { company_id, name, address_1, address_2, city, state, zip, timezone } = fields;
+
+        if( !company_id || !(company_id instanceof Number) ) {
+            throw "company_id must be a number";
+        }
+        if( !name || name === "" || !(name instanceof String) ) {
+            throw "name must be a string";
+        }
+        if( !address_1 || address_1 === "" || !(address_1 instanceof String) ) {
+            throw "address_1 must be a string";
+        }
+        if( !address_2 || address_2 === "" || !(address_2 instanceof String) ) {
+            throw "address_2 must be a string";
+        }
+        if( !city || city === "" || !(city instanceof String) ) {
+            throw "city must be a string";
+        }
+        if( !state || state === "" || !(state instanceof String) ) {
+            throw "state must be a string";
+        }
+        if( !zip || zip === "" || !(zip instanceof Number) ) {
+            throw "zip must be a number";
+        }
+        if( !timezone || timezone === "" || !(timezone instanceof String) ) {
+            throw "timezone must be a string";
+        }
+
+        this.company_id = company_id;
+        this.name = name;
+        this.address_1 = address_1;
+        this.address_2 = address_2;
+        this.city = city;
+        this.state = state;
+        this.zip = zip;
+        this.timezone = timezone;
+    }
 }
 
 class Campaign {
-    constructor(){}
-    //campaign has data packets\
+    constructor(){
 
-    //a campaign should define a data source..?
-    //a campaign should have contact methods
-    //a campaign should have messages defined
-    //a campaign should have a schedule of contact windows.. or now..
-    //a campaign should define if confirm, cancel, reschedule options available
-    //a campaign should define locations affected (timezone)
+        // a campaign should define a data source..?
+        // a campaign should have contact methods
+        // a campaign should have messages defined
+        // a campaign should have a schedule of contact windows.. or now..
+        // a campaign should define if confirm, cancel, reschedule options available
+        //   a campaign should define locations affected (timezone)
+        //   campaign has data packets?
+
+        // `company_id` INT NOT NULL,
+        // `name` VARCHAR(80) NOT NULL DEFAULT '',
+        // `description` VARCHAR(255) NOT NULL DEFAULT '',
+        // `data` json NOT NULL,
+        // FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+
+
+        //grab our allowed fields
+        let { company_id, name, description, data } = fields;
+
+        if( !company_id || !(company_id instanceof Number) ) {
+            throw "company_id must be a number";
+        }
+        if( !name || name === "" || !(name instanceof String) ) {
+            throw "name must be a string";
+        }
+        if( !description || description === "" || !(description instanceof String) ) {
+            throw "description must be a string";
+        }
+        if( !(data instanceof Object) ) {
+            throw "data must be an object";
+        }
+        this.company_id = company_id;
+        this.name = name;
+        this.description = description;
+        this.data = data;
+    }
 }
+
 class Customer {
-    constructor(){}
+    constructor(){
+        // `name` VARCHAR(255) NOT NULL DEFAULT '',
+        // `company_id` INT NOT NULL,
+        // `details` json NOT NULL,
+        // `active` INT NOT NULL,
+        // FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+
+        //grab our allowed fields
+        let { company_id, name, details } = fields;
+
+        if( !company_id || !(company_id instanceof Number) ) {
+            throw "company_id must be a number";
+        }
+        if( !name || name === "" || !(name instanceof String) ) {
+            throw "name must be a string";
+        }
+        if( !(details instanceof Object) ) {
+            throw "details must be an object";
+        }
+        this.company_id = company_id;
+        this.name = name;
+        this.details = details;
+    }
 }
+
 class User {
     constructor(){}
     //user has passwords
@@ -250,6 +460,7 @@ class Email extends Message {
 } //end Email
 
 module.exports = {
+    Company: Company,
     SMS: SMS,
     Email: Email,
     PhoneCall: PhoneCall
