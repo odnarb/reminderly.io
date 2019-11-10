@@ -131,10 +131,15 @@ class Company extends Reminderly {
         }
     } //end create()
 
-    remove(obj, cb){
-        if( obj.id == undefined || obj.id < 0 ) {
+    remove(fields, cb){
+        if( fields.id == undefined || fields.id < 0 ) {
             return cb("Object id is undefined");
         }
+
+        //maybe paranoid.. but just safer to re-create the object with a single field..
+        let obj = {
+            id: fields.id
+        };
 
         super.execQuery(ACTION_REMOVEBYID, obj, function(err,res){
             return cb(err,res);
