@@ -197,3 +197,10 @@ BEGIN
 
  END //
 DELIMITER ;
+
+
+/*
+    --Need a proc for dropping old packet tables
+    --Maybe keep a summary of the meta data...?  (# of contacts, per contact type...etc)
+
+*/

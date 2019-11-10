@@ -1,4 +1,319 @@
-class ReminderlyMessage {
+/*
+
+We want this layer to be tightly coupled with the DB defintion.
+This is where most business logic resides as well as DB operations
+
+Classes have: fields, field validation, and other functions for the lambdas to invoke:
+
+    get(params,cb){}
+    getById(params,cb){}
+    updateById(params, cb){}
+    create(params, cb){}
+    removeById(params, cb){}
+
+    In the end, we want objects that are sent via the UI, then API GW, then lambda, then here
+    and be able to perform operations such as getting lists, and other atomic-level CRUD operations
+    however, those operations need validation as they're going into the DB or being updated
+
+    Also, some objects have a relation to another.. so we need to make sure operations cascade properly.
+*/
+
+const ACTION_CREATE = "create";
+const ACTION_GET = "get";
+const ACTION_GETBYID = "get_by_id";
+const ACTION_UPDATEBYID = "update_by_id";
+const ACTION_REMOVEBYID = "remove_by_id";
+
+const DB_PROCS = {
+    "Company": {
+        "create": "createCompany",
+        "remove_by_id": "removeCompany"
+    }
+}
+
+class Reminderly {
+
+    constructor(db_config) {
+        let mysql = require('mysql');
+        this.connection = mysql.createConnection(db_config);
+        this.connection.connect();
+        this.valid = false;
+    }
+
+    getProcName(action="") {
+        let thisClass = DB_PROCS[this.constructor.name];
+
+        if(!thisClass) {
+            throw "Class not recognized.";
+        }
+
+        let procName = thisClass[action];
+
+        if(!procName) {
+            let err = "Action `"+action+"` not recognized.";
+            throw err;
+        }
+        return procName;
+    }
+
+    execQuery(action, obj, cb){
+
+        //for the sql that's going to be executed
+        let procName = this.getProcName(action);
+
+        //in case we're dealing with a single id, the obj = { id: 1234 }
+        //in case it's some pagination or something, obj looks like = { offset: 10, limit: 100, etc}
+        let sqlQuery = `CALL ${procName}('${JSON.stringify(obj)}');`;
+
+        console.log("Query being executed: ", sqlQuery);
+
+        this.connection.query(sqlQuery, function (error, res, fields) {
+            //drop the connection..? makes sense during a lambda f(x)
+            this._connection.destroy();
+            if(error) {
+                cb(error);
+            } else {
+                cb(null,res);
+            }
+        });
+    }
+}
+
+class Company extends Reminderly {
+    constructor(db_config) {
+        // Chain constructor with super
+        super(db_config);
+    }
+
+    create(fields, cb) {
+        // `name` VARCHAR(255) NOT NULL DEFAULT '',
+        // `alias` VARCHAR(255) NOT NULL DEFAULT '',
+        // `details` json NOT NULL,
+        // `active` INT NOT NULL,
+
+        //grab our allowed fields
+        let company = {
+            name: fields.name,
+            alias: fields.alias,
+            details: fields.details
+        };
+
+        let errors = [];
+        let valid = true;
+
+        if( !company.name || company.name === "" || !(typeof company.name === "string") ) {
+            errors.push("name must be a string");
+            valid = false;
+        }
+        if( !company.alias || company.alias === "" || !(typeof company.alias === "string") ) {
+            errors.push("alias must be a string");
+            valid = false;
+        }
+        if( !(company.details instanceof Object) ) {
+            errors.push("details must be an object");
+            valid = false;
+        }
+        // console.log("Details in this object: ", this);
+
+        // //company has locations
+        // this.locations = details.locations.map((loc) => {new CompanyLocation(loc)});
+        // //company has customers
+        // this.customers = details.customers.map((cust) => {new Customer(loc)});
+        // //company has campaigns
+        // this.campaigns = details.campaigns.map((campaign) => {new Campaign(campaign)});
+
+        if( valid ) {
+            super.execQuery(ACTION_CREATE, company, function(err,res){
+                return cb(err,res);
+            });
+        } else {
+            return cb(errors);
+        }
+    } //end create()
+
+    remove(fields, cb){
+        if( fields.id == undefined || fields.id < 0 ) {
+            return cb("Object id is undefined");
+        }
+
+        //maybe paranoid.. but just safer to re-create the object with a single field..
+        let obj = {
+            id: fields.id
+        };
+
+        super.execQuery(ACTION_REMOVEBYID, obj, function(err,res){
+            return cb(err,res);
+        });
+    } //end remove()
+}
+
+
+class CompanyLocation {
+    constructor(){
+        // `company_id` INT NOT NULL,
+        // `name` VARCHAR(80) NOT NULL DEFAULT '',
+        // `address_1` VARCHAR(80) NOT NULL DEFAULT '',
+        // `address_2` VARCHAR(80) NOT NULL DEFAULT '',
+        // `city` VARCHAR(80) NOT NULL DEFAULT '',
+        // `state` VARCHAR(80) NOT NULL DEFAULT '',
+        // `zip` VARCHAR(20) NOT NULL DEFAULT '',
+        // `timezone` VARCHAR(80) NOT NULL DEFAULT '',
+
+        //grab our allowed fields
+        let { company_id, name, address_1, address_2, city, state, zip, timezone } = fields;
+
+        if( !company_id || !(company_id instanceof Number) ) {
+            throw "company_id must be a number";
+        }
+        if( !name || name === "" || !(name instanceof String) ) {
+            throw "name must be a string";
+        }
+        if( !address_1 || address_1 === "" || !(address_1 instanceof String) ) {
+            throw "address_1 must be a string";
+        }
+        if( !address_2 || address_2 === "" || !(address_2 instanceof String) ) {
+            throw "address_2 must be a string";
+        }
+        if( !city || city === "" || !(city instanceof String) ) {
+            throw "city must be a string";
+        }
+        if( !state || state === "" || !(state instanceof String) ) {
+            throw "state must be a string";
+        }
+        if( !zip || zip === "" || !(zip instanceof Number) ) {
+            throw "zip must be a number";
+        }
+        if( !timezone || timezone === "" || !(timezone instanceof String) ) {
+            throw "timezone must be a string";
+        }
+
+        this.company_id = company_id;
+        this.name = name;
+        this.address_1 = address_1;
+        this.address_2 = address_2;
+        this.city = city;
+        this.state = state;
+        this.zip = zip;
+        this.timezone = timezone;
+    }
+}
+
+class Campaign {
+    constructor(){
+
+        // a campaign should define a data source..?
+        // a campaign should have contact methods
+        // a campaign should have messages defined
+        // a campaign should have a schedule of contact windows.. or now..
+        // a campaign should define if confirm, cancel, reschedule options available
+        //   a campaign should define locations affected (timezone)
+        //   campaign has data packets?
+
+        // `company_id` INT NOT NULL,
+        // `name` VARCHAR(80) NOT NULL DEFAULT '',
+        // `description` VARCHAR(255) NOT NULL DEFAULT '',
+        // `data` json NOT NULL,
+        // FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+
+
+        //grab our allowed fields
+        let { company_id, name, description, data } = fields;
+
+        if( !company_id || !(company_id instanceof Number) ) {
+            throw "company_id must be a number";
+        }
+        if( !name || name === "" || !(name instanceof String) ) {
+            throw "name must be a string";
+        }
+        if( !description || description === "" || !(description instanceof String) ) {
+            throw "description must be a string";
+        }
+        if( !(data instanceof Object) ) {
+            throw "data must be an object";
+        }
+        this.company_id = company_id;
+        this.name = name;
+        this.description = description;
+        this.data = data;
+    }
+}
+
+class Customer {
+    constructor(){
+        // `name` VARCHAR(255) NOT NULL DEFAULT '',
+        // `company_id` INT NOT NULL,
+        // `details` json NOT NULL,
+        // `active` INT NOT NULL,
+        // FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+
+        //grab our allowed fields
+        let { company_id, name, details } = fields;
+
+        if( !company_id || !(company_id instanceof Number) ) {
+            throw "company_id must be a number";
+        }
+        if( !name || name === "" || !(name instanceof String) ) {
+            throw "name must be a string";
+        }
+        if( !(details instanceof Object) ) {
+            throw "details must be an object";
+        }
+        this.company_id = company_id;
+        this.name = name;
+        this.details = details;
+    }
+}
+
+class User {
+    constructor(){}
+    //user has passwords
+    //user has roles
+}
+class Role {
+    constructor(){}
+    //role has policies
+}
+class Policy {
+    constructor(){}
+}
+class CompanyLoadMap{
+    constructor(){}
+}
+class DataPacket{
+    constructor(){}
+}
+
+//semi-constant data
+class MessageFunctions {
+    constructor(){}
+}
+
+//semi-constant data
+class ContactMethods {
+    constructor(){}
+}
+
+//semi-constant data
+class ContactStatus {
+    constructor(){}
+}
+
+//semi-constant data
+class ContactMethodProviders {
+    constructor(){}
+}
+
+//semi-constant data
+class DataIngestSource {
+    constructor(){}
+}
+
+//semi-constant data
+class DataIngestStage {
+    constructor(){}
+}
+
+class Message {
     constructor(db_config, cfg) {
         this.cfg = cfg;
         let mysql = require('mysql');
@@ -17,7 +332,7 @@ class ReminderlyMessage {
 }
 
 // Creating a new class from the parent
-class ReminderlySMS extends ReminderlyMessage {
+class SMS extends Message {
     constructor(db_config, cfg) {
         // Chain constructor with super
         super(db_config, cfg);
@@ -51,9 +366,9 @@ class ReminderlySMS extends ReminderlyMessage {
          });
 
     }
-} //end ReminderlySMS()
+} //end SMS()
 
-class ReminderlyPhoneCall extends ReminderlyMessage {
+class PhoneCall extends Message {
     constructor(db_config, cfg) {
         // Chain constructor with super
         super(db_config, cfg);
@@ -96,9 +411,9 @@ class ReminderlyPhoneCall extends ReminderlyMessage {
             } //endif
         });
     }
-} //end ReminderlyPhoneCall()
+} //end PhoneCall()
 
-class ReminderlyEmail extends ReminderlyMessage {
+class Email extends Message {
     constructor(db_config, cfg) {
         // Chain constructor with super
         super(db_config, cfg);
@@ -113,7 +428,7 @@ class ReminderlyEmail extends ReminderlyMessage {
                 cb(null,'nothing to process..');
             } else {
                 msgs.forEach(function(msg){
-                    console.log("ReminderlyEmail: ", msg);
+                    console.log("Email: ", msg);
                 });
 
                 let tx_guid = msgs[0].tx_guid;
@@ -170,10 +485,11 @@ class ReminderlyEmail extends ReminderlyMessage {
         //   });
 
     }
-} //end ReminderlyEmail
+} //end Email
 
 module.exports = {
-    ReminderlySMS: ReminderlySMS,
-    ReminderlyEmail: ReminderlyEmail,
-    ReminderlyPhoneCall: ReminderlyPhoneCall
+    Company: Company,
+    SMS: SMS,
+    Email: Email,
+    PhoneCall: PhoneCall
 }

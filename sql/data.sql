@@ -4,24 +4,15 @@
 -- 
 
 -- history_table_tracking table
-INSERT INTO `history_table_tracking` (`table_name`, `created_at`, `updated_at`) VALUES
-('messages_history_1', now(), now() ),
-('messages_history_2', date_add(now(), INTERVAL -3 DAY), date_add(now(), INTERVAL -3 DAY) ),
-('messages_history_3', date_add(now(), INTERVAL -10 DAY), date_add(now(), INTERVAL -10 DAY) ),
-('messages_history_4', date_add(now(), INTERVAL -20 DAY), date_add(now(), INTERVAL -20 DAY) ),
-('messages_history_5', date_add(now(), INTERVAL -30 DAY), date_add(now(), INTERVAL -30 DAY) ),
-('messages_history_6', date_add(now(), INTERVAL -89 DAY), date_add(now(), INTERVAL -89 DAY) ),
-('messages_history_7', date_add(now(), INTERVAL -90 DAY), date_add(now(), INTERVAL -90 DAY) ),
-('messages_history_8', date_add(now(), INTERVAL -91 DAY), date_add(now(), INTERVAL -91 DAY) );
-('messages_status_updates_history_1', now(), now() ),
-('messages_status_updates_history_2', date_add(now(), INTERVAL -3 DAY), date_add(now(), INTERVAL -3 DAY) ),
-('messages_status_updates_history_3', date_add(now(), INTERVAL -10 DAY), date_add(now(), INTERVAL -10 DAY) ),
-('messages_status_updates_history_4', date_add(now(), INTERVAL -20 DAY), date_add(now(), INTERVAL -20 DAY) ),
-('messages_status_updates_history_5', date_add(now(), INTERVAL -30 DAY), date_add(now(), INTERVAL -30 DAY) ),
-('messages_status_updates_history_6', date_add(now(), INTERVAL -89 DAY), date_add(now(), INTERVAL -89 DAY) ),
-('messages_status_updates_history_7', date_add(now(), INTERVAL -90 DAY), date_add(now(), INTERVAL -90 DAY) ),
-('messages_status_updates_history_8', date_add(now(), INTERVAL -91 DAY), date_add(now(), INTERVAL -91 DAY) );
-
+INSERT INTO `packet_table_tracking` (`server_name`, `table_name`, `created_at`, `updated_at`) VALUES
+('mvp_localhost','packet_1337_11082019_1_data', now(), now() ),
+('mvp_localhost','packet_1337_11072019_1_data', date_add(now(), INTERVAL -3 DAY), date_add(now(), INTERVAL -3 DAY) ),
+('mvp_localhost','packet_1337_11062019_1_data', date_add(now(), INTERVAL -10 DAY), date_add(now(), INTERVAL -10 DAY) ),
+('mvp_localhost','packet_1337_11052019_1_data', date_add(now(), INTERVAL -20 DAY), date_add(now(), INTERVAL -20 DAY) ),
+('mvp_localhost','packet_1337_11042019_1_data', date_add(now(), INTERVAL -30 DAY), date_add(now(), INTERVAL -30 DAY) ),
+('mvp_localhost','packet_1337_11032019_1_data', date_add(now(), INTERVAL -89 DAY), date_add(now(), INTERVAL -89 DAY) ),
+('mvp_localhost','packet_1337_11022019_1_data', date_add(now(), INTERVAL -90 DAY), date_add(now(), INTERVAL -90 DAY) ),
+('mvp_localhost','packet_1337_11012019_1_data', date_add(now(), INTERVAL -91 DAY), date_add(now(), INTERVAL -91 DAY) );
 
 -- 1 - API, 2 - UI
 -- data_ingest_source table

@@ -1,10 +1,37 @@
+SET FOREIGN_KEY_CHECKS=0; -- to disable them
+
+DROP TABLE IF EXISTS `company`;
+DROP TABLE IF EXISTS `company_location`;
+DROP TABLE IF EXISTS `customer`;
+DROP TABLE IF EXISTS `users`;
+DROP TABLE IF EXISTS `users_passwords`;
+DROP TABLE IF EXISTS `roles`;
+DROP TABLE IF EXISTS `policies`;
+DROP TABLE IF EXISTS `roles_policies`;
+DROP TABLE IF EXISTS `users_roles`;
+DROP TABLE IF EXISTS `company_campaigns`;
+DROP TABLE IF EXISTS `contact_methods`;
+DROP TABLE IF EXISTS `contact_status`;
+DROP TABLE IF EXISTS `contact_method_providers`;
+DROP TABLE IF EXISTS `data_ingest_source`;
+DROP TABLE IF EXISTS `data_ingest_stage`;
+DROP TABLE IF EXISTS `data_packet`;
+DROP TABLE IF EXISTS `packet_1337_110882019_1_data`;
+DROP TABLE IF EXISTS `packet_table_tracking`;
+DROP TABLE IF EXISTS `company_load_map`;
+DROP TABLE IF EXISTS `message_functions`;
+DROP TABLE IF EXISTS `sms_queue`;
+DROP TABLE IF EXISTS `sms_unsubscribe`;
+
+SET FOREIGN_KEY_CHECKS=1; -- to re-enable them
+
 -- company table
 CREATE TABLE `company` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL DEFAULT '',
     `alias` VARCHAR(255) NOT NULL DEFAULT '',
     `details` json NOT NULL,
-    `active` INT NOT NULL,
+    `active` INT NOT NULL DEFAULT 0,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`)
@@ -124,15 +151,6 @@ CREATE TABLE `users_roles` (
 )  ENGINE=INNODB;
 
 
-/*
-##redundant? does company_load_map remove this requirement?
-customer_xref
-    customer_id
-    external_customer_id
-    updated_at
-    created_at
-*/
-
 -- company_campaigns table
 -- a campaign should define a data source..?
 -- a campaign should have contact methods
@@ -246,10 +264,32 @@ CREATE TABLE `data_packet` (
 )  ENGINE=INNODB;
 
 
--- later we'll split data packets by campaign_id -- and generate a new table per packet for tracking and reporting purposes..
+-- we split data packets by id -- and generate a new table per packet for tracking and reporting purposes..
 -- raw row data, unfiltered and un manipulated
--- data_packet_rows table
-CREATE TABLE `data_packet_rows` (
+/*
+    reports are generated on a per-table basis
+
+    --might be useful to store the db shard or server that's hosting the campaign data
+    -- or our middleware takes care of asking all the db servers where a table is located
+
+    show tables like campaign_`${campaign_id}`_data
+        if a row is returned we're safe to continue
+    select * from campaign_`${campaign_id}`_data
+
+
+    --rendering data with company load map will show things like:
+        -contact method per row
+        -rendered message
+        -actual message delivered
+        -which customer this is for (if mixed)
+
+    some basic validation here would be good for MVP.. even if it's just checking against the load map for the company
+        -flag with error if our system detected an issue?
+        -need a table of errors pertaining to campaign_id
+*/
+
+/*
+CREATE TABLE `packet_[packet_id]_[date]_[version]_data` (
     `id` INT AUTO_INCREMENT,
     `data_packet_id` INT NOT NULL,
     `row_num` INT NOT NULL,
@@ -257,6 +297,45 @@ CREATE TABLE `data_packet_rows` (
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+packet data will need message fields like:
+    `to_phone` VARCHAR(20) NOT NULL DEFAULT '',
+    `from_phone` VARCHAR(20) NOT NULL DEFAULT '',
+    `priority` INT NOT NULL DEFAULT 0,
+
+
+*/
+
+CREATE TABLE `packet_1337_110882019_1_data` (
+    `id` INT AUTO_INCREMENT,
+    `data_packet_id` INT NOT NULL,
+    `contact_method_id` INT NOT NULL, -- fill this after contact made?
+    `row_num` INT NOT NULL,
+    `data` json NOT NULL,
+    `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't capture anything but phone calls
+    `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
+    `tx_guid` VARCHAR(80) NOT NULL DEFAULT '',
+    `contact_date` DATETIME NOT NULL, -- fill this after contact made?
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
+    FOREIGN KEY (`contact_method_id`) REFERENCES contact_methods (`id`),
+    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- this is for tracking the data packet tables we have in order to manage them, perform unions, etc
+-- packet_table_tracking table
+CREATE TABLE `packet_table_tracking` (
+    `id` INT AUTO_INCREMENT,
+    `server_name` VARCHAR(255) NOT NULL DEFAULT '',
+    `table_name` VARCHAR(255) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
@@ -285,7 +364,7 @@ CREATE TABLE `company_load_map` (
 
 
 -- message_functions table
-----when building a message, one can apply functions to a message such as:
+-- when building a message, one can apply functions to a message such as:
 --    {data.appointment_date|date|MM-DD-YYYY HH:MM A} - format date string
 --    {data.first_name|name} - capitalize the first letter, this is a proper name
 --    {data.last_name|name} - capitalize the first letter, this is a proper name
@@ -299,82 +378,82 @@ CREATE TABLE `message_functions` (
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
-/*
-some basic validation here would be good for MVP.. even if it's just checking against the load map for the company
-*/
--- messages table
-CREATE TABLE `messages` (
-    `id` INT AUTO_INCREMENT,
-    `data_packet_id` INT NOT NULL,
-    `company_id` INT NOT NULL,
-    `customer_id` INT NOT NULL,
-    `contact_method_id` INT NOT NULL,
-    `data` json NOT NULL,
-    `contact_date` DATETIME NOT NULL,
-    `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't capture anything but phone calls
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
-    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
-    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
-    FOREIGN KEY (`contact_method_id`) REFERENCES contact_methods (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
--- this is for sanitized sms/email/phone dispositions
--- messages_status_updates table
-CREATE TABLE `messages_status_updates` (
-    `id` INT AUTO_INCREMENT,
-    `message_id` INT NOT NULL,
-    `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
-    `tx_guid` VARCHAR(80) NOT NULL DEFAULT '',
-    `data` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`message_id`) REFERENCES messages (`id`),
-    FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
--- this is for tracking the history tables we have in order to manage them, perform unions, etc
--- history_table_tracking table
-CREATE TABLE `history_table_tracking` (
-    `id` INT AUTO_INCREMENT,
-    `table_name` VARCHAR(80) NOT NULL DEFAULT '',
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
--- sms_queue table
-CREATE TABLE `sms_queue` (
-    `id` INT AUTO_INCREMENT,
-    `message_id` INT NOT NULL,
-    `to_phone` VARCHAR(20) NOT NULL DEFAULT '',
-    `from_phone` VARCHAR(20) NOT NULL DEFAULT '',
-    `data` json NOT NULL,
-    `contact_date` DATETIME NOT NULL,
-    `priority` INT NOT NULL DEFAULT 0,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`message_id`) REFERENCES messages (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
 
 
 -- sms_unsubscribe table
 CREATE TABLE `sms_unsubscribe` (
     `id` INT AUTO_INCREMENT,
-    `company_id` INT NOT NULL,
+    `customer_id` INT NOT NULL,
     `phone_number` VARCHAR(20) NOT NULL DEFAULT '',
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
+
+
+-- createCompany()
+DROP PROCEDURE IF EXISTS createCompany;
+
+DELIMITER //
+CREATE PROCEDURE createCompany(IN o_company JSON)
+BEGIN
+
+    DECLARE name VARCHAR(255) DEFAULT null;
+    DECLARE alias VARCHAR(255) DEFAULT null;
+    DECLARE details JSON DEFAULT null;
+
+    SET name = JSON_UNQUOTE(JSON_EXTRACT(o_company,'$.name'));
+    SET alias = JSON_UNQUOTE(JSON_EXTRACT(o_company,'$.alias'));
+    SET details = JSON_UNQUOTE(JSON_EXTRACT(o_company,'$.details'));
+
+    INSERT INTO
+    `company` (
+        `name`,
+        `alias`,
+        `details`
+    ) VALUES (
+        name,
+        alias,
+        details
+    );
+
+    select last_insert_id() as company_id;
+
+END //
+
+DELIMITER ;
+
+-- removeCompany()
+DROP PROCEDURE IF EXISTS removeCompany;
+
+DELIMITER //
+CREATE PROCEDURE removeCompany(IN o_company JSON)
+BEGIN
+
+    DECLARE company_id INT DEFAULT null;
+
+    SET company_id = JSON_UNQUOTE(JSON_EXTRACT(o_company,'$.id'));
+
+    delete from company where id = company_id;
+
+END //
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 groups not slated for MVP

@@ -195,20 +195,6 @@ CREATE TABLE `log_data_packet` (
 )  ENGINE=MyISAM;
 
 
--- log_data_packet_rows table
-CREATE TABLE `log_data_packet_rows` (
-    `id` INT AUTO_INCREMENT,
-    `data_packet_row_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`data_packet_row_id`) REFERENCES data_packet_rows (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
 -- log_company_load_map table
 CREATE TABLE `log_company_load_map` (
     `id` INT AUTO_INCREMENT,
@@ -223,46 +209,20 @@ CREATE TABLE `log_company_load_map` (
 )  ENGINE=MyISAM;
 
 
--- log_messages_status_updates table
-CREATE TABLE `log_messages_status_updates` (
-    `id` INT AUTO_INCREMENT,
-    `messages_status_update_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`messages_status_update_id`) REFERENCES messages_status_updates (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
 
-
--- log_history_table_tracking table
+-- log_packet_table_tracking table
 CREATE TABLE `log_history_table_tracking` (
     `id` INT AUTO_INCREMENT,
-    `history_table_tracking_id` INT NOT NULL,
+    `packet_table_tracking_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `details` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`history_table_tracking_id`) REFERENCES history_table_tracking (`id`),
+    FOREIGN KEY (`packet_table_tracking_id`) REFERENCES packet_table_tracking (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;
 
-
--- log_sms_queue table
-CREATE TABLE `log_sms_queue` (
-    `id` INT AUTO_INCREMENT,
-    `sms_queue_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`sms_queue_id`) REFERENCES sms_queue (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
 
 
 -- log_sms_unsubscribe table

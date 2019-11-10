@@ -44,7 +44,11 @@ x-need to add offloader for messages_status_updates
 
 x-last consideration:
     x-I split messages and messages_contact_status tables.. now we need to maintain history for both tables and rotate both?
-    --yes, split history offloading too
+    x--yes, split history offloading too
+
+-Major re-do:
+    split messages into per-data packets.. this will greatly increase the speed of data retrieved when there are thousands of customers
+    each campaign gets its own sets of tables for data tracking, message updates, etc.
 
 x- flesh out ui supported features/actions
 x- plan api gateway / api endpoints for supporting the platform
@@ -54,15 +58,21 @@ x- plan api gateway / api endpoints for supporting the platform
 
 
 x- review stored procs already created, may need corrections based on changes to the db design
-- stored procs for maintenance fleshed out
-- stored procs fleshed out: temp tables, where clauses
-- write stored procs
+- write queries based on new data packet approach
+    - this will need to be translated into the reminderly.io library
+    - once this is written the DB schema might be less prone to big changes
 
+- write stored procs
+    - this will be nice for translating table names for reporting
+    - move messages in data packets or mark them as ready
+
+- stored procs for maintenance fleshed out
+    - maybe a little bit here.
 
 - plan indices
 - write indices
 - create tests for failures ..?
-- create tests
+- create tests (library-level, and library-to-db)
 
 ----------------------------------------------------
 consider:
