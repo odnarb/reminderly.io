@@ -1,4 +1,6 @@
-/*We want this layer to be tightly coupled with the DB defintion.
+/*
+
+We want this layer to be tightly coupled with the DB defintion.
 This is where most business logic resides as well as DB operations
 
 Classes have: fields, field validation, and other functions for the lambdas to invoke:
@@ -9,26 +11,28 @@ Classes have: fields, field validation, and other functions for the lambdas to i
     create(params, cb){}
     removeById(params, cb){}
 
-
     In the end, we want objects that are sent via the UI, then API GW, then lambda, then here
     and be able to perform operations such as getting lists, and other atomic-level CRUD operations
     however, those operations need validation as they're going into the DB or being updated
 
-    I want to be able to create an object, have it inherit the db config and connectivity.
-    let acme = new Company(db_config);
-    acme.set(fields);
-    if( acme.valid() ){
-        acme.create((error,dbResult){
-            if(error || !dbResult){
-                //do something
-            }
-
-            console.log(dbResult)
-        });
-    }
+    Also, some objects have a relation to another.. so we need to make sure operations cascade properly.
 */
 
+const ACTION_CREATE = "create";
+const ACTION_GET = "get";
+const ACTION_GETBYID = "get_by_id";
+const ACTION_UPDATEBYID = "update_by_id";
+const ACTION_REMOVEBYID = "remove_by_id";
+
+const DB_PROCS = {
+    "Company": {
+        "create": "createCompany",
+        "remove_by_id": "removeCompany"
+    }
+}
+
 class Reminderly {
+
     constructor(db_config) {
         let mysql = require('mysql');
         this.connection = mysql.createConnection(db_config);
@@ -36,28 +40,39 @@ class Reminderly {
         this.valid = false;
     }
 
-    // get(params,cb){}
-    // getById(params,cb){}
-    // updateById(params, cb){}
-    // create(params, cb){}
-    // removeById(params, cb){}
+    getProcName(action="") {
+        let thisClass = DB_PROCS[this.constructor.name];
 
-    create(sqlQuery, cb){
-        //!!!brandon: maybe need to incorporate some MySQL safety measures...!!!
+        if(!thisClass) {
+            throw "Class not recognized.";
+        }
 
-        console.log("SUPER: This is the super create() ");
+        let procName = thisClass[action];
 
-        //just need to make sure the proc name has an xref 
+        if(!procName) {
+            let err = "Action `"+action+"` not recognized.";
+            throw err;
+        }
+        return procName;
+    }
+
+    execQuery(action, obj, cb){
+
+        //for the sql that's going to be executed
+        let procName = this.getProcName(action);
+
+        //in case we're dealing with a single id, the obj = { id: 1234 }
+        //in case it's some pagination or something, obj looks like = { offset: 10, limit: 100, etc}
+        let sqlQuery = `CALL ${procName}('${JSON.stringify(obj)}');`;
+
+        console.log("Query being executed: ", sqlQuery);
 
         this.connection.query(sqlQuery, function (error, res, fields) {
-
-            // console.log("--THIS.CONNECTION..?: ",this._connection);
-
+            //drop the connection..? makes sense during a lambda f(x)
             this._connection.destroy();
             if(error) {
                 cb(error);
             } else {
-                res.affectedRows;
                 cb(null,res);
             }
         });
@@ -70,7 +85,7 @@ class Company extends Reminderly {
         super(db_config);
     }
 
-    create(fields, cb){
+    create(fields, cb) {
         // `name` VARCHAR(255) NOT NULL DEFAULT '',
         // `alias` VARCHAR(255) NOT NULL DEFAULT '',
         // `details` json NOT NULL,
@@ -108,15 +123,23 @@ class Company extends Reminderly {
         // this.campaigns = details.campaigns.map((campaign) => {new Campaign(campaign)});
 
         if( valid ) {
-            let sqlQuery = "CALL createCompany('"+JSON.stringify(company)+"');";
-
-            super.create(sqlQuery, function(err,res){
+            super.execQuery(ACTION_CREATE, company, function(err,res){
                 return cb(err,res);
             });
         } else {
             return cb(errors);
         }
-    } //end set()
+    } //end create()
+
+    remove(obj, cb){
+        if( obj.id == undefined || obj.id < 0 ) {
+            return cb("Object id is undefined");
+        }
+
+        super.execQuery(ACTION_REMOVEBYID, obj, function(err,res){
+            return cb(err,res);
+        });
+    } //end remove()
 }
 
 

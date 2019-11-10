@@ -33,8 +33,16 @@ let opts = {
 };
 
 company.create(opts,function(err, res){
-	console.log("err: ", err);
-	console.log("res: ", res);
+	console.log("company.create err: ", err);
+	console.log("company.create res: ", res);
+
+});
+
+company = new reminderly[cleanNoun](db_config);
+
+company.remove({ id: 2 }, (err,res) => {
+	console.log("company.remove err: ", err);
+	console.log("company.remove res: ", res);
 
 });
 

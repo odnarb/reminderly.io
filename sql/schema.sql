@@ -392,23 +392,12 @@ CREATE TABLE `sms_unsubscribe` (
 )  ENGINE=INNODB;
 
 
-
-
-
-
-
-
-
 -- createCompany()
 DROP PROCEDURE IF EXISTS createCompany;
 
 DELIMITER //
 CREATE PROCEDURE createCompany(IN o_company JSON)
 BEGIN
-
-    -- `name` VARCHAR(255) NOT NULL DEFAULT '',
-    -- `alias` VARCHAR(255) NOT NULL DEFAULT '',
-    -- `details` json NOT NULL,
 
     DECLARE name VARCHAR(255) DEFAULT null;
     DECLARE alias VARCHAR(255) DEFAULT null;
@@ -430,6 +419,23 @@ BEGIN
     );
 
     select last_insert_id() as company_id;
+
+END //
+
+DELIMITER ;
+
+-- removeCompany()
+DROP PROCEDURE IF EXISTS removeCompany;
+
+DELIMITER //
+CREATE PROCEDURE removeCompany(IN o_company JSON)
+BEGIN
+
+    DECLARE company_id INT DEFAULT null;
+
+    SET company_id = JSON_UNQUOTE(JSON_EXTRACT(o_company,'$.id'));
+
+    delete from company where id = company_id;
 
 END //
 
