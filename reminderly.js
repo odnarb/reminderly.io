@@ -26,8 +26,11 @@ const ACTION_REMOVEBYID = "remove_by_id";
 
 const DB_PROCS = {
     "Company": {
-        "create": "createCompany",
-        "remove_by_id": "removeCompany"
+        "create":       "createCompany",
+        "remove_by_id": "removeCompany",
+        "update_by_id": "updateCompany",
+        "get_by_id":    "getCompany",
+        "get":          "getCompanies"
     }
 }
 
@@ -145,6 +148,40 @@ class Company extends Reminderly {
             return cb(err,res);
         });
     } //end remove()
+
+    getById(fields, cb){
+        if( fields.id == undefined || fields.id < 0 ) {
+            return cb("Object id is undefined");
+        }
+
+        //maybe paranoid.. but just safer to re-create the object with a single field..
+        let obj = {
+            id: fields.id
+        };
+
+        super.execQuery(ACTION_GET, obj, function(err,res){
+            return cb(err,res);
+        });
+    } //end getById()
+
+    get(fields, cb){
+        // if( fields.id == undefined || fields.id < 0 ) {
+        //     return cb("Object id is undefined");
+        // }
+
+        //maybe paranoid.. but just safer to re-create the object with a single field..
+        let obj = {
+            offset: 0,
+            limit: 10,
+            order: '',
+            order_direction: 'desc',
+        };
+
+        super.execQuery(ACTION_GET, obj, function(err,res){
+            console.log(res[0][0].query);
+            return cb(err,res[0][0]);
+        });
+    } //end get()
 }
 
 
