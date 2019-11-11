@@ -35,7 +35,6 @@ let opts = {
 // company.create(opts,function(err, res){
 // 	console.log("company.create err: ", err);
 // 	console.log("company.create res: ", res);
-
 // });
 
 // company = new reminderly[cleanNoun](db_config);
@@ -56,9 +55,14 @@ let opts = {
 
 company = new reminderly[cleanNoun](db_config);
 
-company.get({}, (err,res) => {
-	//console.log("company.getById err: ", err);
-	console.log("company.getById res: ", res);
+let search_obj = {
+    offset: 0,
+    limit: 10,
+    order: 'alias',
+    order_direction: 'DESC'
+};
 
-
+company.get(search_obj, (err,res) => {
+	console.log("company.get err: ", err);
+	console.log("company.get res: ", res);
 });

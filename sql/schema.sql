@@ -520,32 +520,49 @@ BEGIN
 
     DECLARE v_search VARCHAR(255) DEFAULT '';
     DECLARE v_order VARCHAR(80) DEFAULT 'name';
-    DECLARE v_order_override VARCHAR(80) DEFAULT '';
     DECLARE v_order_direction VARCHAR(80) DEFAULT 'ASC';
     DECLARE i_limit INT DEFAULT 10;
     DECLARE i_offset INT DEFAULT 0;
     DECLARE query VARCHAR(1000) DEFAULT '';
 
+    DECLARE v_order_override VARCHAR(80) DEFAULT '';
+    DECLARE v_order_direction_override VARCHAR(80) DEFAULT '';
+    DECLARE i_limit_override INT DEFAULT 0;
+    DECLARE i_offset_override INT DEFAULT 0;
 
     SET v_search = JSON_UNQUOTE(JSON_EXTRACT(o_search,'$.search'));
-    SET i_limit = JSON_UNQUOTE(JSON_EXTRACT(o_search,'$.limit'));
-    SET i_offset = JSON_UNQUOTE(JSON_EXTRACT(o_search,'$.offset'));
-    SET v_order_override = JSON_UNQUOTE(JSON_EXTRACT(o_search,'$.order'));
 
-    IF v_order_override <> '' THEN
+    SET v_order_override  = JSON_UNQUOTE(JSON_EXTRACT(o_search,'$.order'));
+    SET v_order_direction_override = JSON_UNQUOTE(JSON_EXTRACT(o_search,'$.order_direction'));
+    SET i_limit_override  = JSON_UNQUOTE(JSON_EXTRACT(o_search,'$.limit'));
+    SET i_offset_override = JSON_UNQUOTE(JSON_EXTRACT(o_search,'$.offset'));
+
+    IF v_order_override = 'name' OR v_order_override = 'alias' OR v_order_override = 'id' THEN
         SET v_order = v_order_override;
     END IF;
 
-    SET v_order_direction = JSON_UNQUOTE(JSON_EXTRACT(o_search,'$.order_direction'));
-
-    -- SET @query = CONCAT('SELECT ', kolom, 'FROM tb_mastertindakan WHERE ', kolom, ' LIKE CONCAT(\'%\'', kolomnilai, '\'%\'');
-    SET query = CONCAT('SELECT id,name,alias,details,active,updated_at,created_at FROM companies' );
-
-    IF v_search <> '' THEN
-        SET query = CONCAT(query, 'WHERE name LIKE CONCAT(''%'',', v_search, ',''%'')' );
+    IF v_order_direction_override = 'DESC' THEN
+        SET v_order_direction = 'DESC';
     END IF;
 
-    SET @query = CONCAT(query, ' LIMIT ',i_offset,', ', i_limit, ' ORDER BY ', v_order, ' ', v_order_direction, ';');
+    IF (i_limit_override > 10) AND (i_limit_override <= 100) THEN
+        SET i_limit = i_limit_override;
+    END IF;
+
+    IF (i_offset_override > 0) THEN
+        SET i_offset = i_offset_override;
+    END IF;
+
+    -- SET @query = CONCAT('SELECT ', kolom, 'FROM tb_mastertindakan WHERE ', kolom, ' LIKE CONCAT(\'%\'', kolomnilai, '\'%\'');
+    SET query = CONCAT('SELECT id,name,alias,updated_at,created_at FROM company' );
+
+    IF v_search <> '' THEN
+        SET query = CONCAT(query, ' WHERE active=1 and name LIKE CONCAT(''%'',', v_search, ',''%'')' );
+    ELSE
+        SET query = CONCAT(query, ' WHERE active=1' );
+    END IF;
+
+    SET @query = CONCAT(query, ' ORDER BY ', v_order, ' ', v_order_direction, ' LIMIT ',i_offset,', ', i_limit, ';');
 
     PREPARE stmt FROM @query;
     EXECUTE stmt;

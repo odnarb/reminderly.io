@@ -164,22 +164,10 @@ class Company extends Reminderly {
         });
     } //end getById()
 
-    get(fields, cb){
-        // if( fields.id == undefined || fields.id < 0 ) {
-        //     return cb("Object id is undefined");
-        // }
-
-        //maybe paranoid.. but just safer to re-create the object with a single field..
-        let obj = {
-            offset: 0,
-            limit: 10,
-            order: '',
-            order_direction: 'desc',
-        };
-
-        super.execQuery(ACTION_GET, obj, function(err,res){
-            console.log(res[0][0].query);
-            return cb(err,res[0][0]);
+    get(search, cb){
+        super.execQuery(ACTION_GET, search, function(err,res){
+            // console.log(res[0]);
+            return cb(err,res[0]);
         });
     } //end get()
 }
