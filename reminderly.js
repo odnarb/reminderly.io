@@ -170,6 +170,23 @@ class Company extends Reminderly {
             return cb(err,res[0]);
         });
     } //end get()
+
+
+    update(fields, cb) {
+
+        let errors = [];
+        let valid = true;
+
+        //build this out.. need to allow/disallow stuff
+
+        if( valid ) {
+            super.execQuery(ACTION_UPDATEBYID, company, function(err,res){
+                return cb(err,res);
+            });
+        } else {
+            return cb(errors);
+        }
+    } //end update()
 }
 
 
