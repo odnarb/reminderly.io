@@ -537,7 +537,7 @@ BEGIN
     SET i_limit_override  = JSON_UNQUOTE(JSON_EXTRACT(o_search,'$.limit'));
     SET i_offset_override = JSON_UNQUOTE(JSON_EXTRACT(o_search,'$.offset'));
 
-    IF v_order_override = 'name' OR v_order_override = 'alias' OR v_order_override = 'id' THEN
+    IF v_order_override = 'id' OR v_order_override = 'name' OR v_order_override = 'alias' THEN
         SET v_order = v_order_override;
     END IF;
 
@@ -554,7 +554,7 @@ BEGIN
     END IF;
 
     -- SET @query = CONCAT('SELECT ', kolom, 'FROM tb_mastertindakan WHERE ', kolom, ' LIKE CONCAT(\'%\'', kolomnilai, '\'%\'');
-    SET query = CONCAT('SELECT id,name,alias,updated_at,created_at FROM company' );
+    SET query = CONCAT('SELECT id,name,alias,active,updated_at,created_at FROM company' );
 
     IF v_search <> '' THEN
         SET query = CONCAT(query, ' WHERE active=1 and name LIKE CONCAT(''%'',', v_search, ',''%'')' );
