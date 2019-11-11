@@ -545,9 +545,9 @@ BEGIN
         SET query = CONCAT(query, 'WHERE name LIKE CONCAT(''%'',', v_search, ',''%'')' );
     END IF;
 
-    SET query = CONCAT(query, ' LIMIT ',i_offset,', ', i_limit, ' ORDER BY ', v_order, ' ', v_order_direction, ';');
+    SET @query = CONCAT(query, ' LIMIT ',i_offset,', ', i_limit, ' ORDER BY ', v_order, ' ', v_order_direction, ';');
 
-    PREPARE stmt FROM query;
+    PREPARE stmt FROM @query;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
 
