@@ -189,57 +189,6 @@ class Company extends Reminderly {
     } //end update()
 }
 
-
-class CompanyLocation {
-    constructor(){
-        // `company_id` INT NOT NULL,
-        // `name` VARCHAR(80) NOT NULL DEFAULT '',
-        // `address_1` VARCHAR(80) NOT NULL DEFAULT '',
-        // `address_2` VARCHAR(80) NOT NULL DEFAULT '',
-        // `city` VARCHAR(80) NOT NULL DEFAULT '',
-        // `state` VARCHAR(80) NOT NULL DEFAULT '',
-        // `zip` VARCHAR(20) NOT NULL DEFAULT '',
-        // `timezone` VARCHAR(80) NOT NULL DEFAULT '',
-
-        //grab our allowed fields
-        let { company_id, name, address_1, address_2, city, state, zip, timezone } = fields;
-
-        if( !company_id || !(company_id instanceof Number) ) {
-            throw "company_id must be a number";
-        }
-        if( !name || name === "" || !(name instanceof String) ) {
-            throw "name must be a string";
-        }
-        if( !address_1 || address_1 === "" || !(address_1 instanceof String) ) {
-            throw "address_1 must be a string";
-        }
-        if( !address_2 || address_2 === "" || !(address_2 instanceof String) ) {
-            throw "address_2 must be a string";
-        }
-        if( !city || city === "" || !(city instanceof String) ) {
-            throw "city must be a string";
-        }
-        if( !state || state === "" || !(state instanceof String) ) {
-            throw "state must be a string";
-        }
-        if( !zip || zip === "" || !(zip instanceof Number) ) {
-            throw "zip must be a number";
-        }
-        if( !timezone || timezone === "" || !(timezone instanceof String) ) {
-            throw "timezone must be a string";
-        }
-
-        this.company_id = company_id;
-        this.name = name;
-        this.address_1 = address_1;
-        this.address_2 = address_2;
-        this.city = city;
-        this.state = state;
-        this.zip = zip;
-        this.timezone = timezone;
-    }
-}
-
 class Campaign {
     constructor(){
 
@@ -280,47 +229,21 @@ class Campaign {
     }
 }
 
-class Customer {
-    constructor(){
-        // `name` VARCHAR(255) NOT NULL DEFAULT '',
-        // `company_id` INT NOT NULL,
-        // `details` json NOT NULL,
-        // `active` INT NOT NULL,
-        // FOREIGN KEY (`company_id`) REFERENCES company (`id`),
-
-        //grab our allowed fields
-        let { company_id, name, details } = fields;
-
-        if( !company_id || !(company_id instanceof Number) ) {
-            throw "company_id must be a number";
-        }
-        if( !name || name === "" || !(name instanceof String) ) {
-            throw "name must be a string";
-        }
-        if( !(details instanceof Object) ) {
-            throw "details must be an object";
-        }
-        this.company_id = company_id;
-        this.name = name;
-        this.details = details;
-    }
-}
-
 class User {
     constructor(){}
     //user has passwords
     //user has roles
 }
+
 class Role {
     constructor(){}
     //role has policies
 }
+
 class Policy {
     constructor(){}
 }
-class CompanyLoadMap{
-    constructor(){}
-}
+
 class DataPacket{
     constructor(){}
 }

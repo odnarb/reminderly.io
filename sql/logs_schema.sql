@@ -11,7 +11,7 @@ CREATE TABLE `log_company` (
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;
 
-
+/*
 -- log_company_location table
 CREATE TABLE `log_company_location` (
     `id` INT AUTO_INCREMENT,
@@ -38,7 +38,7 @@ CREATE TABLE `log_customer` (
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;
-
+*/
 
 -- what if a user deletes themselves??? (foreign key issue?)
 -- log_users table
