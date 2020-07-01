@@ -1,4 +1,4 @@
-console.log('Loading function...');
+console.log('Loading SENDER function...');
 
 const db_config = {
     host     : '192.168.32.130',
@@ -17,7 +17,10 @@ const emailCFG = {
     authToken: 'your_auth_token'
 };
 
-let r = require('./reminderly.js');
+let r = require('../reminderly.js');
+
+console.log( "contact method: ", r.CONTACT_METHODS );
+
 let senderCB = function(err, status){
     console.log("Error: ", err);
     console.log("Status: ", status);

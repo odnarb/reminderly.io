@@ -474,6 +474,7 @@ class Email extends Message {
 } //end Email
 
 module.exports = {
+    CONTACT_METHODS: CONTACT_METHODS,
     Company: Company,
     SMS: SMS,
     Email: Email,
