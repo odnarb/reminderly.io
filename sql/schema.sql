@@ -243,6 +243,7 @@ CREATE TABLE `data_ingest_stage` (
 -- consider: what to do with additional data? overwrite / flush / append?
 -- track the number of times we tried to load this file
 -- data_packet table
+-- track the table name
 CREATE TABLE `data_packet` (
     `id` INT AUTO_INCREMENT,
     `campaign_id` INT NOT NULL,
@@ -251,6 +252,8 @@ CREATE TABLE `data_packet` (
     `company_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `tx_guid` VARCHAR(80) NOT NULL DEFAULT '',
+    `table_name` VARCHAR(80) NOT NULL DEFAULT '',
+    `version` INT NOT NULL,
     `num_tries` INT NOT NULL,
     `metadata` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),

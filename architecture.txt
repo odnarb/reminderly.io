@@ -1,0 +1,20 @@
+Sending Architecture
+-----------------------
+
+Build:
+    --Create SQS and lambda poller per packet
+    --Use a lambda to create this set
+
+Teardown:
+    --Remove when campaign is removed
+    --Use a lambda to remove this set
+
+Lambda: get packets and their data
+    --send to appropriate SQS depending on the packet
+
+SQS:
+    --each packet (campaign) gets its own SQS queue
+    --limitation for now is 120k per queue (campaign)
+
+Lambda:
+    --poll its SQS queue
