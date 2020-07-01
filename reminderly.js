@@ -18,6 +18,15 @@ Classes have: fields, field validation, and other functions for the lambdas to i
     Also, some objects have a relation to another.. so we need to make sure operations cascade properly.
 */
 
+//1 -- sms
+//2 -- email
+//3 -- phone
+const CONTACT_METHODS = {
+    SMS: 1,
+    EMAIL:2,
+    PHONE: 3
+}
+
 const ACTION_CREATE = "create";
 const ACTION_GET = "get";
 const ACTION_GETBYID = "get_by_id";
