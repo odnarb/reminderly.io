@@ -1,8 +1,8 @@
 SET FOREIGN_KEY_CHECKS=0; -- to disable them
 
 DROP TABLE IF EXISTS `company`;
-DROP TABLE IF EXISTS `company_location`;
-DROP TABLE IF EXISTS `customer`;
+-- DROP TABLE IF EXISTS `company_location`;
+-- DROP TABLE IF EXISTS `customer`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `users_passwords`;
 DROP TABLE IF EXISTS `roles`;
@@ -18,14 +18,15 @@ DROP TABLE IF EXISTS `data_ingest_stage`;
 DROP TABLE IF EXISTS `data_packet`;
 DROP TABLE IF EXISTS `packet_1337_110882019_1_data`;
 DROP TABLE IF EXISTS `packet_table_tracking`;
-DROP TABLE IF EXISTS `company_load_map`;
 DROP TABLE IF EXISTS `message_functions`;
-DROP TABLE IF EXISTS `sms_queue`;
 DROP TABLE IF EXISTS `sms_unsubscribe`;
 
 SET FOREIGN_KEY_CHECKS=1; -- to re-enable them
 
 -- company table
+/*
+    For now the company locations are included in the details
+*/
 CREATE TABLE `company` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL DEFAULT '',
@@ -38,6 +39,7 @@ CREATE TABLE `company` (
 )  ENGINE=INNODB;
 
 
+/*
 -- company_location table
 CREATE TABLE `company_location` (
     `id` INT AUTO_INCREMENT,
@@ -53,8 +55,9 @@ CREATE TABLE `company_location` (
     FOREIGN KEY (`company_id`) REFERENCES company (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
+*/
 
-
+/*
 -- customer table
 CREATE TABLE `customer` (
     `id` INT AUTO_INCREMENT,
@@ -67,8 +70,9 @@ CREATE TABLE `customer` (
     FOREIGN KEY (`company_id`) REFERENCES company (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
+*/
 
-
+-- users table
 CREATE TABLE `users` (
     `id` INT AUTO_INCREMENT,
     `first_name` VARCHAR(255) NOT NULL DEFAULT '',
@@ -139,24 +143,31 @@ CREATE TABLE `users_roles` (
     `id` INT AUTO_INCREMENT,
     `user_id` INT NOT NULL,
     `company_id` INT NOT NULL,
-    `customer_id` INT NOT NULL,
     `role_id` INT NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     FOREIGN KEY (`company_id`) REFERENCES company (`id`),
-    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
     FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
 
 -- company_campaigns table
--- a campaign should define a data source..?
+-- a campaign should have at least one data source.. (MVP just one)
+-- a campaign each data source has a mapping
 -- a campaign should have contact methods
 -- a campaign should have messages defined
 -- a campaign should have a schedule of contact windows.. or now..
 -- a campaign should define if confirm, cancel, reschedule options available
+/*
+For certain contact types we will need a bare minimum of fields defined and mapped:
+    sms: to, message body
+    email: to, subject line, message body
+    phone: to, message body
+
+    * if the message template pulls from a field that's not available in the map, then we'll throw an error
+*/
 CREATE TABLE `company_campaigns` (
     `id` INT AUTO_INCREMENT,
     `company_id` INT NOT NULL,
@@ -279,13 +290,6 @@ CREATE TABLE `data_packet` (
         if a row is returned we're safe to continue
     select * from campaign_`${campaign_id}`_data
 
-
-    --rendering data with company load map will show things like:
-        -contact method per row
-        -rendered message
-        -actual message delivered
-        -which customer this is for (if mixed)
-
     some basic validation here would be good for MVP.. even if it's just checking against the load map for the company
         -flag with error if our system detected an issue?
         -need a table of errors pertaining to campaign_id
@@ -343,29 +347,6 @@ CREATE TABLE `packet_table_tracking` (
 )  ENGINE=INNODB;
 
 
-/*
-For certain contact types we will need a bare minimum of fields defined and mapped:
-    sms: to, message body
-    email: to, subject line, message body
-    phone: to, message body
-
-    * if the message template pulls from a field that's not available in the map, then we'll throw an error
-*/
--- company_load_map table
-CREATE TABLE `company_load_map` (
-    `id` INT AUTO_INCREMENT,
-    `company_id` INT NOT NULL,
-    `load_name` VARCHAR(80) NOT NULL DEFAULT '',
-    `system_name` VARCHAR(80) NOT NULL DEFAULT '',
-    `system_version` VARCHAR(80) NOT NULL DEFAULT '',
-    `load_map` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
 -- message_functions table
 -- when building a message, one can apply functions to a message such as:
 --    {data.appointment_date|date|MM-DD-YYYY HH:MM A} - format date string
@@ -382,80 +363,16 @@ CREATE TABLE `message_functions` (
 )  ENGINE=INNODB;
 
 
-
 -- sms_unsubscribe table
 CREATE TABLE `sms_unsubscribe` (
     `id` INT AUTO_INCREMENT,
-    `customer_id` INT NOT NULL,
+    `company_id` INT NOT NULL,
     `phone_number` VARCHAR(20) NOT NULL DEFAULT '',
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
+    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-
-
--- createCompany()
-DROP PROCEDURE IF EXISTS createCompany;
-
-DELIMITER //
-CREATE PROCEDURE createCompany(IN o_company JSON)
-BEGIN
-
-    DECLARE name VARCHAR(255) DEFAULT null;
-    DECLARE alias VARCHAR(255) DEFAULT null;
-    DECLARE details JSON DEFAULT null;
-
-    SET name = JSON_UNQUOTE(JSON_EXTRACT(o_company,'$.name'));
-    SET alias = JSON_UNQUOTE(JSON_EXTRACT(o_company,'$.alias'));
-    SET details = JSON_UNQUOTE(JSON_EXTRACT(o_company,'$.details'));
-
-    INSERT INTO
-    `company` (
-        `name`,
-        `alias`,
-        `details`
-    ) VALUES (
-        name,
-        alias,
-        details
-    );
-
-    select last_insert_id() as company_id;
-
-END //
-
-DELIMITER ;
-
--- removeCompany()
-DROP PROCEDURE IF EXISTS removeCompany;
-
-DELIMITER //
-CREATE PROCEDURE removeCompany(IN o_company JSON)
-BEGIN
-
-    DECLARE company_id INT DEFAULT null;
-
-    SET company_id = JSON_UNQUOTE(JSON_EXTRACT(o_company,'$.id'));
-
-    delete from company where id = company_id;
-
-END //
-
-DELIMITER ;
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /*

@@ -32,17 +32,37 @@ let opts = {
 	active: true // this should not be save.. because we're disallowing companies to be active on first save.. one must go into company details and set them to active
 };
 
-company.create(opts,function(err, res){
-	console.log("company.create err: ", err);
-	console.log("company.create res: ", res);
+// company.create(opts,function(err, res){
+// 	console.log("company.create err: ", err);
+// 	console.log("company.create res: ", res);
+// });
 
-});
+// company = new reminderly[cleanNoun](db_config);
+
+// company.remove({ id: 2 }, (err,res) => {
+// 	console.log("company.remove err: ", err);
+// 	console.log("company.remove res: ", res);
+
+// });
+
+
+// company = new reminderly[cleanNoun](db_config);
+
+// company.getById({ id: 1 }, (err,res) => {
+// 	//console.log("company.getById err: ", err);
+// 	console.log("company.getById res: ", res);
+
 
 company = new reminderly[cleanNoun](db_config);
 
-company.remove({ id: 2 }, (err,res) => {
-	console.log("company.remove err: ", err);
-	console.log("company.remove res: ", res);
+let search_obj = {
+    offset: 0,
+    limit: 10,
+    order: 'alias',
+    order_direction: 'DESC'
+};
 
+company.get(search_obj, (err,res) => {
+	console.log("company.get err: ", err);
+	console.log("company.get res: ", res);
 });
-
