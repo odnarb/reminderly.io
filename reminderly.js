@@ -418,7 +418,7 @@ class Email extends Message {
         msgs.forEach(function(msg){
             console.log("Email: ", msg);
 
-            let sqlQuery = "CALL SetMessagesProcessed('"+msg.tx_guid+"');";\
+            let sqlQuery = "CALL SetMessagesProcessed('"+msg.tx_guid+"');";
             connection.query(sqlQuery, function (error, msg, fields) {
                 if(error) cb(error)
                 else cb(null,msg);
