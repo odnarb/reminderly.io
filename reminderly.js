@@ -281,14 +281,18 @@ class DataIngestStage {
 class Message {
     constructor(db_config, cfg) {
         this.cfg = cfg;
+    }
+
+    get(){}
+
+    get_connection(){
         let mysql = require('mysql');
         this.connection = mysql.createConnection(db_config);
         this.connection.connect();
-    }
+        return this.connection
+    };
 
     send(){}
-
-    get_connection(){ return this.connection };
 
     db_close(){
         console.log("Closing db connection..");
@@ -303,33 +307,37 @@ class SMS extends Message {
         super(db_config, cfg);
     }
 
-    send(cb){
+    get(cb){
         let connection = this.get_connection();
         let sqlQuery = "CALL GetMessagesReady('sms');";
         connection.query(sqlQuery, function (error, msgs, fields) {
-            if(error) cb(error);
-            else if( msgs.length == 0) {
-                cb(null,'nothing to process..');
-            } else {
-                msgs.forEach(function(msg){
-                    console.log("sending sms: ", msg);
-                    // console.log(this.constructor.name + ": ", msg);
-                    // twilioClient = require('twilio')(this.cfg.accountSid, this.cfg.authToken);
-                    // twilioClient.messages
-                    //   .create(msg)
-                    //   .then(message => console.log(message.sid));
-                    // }
-                });
+            if(error) return cb(error);
+            return cb(null, msgs);
+        });
+    }
 
-                let tx_guid = msgs[0].tx_guid;
-                let sqlQuery = "CALL SetMessagesProcessed('"+tx_guid+"');";
-                connection.query(sqlQuery, function (error, msgs, fields) {
-                    if(error) cb(error);
-                    else cb(null,'success!: sms');
-                });
-            }
-         });
+    send(msgs, cb){
+        let connection = this.get_connection();
 
+        msgs.forEach(function(msg){
+            console.log("sending sms: ", msg);
+            console.log(this.constructor.name + ": ", msg);
+            // twilioClient = require('twilio')(this.cfg.accountSid, this.cfg.authToken);
+            // twilioClient.messages
+            //   .create(msg)
+            //   .then(message =>
+            //         console.log(message.sid)
+            //     );
+            // }
+
+            console.log("Sending message: ", msg);
+
+            let sqlQuery = "CALL SetMessagesProcessed('"+msg.tx_guid;+"');";
+            connection.query(sqlQuery, function (error, msg, fields) {
+                if(error) cb(error)
+                else cb(null,msg);
+            });
+        });
     }
 } //end SMS()
 
@@ -339,41 +347,43 @@ class PhoneCall extends Message {
         super(db_config, cfg);
     }
 
-    send(cb){
+    get(){
         let connection = this.get_connection();
         let sqlQuery = "CALL GetMessagesReady('call');";
         connection.query(sqlQuery, function (error, msgs, fields) {
-            if(error) cb(error);
-            else if( msgs.length == 0){
-                cb(null,'nothing to process..');
-            } else {
-                msgs.forEach(function(msg){
-                    console.log("sending call: ", msg);
-                    // //use twilio phone
-                    //twilioClient = require('twilio')(this.cfg.accountSid, this.cfg.authToken);
-                    // twilioClient.calls
-                    //   .create({
-                    //      url: 'http://demo.twilio.com/docs/voice.xml',
-                        
-                    //     <Response>
-                    //     <script/>
-                    //     <Say voice="alice">Thanks for trying our documentation. Enjoy!</Say>
-                    //     <Play>http://demo.twilio.com/docs/classic.mp3</Play>
-                    //     </Response>
-                        
-                    //      to: msg.to,
-                    //      from: msg.from
-                    //    })
-                    //   .then(call => console.log(call.sid));
-                });
+            if(error) return cb(error);
+            return cb(null, msgs);
+        });
+    }
 
-                let tx_guid = msgs[0].tx_guid;
-                let sqlQuery = "CALL SetMessagesProcessed('"+tx_guid+"');";
-                connection.query(sqlQuery, function (error, msgs, fields) {
-                    if(error) cb(error);
-                    else cb(null,'success!: call');
-                });
-            } //endif
+    send(msgs,cb){
+        let connection = this.get_connection();
+
+        msgs.forEach(function(msg){
+            console.log("sending call: ", msg);
+            // //use twilio phone
+            //twilioClient = require('twilio')(this.cfg.accountSid, this.cfg.authToken);
+            // twilioClient.calls
+            //   .create({
+            //      url: 'http://demo.twilio.com/docs/voice.xml',
+
+            //     <Response>
+            //     <script/>
+            //     <Say voice="alice">Thanks for trying our documentation. Enjoy!</Say>
+            //     <Play>http://demo.twilio.com/docs/classic.mp3</Play>
+            //     </Response>
+
+            //      to: msg.to,
+            //      from: msg.from
+            //    })
+            //   .then(call => console.log(call.sid));
+            console.log("Sending message: ", msg);
+
+            let sqlQuery = "CALL SetMessagesProcessed('"+msg.tx_guid+"');";
+            connection.query(sqlQuery, function (error, msg, fields) {
+                if(error) cb(error)
+                else cb(null,msg);
+            });
         });
     }
 } //end PhoneCall()
@@ -384,33 +394,35 @@ class Email extends Message {
         super(db_config, cfg);
     }
 
-    send(cb){
+    get(){
         let connection = this.get_connection();
         let sqlQuery = "CALL GetMessagesReady('email');";
         connection.query(sqlQuery, function (error, msgs, fields) {
-            if(error) cb(error);
-            else if( msgs.length == 0){
-                cb(null,'nothing to process..');
-            } else {
-                msgs.forEach(function(msg){
-                    console.log("Email: ", msg);
-                });
-
-                let tx_guid = msgs[0].tx_guid;
-                let sqlQuery = "CALL SetMessagesProcessed('"+tx_guid+"');";
-                connection.query(sqlQuery, function (error, msgs, fields) {
-                    if(error) cb(error);
-                    else cb(null,'success!: email');
-                });
-            }
+            if(error) return cb(error);
+            return cb(null, msgs);
         });
+    }
+
+    send(msgs,cb){
+        let connection = this.get_connection();
+
+        msgs.forEach(function(msg){
+            console.log("Email: ", msg);
+
+            let sqlQuery = "CALL SetMessagesProcessed('"+msg.tx_guid+"');";\
+            connection.query(sqlQuery, function (error, msg, fields) {
+                if(error) cb(error)
+                else cb(null,msg);
+            });
+        });
+
         //use aws ses
         // let AWS = require('aws-sdk');
         // AWS set accessKey & secret: this.cfg.accessKey and this.cfg.secret
         // AWS.config.update({region: 'us-west-2'});
         // let ses = new AWS.SES();
 
-        // // Create sendEmail params 
+        // // Create sendEmail params
         // let params = {
         //   Destination: { /* required */
         //     ToAddresses: msg.email_address.split(";") //make the string of email address into an array for multiple recipients
