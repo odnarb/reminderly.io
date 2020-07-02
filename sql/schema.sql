@@ -1,8 +1,8 @@
 SET FOREIGN_KEY_CHECKS=0; -- to disable them
 
 DROP TABLE IF EXISTS `company`;
--- DROP TABLE IF EXISTS `company_location`;
--- DROP TABLE IF EXISTS `customer`;
+DROP TABLE IF EXISTS `company_location`;
+DROP TABLE IF EXISTS `customer`;
 DROP TABLE IF EXISTS `users`;
 DROP TABLE IF EXISTS `users_passwords`;
 DROP TABLE IF EXISTS `roles`;
@@ -17,6 +17,7 @@ DROP TABLE IF EXISTS `data_ingest_source`;
 DROP TABLE IF EXISTS `data_ingest_stage`;
 DROP TABLE IF EXISTS `data_packet`;
 DROP TABLE IF EXISTS `packet_1337_110882019_1_data`;
+DROP TABLE IF EXISTS `packet_1337_07022020_1_data`;
 DROP TABLE IF EXISTS `packet_table_tracking`;
 DROP TABLE IF EXISTS `message_functions`;
 DROP TABLE IF EXISTS `sms_unsubscribe`;
@@ -79,15 +80,16 @@ CREATE TABLE `users` (
     `last_name` VARCHAR(255) NOT NULL DEFAULT '',
     `email_address` VARCHAR(255) NOT NULL DEFAULT '',
     `phone_number` VARCHAR(50) NOT NULL DEFAULT '',
-    `locked` INT NOT NULL,
-    `login_attempts` INT NOT NULL,
+    `enabled` INT NOT NULL DEFAULT 0,
+    `locked` INT NOT NULL DEFAULT 0,
+    `login_attempts` INT NOT NULL DEFAULT 0,
     `password_hash` VARCHAR(255) NOT NULL DEFAULT '',
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
-
+/*
 -- users_passwords table
 CREATE TABLE `users_passwords` (
     `id` INT AUTO_INCREMENT,
@@ -98,10 +100,11 @@ CREATE TABLE `users_passwords` (
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-
+*/
 
 -- these need to be fleshed out, primarily for the UI of the system
 -- roles table
+/*
 CREATE TABLE `roles` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL DEFAULT '',
@@ -151,7 +154,7 @@ CREATE TABLE `users_roles` (
     FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-
+*/
 
 -- company_campaigns table
 -- a campaign should have at least one data source.. (MVP just one)
@@ -224,7 +227,7 @@ CREATE TABLE `contact_method_providers` (
 CREATE TABLE `data_ingest_source` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
-    `description` VARCHAR(80) NOT NULL DEFAULT '',
+    `description` VARCHAR(160) NOT NULL DEFAULT '',
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`)
@@ -251,6 +254,17 @@ CREATE TABLE `data_ingest_stage` (
 )  ENGINE=INNODB;
 
 
+-- this is for tracking the data packet tables we have in order to manage them, perform unions, etc
+-- packet_table_tracking table
+CREATE TABLE `packet_table_tracking` (
+    `id` INT AUTO_INCREMENT,
+    `server_name` VARCHAR(255) NOT NULL DEFAULT '',
+    `table_name` VARCHAR(255) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
 -- consider: what to do with additional data? overwrite / flush / append?
 -- track the number of times we tried to load this file
 -- data_packet table
@@ -260,10 +274,10 @@ CREATE TABLE `data_packet` (
     `campaign_id` INT NOT NULL,
     `data_ingest_source_id` INT NOT NULL,
     `data_ingest_stage_id` INT NOT NULL,
+    `packet_table_tracking_id` INT NOT NULL,
     `company_id` INT NOT NULL,
     `user_id` INT NOT NULL,
     `tx_guid` VARCHAR(80) NOT NULL DEFAULT '',
-    `table_name` VARCHAR(80) NOT NULL DEFAULT '',
     `version` INT NOT NULL,
     `num_tries` INT NOT NULL,
     `metadata` json NOT NULL,
@@ -272,6 +286,7 @@ CREATE TABLE `data_packet` (
     FOREIGN KEY (`campaign_id`) REFERENCES company_campaigns (`id`),
     FOREIGN KEY (`data_ingest_source_id`) REFERENCES data_ingest_source (`id`),
     FOREIGN KEY (`data_ingest_stage_id`) REFERENCES data_ingest_stage (`id`),
+    FOREIGN KEY (`packet_table_tracking_id`) REFERENCES packet_table_tracking (`id`),
     FOREIGN KEY (`company_id`) REFERENCES company (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
@@ -316,34 +331,22 @@ packet data will need message fields like:
 
 */
 
-CREATE TABLE `packet_1337_110882019_1_data` (
+CREATE TABLE `packet_1337_07022020_1_data` (
     `id` INT AUTO_INCREMENT,
     `data_packet_id` INT NOT NULL,
+    `packet_table_name` VARCHAR(80) NOT NULL DEFAULT '', -- contains table name like: "packet_1337_07022020_1_data"
+    `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
     `contact_method_id` INT NOT NULL, -- fill this after contact made?
-    `packet_table_name` VARCHAR(80) NOT NULL DEFAULT '', -- contains table name like: "packet_1337_110882019_1_data"
     `row_num` INT NOT NULL,
     `data` json NOT NULL,
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't capture anything but phone calls
-    `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
     `tx_guid` VARCHAR(80) NOT NULL DEFAULT '',
-    `contact_date` DATETIME NOT NULL, -- fill this after contact made?
+    `contact_date` DATETIME NOT NULL DEFAULT '1900-01-01', -- fill this after contact made?
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`contact_status_id`) REFERENCES contact_status (`id`),
     FOREIGN KEY (`contact_method_id`) REFERENCES contact_methods (`id`),
     FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
--- this is for tracking the data packet tables we have in order to manage them, perform unions, etc
--- packet_table_tracking table
-CREATE TABLE `packet_table_tracking` (
-    `id` INT AUTO_INCREMENT,
-    `server_name` VARCHAR(255) NOT NULL DEFAULT '',
-    `table_name` VARCHAR(255) NOT NULL DEFAULT '',
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
