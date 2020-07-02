@@ -1,3 +1,7 @@
+//reminderly - get data from packets
+
+//TODO: create poc part to get data packets from reminderly programmable API (and DB)
+
 console.log('Loading GETTER function...');
 
 const db_config = {
@@ -8,21 +12,36 @@ const db_config = {
 };
 
 let r = require('../reminderly.js');
-let getterCB = function(err, status){
-    console.log("Error: ", err);
-    console.log("Status: ", status);
-    contacts++;
-    if(contacts == 3){
-        console.log('calling phone.db_close()...');
-        phone.db_close();
-    }
-};
+
+console.log( "contact method: ", r.CONTACT_METHODS );
 
 exports.handler = async (event) => {
-    // console.log('Received event:', JSON.stringify(event, null, 2));
-    let packet_id = event.packet_id;
-        console.log('PACKET ID TO PROCESS: %j', packet_id);
 
-    //get data for packet_id
-    return `Successfully processed packet messages.`;
+    //this part merely sends some content to a queue
+    let AWS = require('aws-sdk');
+    AWS.config.update({region: 'us-west-2'});
+
+    let sqs = new AWS.SQS({apiVersion: '2012-11-05'});
+    let queueUrl = 'https://sqs.us-west-2.amazonaws.com/699486157734/reminderly_email_queue_1';
+
+    let msgObj = {
+        id: 123,
+        packet_id: 123,
+        packet_table_name: "packet_1337_07012020_1_data",
+        data: { attr1: "test246" }
+    };
+
+    let message = {
+        MessageBody: JSON.stringify(msgObj),
+        QueueUrl: queueUrl
+    };
+
+    try {
+        await sqs.sendMessage(message).promise();
+        console.log("Success, message sent");
+        return { result: "Success"};
+    } catch (err){
+        console.log('error:',"Fail Send Message" + err);
+        return context.done('error', "ERROR Put SQS");  // ERROR with message
+    }
 };

@@ -320,6 +320,7 @@ CREATE TABLE `packet_1337_110882019_1_data` (
     `id` INT AUTO_INCREMENT,
     `data_packet_id` INT NOT NULL,
     `contact_method_id` INT NOT NULL, -- fill this after contact made?
+    `packet_table_name` VARCHAR(80) NOT NULL DEFAULT '', -- contains table name like: "packet_1337_110882019_1_data"
     `row_num` INT NOT NULL,
     `data` json NOT NULL,
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't capture anything but phone calls
