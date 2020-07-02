@@ -5,7 +5,7 @@
 console.log('Loading GETTER function...');
 
 const db_config = {
-    host     : '192.168.32.130',
+    host     : '192.168.152.128',
     user     : 'reminderly',
     password : 'Rem!nDerly123!$',
     database : 'reminderly'
@@ -13,7 +13,16 @@ const db_config = {
 
 let r = require('../reminderly.js');
 
-console.log( "contact method: ", r.CONTACT_METHODS );
+let packetData = new r.PacketData(db_config);
+
+let opts = {
+    packet_table_name: 'packet_1337_07022020_1_data'
+};
+
+packetData.get(opts, function(err, res){
+    console.log("Error: ", err);
+    console.log("res: ", res);
+});
 
 exports.handler = async (event) => {
 

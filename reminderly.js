@@ -40,6 +40,12 @@ const DB_PROCS = {
         "update_by_id": "updateCompany",
         "get_by_id":    "getCompany",
         "get":          "getCompanies"
+    },
+    "Packet": {
+        "getBatch": "getPacketBatch"
+    },
+    "PacketData": {
+        "get": "getPacketData"
     }
 }
 
@@ -89,6 +95,33 @@ class Reminderly {
             }
         });
     }
+}
+
+class Packet extends Reminderly {
+    constructor(db_config) {
+        // Chain constructor with super
+        super(db_config);
+    }
+    getBatch(packet, cb){
+        super.execQuery(ACTION_GET, search, function(err,res){
+            // console.log(res[0]);
+            return cb(err,res[0]);
+        });
+    } //end get()
+}
+
+class PacketData extends Reminderly {
+    constructor(db_config) {
+        // Chain constructor with super
+        super(db_config);
+    }
+
+    get(opts, cb){
+        super.execQuery(ACTION_GET, opts, function(err,res){
+            console.log("remindely()::PacketData::get(): ", res);
+            return cb(err,res);
+        });
+    } //end get()
 }
 
 class Company extends Reminderly {
@@ -475,6 +508,8 @@ class Email extends Message {
 
 module.exports = {
     CONTACT_METHODS: CONTACT_METHODS,
+    Packet: Packet,
+    PacketData: PacketData,
     Company: Company,
     SMS: SMS,
     Email: Email,
