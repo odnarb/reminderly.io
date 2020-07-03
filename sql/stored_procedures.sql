@@ -35,8 +35,6 @@ BEGIN
 
     SET @query = CONCAT(query,';');
 
-    SELECT @query;
-
     PREPARE stmt FROM @query;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
@@ -251,9 +249,6 @@ BEGIN
     END IF;
 
     SET @query = CONCAT(query,';');
-
-    SELECT @query;
-
 
     PREPARE stmt FROM @query;
     EXECUTE stmt;
