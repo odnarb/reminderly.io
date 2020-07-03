@@ -313,7 +313,6 @@ CREATE TABLE `data_packet` (
 CREATE TABLE `packet_[packet_id]_[date]_[version]_data` (
     `id` INT AUTO_INCREMENT,
     `data_packet_id` INT NOT NULL,
-    `row_num` INT NOT NULL,
     `data` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
@@ -336,7 +335,6 @@ CREATE TABLE `packet_1337_07022020_1_data` (
     `packet_table_name` VARCHAR(255) NOT NULL DEFAULT '', -- contains table name like: "packet_1337_07022020_1_data"
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
     `contact_method_id` INT NOT NULL, -- fill this after contact made?
-    `row_num` INT NOT NULL,
     `data` json NOT NULL,
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't capture anything but phone calls
     `num_tries` INT NOT NULL DEFAULT 0,

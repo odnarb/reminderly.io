@@ -118,8 +118,7 @@ class PacketData extends Reminderly {
 
     get(opts, cb){
         super.execQuery(ACTION_GET, opts, function(err,res){
-            console.log("remindely()::PacketData::get(): ", res);
-            return cb(err,res);
+            return cb(err,res[0]);
         });
     } //end get()
 }

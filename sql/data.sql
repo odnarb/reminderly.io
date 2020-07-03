@@ -112,13 +112,24 @@ INSERT INTO `packet_1337_07022020_1_data` (
     `packet_table_name`,
     `contact_status_id`,
     `contact_method_id`,
-    `row_num`,
     `data`
 ) VALUES
-(8,'packet_1337_07022020_1_data',1,1,1,'{ "message": "This is a test 1"}'),
-(8,'packet_1337_07022020_1_data',1,1,2,'{ "message": "This is a test 2"}'),
-(8,'packet_1337_07022020_1_data',1,1,3,'{ "message": "This is a test 3"}'),
-(8,'packet_1337_07022020_1_data',1,1,4,'{ "message": "This is a test 4"}');
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 1", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 2", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 3", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 4", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 5", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 6", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 7", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 8", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 9", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 10", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 11", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 12", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 13", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 14", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 15", "phone_number": "(123) 123-4321"}'),
+(8,'packet_1337_07022020_1_data',1,1,'{ "message": "This is a test 16", "phone_number": "(123) 123-4321"}');
 
 /*
 INSERT INTO `messages`
