@@ -19,18 +19,23 @@ BEGIN
     SET i_limit_override  = JSON_UNQUOTE(JSON_EXTRACT(o_packet,'$.limit'));
     SET i_offset_override = JSON_UNQUOTE(JSON_EXTRACT(o_packet,'$.offset'));
 
-    IF (i_limit_override > 10) AND (i_limit_override < 1000) THEN
+    IF (i_limit_override > 0) AND (i_limit_override < 1000) THEN
         SET i_limit = i_limit_override;
-    END IF;
-
-    IF (i_offset_override > 0) THEN
-        SET i_offset = i_offset_override;
     END IF;
 
     SET query = 'SELECT id,data_packet_id,packet_table_name,contact_status_id,contact_method_id,data FROM';
     SET query = CONCAT(query, ' ', v_packet_table_name );
     SET query = CONCAT(query, ' WHERE contact_status_id=1 and num_tries < 3' );
-    SET @query = CONCAT(query, ' LIMIT ',i_offset,', ', i_limit, ';');
+    SET query = CONCAT(query, ' LIMIT ', i_limit);
+
+    IF (i_offset_override > 0) THEN
+        SET i_offset = i_offset_override;
+        SET query = CONCAT(query,', ', i_offset);
+    END IF;
+
+    SET @query = CONCAT(query,';');
+
+    SELECT @query;
 
     PREPARE stmt FROM @query;
     EXECUTE stmt;
@@ -228,10 +233,6 @@ BEGIN
         SET i_limit = i_limit_override;
     END IF;
 
-    IF (i_offset_override > 0) THEN
-        SET i_offset = i_offset_override;
-    END IF;
-
     SET query = 'SELECT id,name,alias,active,updated_at,created_at FROM company';
 
     IF v_search <> '' THEN
@@ -240,7 +241,19 @@ BEGIN
         SET query = CONCAT(query, ' WHERE active=1' );
     END IF;
 
-    SET @query = CONCAT(query, ' ORDER BY ', v_order, ' ', v_order_direction, ' LIMIT ',i_offset,', ', i_limit, ';');
+    SET @query = CONCAT(query, ' ORDER BY ', v_order, ' ', v_order_direction, ' LIMIT ', i_limit);
+
+    SET query = CONCAT(query, ' LIMIT ', i_limit);
+
+    IF (i_offset_override > 0) THEN
+        SET i_offset = i_offset_override;
+        SET query = CONCAT(query,', ', i_offset);
+    END IF;
+
+    SET @query = CONCAT(query,';');
+
+    SELECT @query;
+
 
     PREPARE stmt FROM @query;
     EXECUTE stmt;
