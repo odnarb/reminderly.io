@@ -23,7 +23,7 @@ exports.handler = async (event) => {
         Entries: [{
             Id: 'ffdfdsafdsf8-fdsfdsfds-1', //make up some uuid value
             MessageBody: JSON.stringify({
-                phone_number: "(530) 908-2640",
+                phone_number: "(123) 123-1234",
                 body: "This is a test phone call",
                 contact_method: "phone"
             })
@@ -31,7 +31,7 @@ exports.handler = async (event) => {
         {
             Id: 'ffdfdsafdsf8-fdsfdsfds-2', //make up some uuid value
             MessageBody: JSON.stringify({
-                phone_number: "(530) 908-2640",
+                phone_number: "(123) 123-1234",
                 body: "This is a test sms",
                 contact_method: "sms"
             })
@@ -39,7 +39,7 @@ exports.handler = async (event) => {
         {
             Id: 'ffdfdsafdsf8-fdsfdsfds-3', //make up some uuid value
             MessageBody: JSON.stringify({
-                email_address: "bran.cham@gmail.com",
+                email_address: "john.doe@gmail.com",
                 body: "This is a test",
                 contact_method: "email"
             })
@@ -47,7 +47,7 @@ exports.handler = async (event) => {
         {
             Id: 'ffdfdsafdsf8-fdsfdsfds-4', //make up some uuid value
             MessageBody: JSON.stringify({
-                email_address: "bran.cham@gmail.com",
+                email_address: "john.doe@gmail.com",
                 body: "This is a general account alert",
                 contact_method: "general"
             })
