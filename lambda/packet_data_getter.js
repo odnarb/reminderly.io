@@ -1,15 +1,15 @@
-//reminderly - get data from packets
-
-console.log('Loading GETTER function...');
-
-process.env.queue_url = 'https://sqs.us-west-2.amazonaws.com/699486157734/reminderly_email_queue_1'
+process.env.email_queue_url = 'https://sqs.us-west-2.amazonaws.com/699486157734/reminderly_email_queue_1';
+process.env.phone_queue_url = 'https://sqs.us-west-2.amazonaws.com/699486157734/reminderly_phone_queue_1';
+process.env.sms_queue_url = 'https://sqs.us-west-2.amazonaws.com/699486157734/reminderly_sms_queue_1';
 process.env.packet_table_name = 'packet_1337_07022020_1_data';
-process.env.db_host = 'localhost';
+process.env.db_host = 'reminderly.c3tweep3ixcv.us-west-2.rds.amazonaws.com';
 process.env.db_user = 'reminderly';
-process.env.db_password = 'Rem!nDerly123!$';;
+process.env.db_password = 'Rem!nDerly123!$';
 process.env.db_name = 'reminderly';
 process.env.packet_size_limit = 1000;
 process.env.sqs_batch_limit = 10;
+
+let mysql = require('mysql');
 
 //this part merely sends some content to a queue
 let AWS = require('aws-sdk');
@@ -17,57 +17,87 @@ AWS.config.update({region: 'us-west-2'});
 
 let sqs = new AWS.SQS({apiVersion: '2012-11-05'});
 
-
-let sendSQS = function(batch){
-    let message = {
-        MessageBody: JSON.stringify(batch),
-        QueueUrl: process.env.queue_url
-    };
-
-    try {
-        await sqs.sendMessageBatch(message).promise();
-        console.log("Success, message batch sent");
-        return { result: "Success"};
-    } catch (err){
-        console.log('error:',"Fail Send Message" + err);
-        return context.done('error', "ERROR Put SQS");  // ERROR with message
-    }
-};
-
-exports.handler = async (event) => {
-
-    let r = require('../reminderly.js');
-
-    let packetData = new r.PacketData({
+//reminderly - get data from packets
+let get_connection = function() {
+    return mysql.createConnection({
         host     : process.env.db_host,
         user     : process.env.db_user,
         password : process.env.db_password,
         database : process.env.db_name
     });
+}
 
-    let opts = {
-        packet_table_name: process.env.packet_table_name,
-        limit: packet_size_limit
+//async DOES NOT WORK with mysql for some reason... UGH
+exports.handler = (event, context, callback) => {
+
+    console.log('---Loading GETTER function...');
+
+    let param = {
+        packet_table_name: process.env.packet_table_name
     };
+    let query = "CALL getPacketData('"+JSON.stringify(param)+"');"
 
-    packetData.get(opts, function(err, msgs){
-        if(err){
-            console.log("Error: ", err);
-        } else {
-            //console.log("res: ", res);
-            //sendMessageBatch can send up to 10 per loop
+    console.log("---query to be executed: ", query);
 
-            //loop and create a new array for batching
-            let batch = [];
-            for(let i=msgs.length; i > 0; i--){
-                let msg = msgs.pop();
-                batch.push(msg);
+    let connection = get_connection();
 
-                if( i < msgs.length && i%process.env.sqs_batch_limit == 0 ){
-                    sendSQS(batch);
-                    batch = [];
-                }
-            }
+    console.log("---EXEC QUERY");
+
+    connection.query(query, function (error, results, fields) {
+        if (error) {
+            console.log("---DB ERROR!");
+            connection.destroy();
+            return callback(error);
         }
-    });
+        console.log("---got DB results: ", results);
+
+        let msgs = results[0];
+
+        let batchesComplete = 0;
+        let totalBatches = Math.ceil(msgs.length/process.env.sqs_batch_limit);
+
+        //loop and create a new array for batching
+        let batch = [];
+        let i = 1;
+        while(msgs.length > 0){
+            // console.log("---Process msg for batch");
+            let msg = msgs.pop();
+
+            //format for sqs.sendMessageBatch()
+            let sqsMsg = {
+                Id: msg.id+"",
+                MessageBody: JSON.stringify(msg)
+            };
+
+            //add to the batch
+            batch.push(sqsMsg);
+
+            if( (i%process.env.sqs_batch_limit == 0) || msgs.length == 0 ){
+                console.log("---batch size: ", batch.length);
+                let message = {
+                    QueueUrl: process.env.queue_url,
+                    Entries: batch
+                };
+
+                console.log("---BEFORE SQS SEND");
+                sqs.sendMessageBatch(message, function(){
+                    console.log("---AFTER SQS SEND");
+
+                    batchesComplete++;
+
+                    console.log("---batchesComplete: " + batchesComplete + " :: totalBatches: " + totalBatches );
+                    if (batchesComplete == totalBatches) {
+                        connection.end(function(){
+                            return callback(null, "batches complete");
+                        });
+                    }
+                });
+                //reset
+                batch = [];
+            } //endif
+
+            //continue the loop
+            i++;
+        } //end while()
+    }); //end connection.query()
 };

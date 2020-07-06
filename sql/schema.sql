@@ -1,14 +1,14 @@
 SET FOREIGN_KEY_CHECKS=0; -- to disable them
 
 DROP TABLE IF EXISTS `company`;
-DROP TABLE IF EXISTS `company_location`;
+-- DROP TABLE IF EXISTS `company_location`;
 DROP TABLE IF EXISTS `customer`;
 DROP TABLE IF EXISTS `users`;
-DROP TABLE IF EXISTS `users_passwords`;
-DROP TABLE IF EXISTS `roles`;
-DROP TABLE IF EXISTS `policies`;
-DROP TABLE IF EXISTS `roles_policies`;
-DROP TABLE IF EXISTS `users_roles`;
+-- DROP TABLE IF EXISTS `users_passwords`;
+-- DROP TABLE IF EXISTS `roles`;
+-- DROP TABLE IF EXISTS `policies`;
+-- DROP TABLE IF EXISTS `roles_policies`;
+-- DROP TABLE IF EXISTS `users_roles`;
 DROP TABLE IF EXISTS `company_campaigns`;
 DROP TABLE IF EXISTS `contact_methods`;
 DROP TABLE IF EXISTS `contact_status`;
