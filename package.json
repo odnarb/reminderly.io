@@ -1,0 +1,25 @@
+{
+  "name": "reminderly.io",
+  "version": "1.0.0",
+  "description": "Reminderly.io repo",
+  "main": "reminderly.js",
+  "dependencies": {
+    "aws-sdk": "^2.709.0",
+    "node-uuid": "^1.4.8",
+    "mysql": "^2.18.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odnarb/reminderly.io.git"
+  },
+  "author": "Brandon Chambers",
+  "license": "Apache 2.0",
+  "bugs": {
+    "url": "https://github.com/odnarb/reminderly.io/issues"
+  },
+  "homepage": "https://github.com/odnarb/reminderly.io#readme"
+}
