@@ -26,6 +26,15 @@ describe('Some boolean', function () {
   });
 });
 
+describe('Some boolean', function () {
+  describe('another description', function () {
+    it('should return index of 4 when the value is present', function () {
+      assert.equal([1,2,3,4,5].indexOf(5), 4);
+      throw {"err": "custom error"}
+    });
+  });
+});
+
 describe('Array', function () {
   describe('#indexOf()', function () {
     // pending test below
