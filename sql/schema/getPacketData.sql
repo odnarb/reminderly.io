@@ -1,6 +1,3 @@
--- getPacketData()
-DROP PROCEDURE IF EXISTS getPacketData;
-
 DELIMITER //
 CREATE PROCEDURE getPacketData(IN o_packet JSON)
 BEGIN

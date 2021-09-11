@@ -1,6 +1,3 @@
--- getPacketBatch()
-DROP PROCEDURE IF EXISTS getPacketBatch;
-
 DELIMITER //
 CREATE PROCEDURE getPacketBatch()
 BEGIN
@@ -26,8 +23,6 @@ BEGIN
         data_ingest_stage_id = 4
         and num_tries < 3
     LIMIT 10;
- 
 
 END //
-
 DELIMITER ;
