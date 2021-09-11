@@ -3,12 +3,6 @@ SET FOREIGN_KEY_CHECKS=0; -- to disable them
 DROP TABLE IF EXISTS `company`;
 -- DROP TABLE IF EXISTS `company_location`;
 DROP TABLE IF EXISTS `customer`;
-DROP TABLE IF EXISTS `users`;
--- DROP TABLE IF EXISTS `users_passwords`;
--- DROP TABLE IF EXISTS `roles`;
--- DROP TABLE IF EXISTS `policies`;
--- DROP TABLE IF EXISTS `roles_policies`;
--- DROP TABLE IF EXISTS `users_roles`;
 DROP TABLE IF EXISTS `company_campaigns`;
 DROP TABLE IF EXISTS `contact_methods`;
 DROP TABLE IF EXISTS `contact_status`;
@@ -20,6 +14,15 @@ DROP TABLE IF EXISTS `packet_1337_07022020_1_data`;
 DROP TABLE IF EXISTS `packet_table_tracking`;
 DROP TABLE IF EXISTS `message_functions`;
 DROP TABLE IF EXISTS `sms_unsubscribe`;
+
+-- these are app level tables... not even needed for now
+-- DROP TABLE IF EXISTS `users`;
+-- DROP TABLE IF EXISTS `users_passwords`;
+-- DROP TABLE IF EXISTS `roles`;
+-- DROP TABLE IF EXISTS `policies`;
+-- DROP TABLE IF EXISTS `roles_policies`;
+-- DROP TABLE IF EXISTS `users_roles`;
+
 
 SET FOREIGN_KEY_CHECKS=1; -- to re-enable them
 
@@ -72,88 +75,6 @@ CREATE TABLE `customer` (
 )  ENGINE=INNODB;
 */
 
--- users table
-CREATE TABLE `users` (
-    `id` INT AUTO_INCREMENT,
-    `first_name` VARCHAR(255) NOT NULL DEFAULT '',
-    `last_name` VARCHAR(255) NOT NULL DEFAULT '',
-    `email_address` VARCHAR(255) NOT NULL DEFAULT '',
-    `phone_number` VARCHAR(50) NOT NULL DEFAULT '',
-    `enabled` INT NOT NULL DEFAULT 0,
-    `locked` INT NOT NULL DEFAULT 0,
-    `login_attempts` INT NOT NULL DEFAULT 0,
-    `password_hash` VARCHAR(255) NOT NULL DEFAULT '',
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-/*
--- users_passwords table
-CREATE TABLE `users_passwords` (
-    `id` INT AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `password_hash` VARCHAR(255) NOT NULL DEFAULT '',
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-*/
-
--- these need to be fleshed out, primarily for the UI of the system
--- roles table
-/*
-CREATE TABLE `roles` (
-    `id` INT AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL DEFAULT '',
-    `description` VARCHAR(255) NOT NULL DEFAULT '',
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
--- policies table
-CREATE TABLE `policies` (
-    `id` INT AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL DEFAULT '',
-    `description` VARCHAR(255) NOT NULL DEFAULT '',
-    `module` VARCHAR(255) NOT NULL DEFAULT '',
-    `function` VARCHAR(255) NOT NULL DEFAULT '',
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
--- roles_policies table
-CREATE TABLE `roles_policies` (
-    `id` INT AUTO_INCREMENT,
-    `role_id` INT NOT NULL,
-    `policy_id` INT NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
-    FOREIGN KEY (`policy_id`) REFERENCES policies (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-
-
--- users_roles table
-CREATE TABLE `users_roles` (
-    `id` INT AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `company_id` INT NOT NULL,
-    `role_id` INT NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
-    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-*/
 
 -- company_campaigns table
 -- a campaign should have at least one data source.. (MVP just one)
@@ -378,6 +299,87 @@ CREATE TABLE `sms_unsubscribe` (
 
 
 /*
+-- users table
+CREATE TABLE `users` (
+    `id` INT AUTO_INCREMENT,
+    `first_name` VARCHAR(255) NOT NULL DEFAULT '',
+    `last_name` VARCHAR(255) NOT NULL DEFAULT '',
+    `email_address` VARCHAR(255) NOT NULL DEFAULT '',
+    `phone_number` VARCHAR(50) NOT NULL DEFAULT '',
+    `enabled` INT NOT NULL DEFAULT 0,
+    `locked` INT NOT NULL DEFAULT 0,
+    `login_attempts` INT NOT NULL DEFAULT 0,
+    `password_hash` VARCHAR(255) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+-- users_passwords table
+CREATE TABLE `users_passwords` (
+    `id` INT AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `password_hash` VARCHAR(255) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+*/
+
+-- these need to be fleshed out, primarily for the UI of the system
+-- roles table
+/*
+CREATE TABLE `roles` (
+    `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL DEFAULT '',
+    `description` VARCHAR(255) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- policies table
+CREATE TABLE `policies` (
+    `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL DEFAULT '',
+    `description` VARCHAR(255) NOT NULL DEFAULT '',
+    `module` VARCHAR(255) NOT NULL DEFAULT '',
+    `function` VARCHAR(255) NOT NULL DEFAULT '',
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- roles_policies table
+CREATE TABLE `roles_policies` (
+    `id` INT AUTO_INCREMENT,
+    `role_id` INT NOT NULL,
+    `policy_id` INT NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
+    FOREIGN KEY (`policy_id`) REFERENCES policies (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+
+-- users_roles table
+CREATE TABLE `users_roles` (
+    `id` INT AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `company_id` INT NOT NULL,
+    `role_id` INT NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
 groups not slated for MVP
 
 -- groups table
@@ -406,9 +408,8 @@ CREATE TABLE `company_group` (
     FOREIGN KEY (`company_id`) REFERENCES company (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-*/
 
-/*
+
 API not slated for MVP release
 
 -- company_apps table
@@ -453,19 +454,6 @@ CREATE TABLE `company_api` (
 
 
 /*
-groups not slated for MVP
-
--- groups table
-CREATE TABLE `ui_groups` (
-    `id` INT AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL DEFAULT '',
-    `alias` VARCHAR(255) NOT NULL DEFAULT '',
-    `description` VARCHAR(255) NOT NULL DEFAULT '',
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
 
 
 -- roles_ui_groups table
