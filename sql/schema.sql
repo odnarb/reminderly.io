@@ -27,6 +27,11 @@ SET FOREIGN_KEY_CHECKS=1; -- to re-enable them
 */
 
 /*
+
+    a campaign will need to have a filename for the bulk load step
+        what the filename will be saved as via upload or SFTP: acme.csv, my-health-practice-3days-out.csv
+        then we can have that
+
     we split data packets by id -- and generate a new table per packet for tracking and reporting purposes..
     raw row data, unfiltered and un manipulated
 

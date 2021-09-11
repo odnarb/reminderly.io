@@ -2,17 +2,58 @@
 x- means that item is done
 -------------------------------------------
 
-x- create db
+Data process (reference the open project for details):
 
--Major re-do:
-    split messages into per-data packets.. this will greatly increase the speed of data retrieved when there are thousands of customers
-    each campaign gets its own sets of tables for data tracking, message updates, etc.
+    Ingest packet to packet data table
 
 
-- plan api gateway / api endpoints for supporting the platform
-- write with swagger
-    - need to build out responses, error codes, response body, request body requirements
-    - might be good to create a folder structure to organize the yaml definition, since a single yaml file is quite large to manage
+    Data Ingest
+        via campaign settings:
+
+        Allow all communication channels?
+        Phone, email, sms, etc
+
+        Pre-Ingest: Delimiters
+            --figure data fields based on campaigns' delimiters
+        Post-Ingest: Field Mapping
+            if [field20] == "sms" --> send as sms and use [field6] for phone number
+            else send an email and use [field23] for email address
+
+        Post-Ingest: Cleaning / Field Manipulation
+            trim whitespace
+            Phone number: ported or landline status
+            Phone number validation (just validates format)
+            Email format validation (this doesn't capture all issues)
+            Filter/chop off certain text (such as "Bill amt:")
+
+    Message Assembly
+        Create message templates of messages from mappings
+            a mapping determines what fields are available to the user for creating templates
+        Create rule sets for delivery
+        Customize Presentation
+        Unsubscribe Page
+            Allow client to customize basic wording and branding
+            Always have unsubscribe options for all communication channels
+        Confirmation Page (if any)
+            Setup depends on request type / campaign settings (go see that section)
+
+    Rules
+        Filter duplicates & sort by timezone
+            What is a duplicate?
+            Same day, same message, same end contact point
+
+        We'll sort based on few rules at first
+        Timing and scheduling for companies (use hours as slots?)
+            If an hour's slot is full, or delivery is delayed, we need alarms
+            How is fullness is determined?
+            Our ability to deliver x messages in an hour? Should be instantaneous...
+        Then give more weight to companies with more messages in the queue
+        If companies are competing for priority, it's random from there.. but there are multiple senders so delivery lanes should not be congested much at all
+        DB-wise I see this as an expandable list (or JSON field) to define its weight
+
+    Message Queuing
+    Message Delivery
+    Delivery Dispositions/Updates
 
 
 - write queries based on new data packet approach
@@ -30,7 +71,6 @@ x- create db
 - write indices
 - create tests for failures ..?
 - create tests (library-level, and library-to-db)
-
 
 ----------------------------------------------------
 
@@ -58,10 +98,18 @@ phase 3:
     metrics and alarms
     ci/cd
 
+----------------------------------------------------
+
 phase 4:
     engineering issue tracking
     disaster recovery
 
+----------------------------------------------------
+
 phase 5:
     cloud formation
     api
+    - plan api gateway / api endpoints for supporting the platform
+    - write with swagger
+        - need to build out responses, error codes, response body, request body requirements
+        - might be good to create a folder structure to organize the yaml definition, since a single yaml file is quite large to manage

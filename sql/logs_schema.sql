@@ -11,7 +11,7 @@ CREATE TABLE `log_company` (
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;
 
-/*
+
 -- log_company_location table
 CREATE TABLE `log_company_location` (
     `id` INT AUTO_INCREMENT,
@@ -35,89 +35,6 @@ CREATE TABLE `log_customer` (
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-*/
-
--- what if a user deletes themselves??? (foreign key issue?)
--- log_users table
-CREATE TABLE `log_users` (
-    `id` INT AUTO_INCREMENT,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_users_passwords table
-CREATE TABLE `log_users_passwords` (
-    `id` INT AUTO_INCREMENT,
-    `users_passwords_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`users_passwords_id`) REFERENCES users_passwords (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_roles table
-CREATE TABLE `log_roles` (
-    `id` INT AUTO_INCREMENT,
-    `role_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_policies table
-CREATE TABLE `log_policies` (
-    `id` INT AUTO_INCREMENT,
-    `policy_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`policy_id`) REFERENCES policies (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_roles_policies table
-CREATE TABLE `log_roles_policies` (
-    `id` INT AUTO_INCREMENT,
-    `roles_policies_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`roles_policies_id`) REFERENCES roles_policies (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=MyISAM;
-
-
--- log_users_roles table
-CREATE TABLE `log_users_roles` (
-    `id` INT AUTO_INCREMENT,
-    `users_roles_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`users_roles_id`) REFERENCES roles_policies (`id`),
     FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=MyISAM;
@@ -209,7 +126,6 @@ CREATE TABLE `log_company_load_map` (
 )  ENGINE=MyISAM;
 
 
-
 -- log_packet_table_tracking table
 CREATE TABLE `log_history_table_tracking` (
     `id` INT AUTO_INCREMENT,
@@ -241,6 +157,89 @@ CREATE TABLE `log_sms_unsubscribe` (
 
 /*
 Not slated for MVP
+
+-- what if a user deletes themselves??? (foreign key issue?)
+-- log_users table
+CREATE TABLE `log_users` (
+    `id` INT AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_users_passwords table
+CREATE TABLE `log_users_passwords` (
+    `id` INT AUTO_INCREMENT,
+    `users_passwords_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`users_passwords_id`) REFERENCES users_passwords (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_roles table
+CREATE TABLE `log_roles` (
+    `id` INT AUTO_INCREMENT,
+    `role_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`role_id`) REFERENCES roles (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_policies table
+CREATE TABLE `log_policies` (
+    `id` INT AUTO_INCREMENT,
+    `policy_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`policy_id`) REFERENCES policies (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_roles_policies table
+CREATE TABLE `log_roles_policies` (
+    `id` INT AUTO_INCREMENT,
+    `roles_policies_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`roles_policies_id`) REFERENCES roles_policies (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
+
+-- log_users_roles table
+CREATE TABLE `log_users_roles` (
+    `id` INT AUTO_INCREMENT,
+    `users_roles_id` INT NOT NULL,
+    `user_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`users_roles_id`) REFERENCES roles_policies (`id`),
+    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=MyISAM;
+
 
 -- log_ui_groups table
 CREATE TABLE `log_ui_groups` (

@@ -7,6 +7,7 @@
     -- last chance to cancel contacts
 5-complete
 */
+
 CREATE TABLE `data_ingest_stage` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(80) NOT NULL DEFAULT '',

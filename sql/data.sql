@@ -1,7 +1,4 @@
--- 
--- 
--- NOW BEGIN DATA ENTRY
--- 
+/*
 INSERT INTO `users` (
     `first_name`,
     `last_name`,
@@ -11,7 +8,7 @@ INSERT INTO `users` (
     `password_hash`
 ) VALUES
 ('Brandon','Chambers', 'brandon@test.com', '(123) 123-1234',1,'12345'); -- no it's not a real pw hash.. chill out.
-
+*/
 
 INSERT INTO `company` (
     `name`,
@@ -51,7 +48,6 @@ INSERT INTO `customer_campaigns` (
 INSERT INTO `data_ingest_source` (`name`,`description`) VALUES
 ('API','This source means the data packet came from the API'),
 ('UI','This source means the data packet came from someone uploading it via our web portal');
-
 
 /*
 1-ingested - file is recorded to be "in the system", but data not loaded yet
