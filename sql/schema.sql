@@ -1,8 +1,8 @@
 SET FOREIGN_KEY_CHECKS=0; -- to disable them
 
 DROP TABLE IF EXISTS `company`;
--- DROP TABLE IF EXISTS `company_location`;
 DROP TABLE IF EXISTS `customer`;
+DROP TABLE IF EXISTS `customer_location`;
 DROP TABLE IF EXISTS `company_campaigns`;
 DROP TABLE IF EXISTS `contact_methods`;
 DROP TABLE IF EXISTS `contact_status`;
@@ -27,9 +27,6 @@ DROP TABLE IF EXISTS `sms_unsubscribe`;
 SET FOREIGN_KEY_CHECKS=1; -- to re-enable them
 
 -- company table
-/*
-    For now the company locations are included in the details
-*/
 CREATE TABLE `company` (
     `id` INT AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL DEFAULT '',
@@ -41,10 +38,21 @@ CREATE TABLE `company` (
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
+-- customer table
+CREATE TABLE `customer` (
+    `id` INT AUTO_INCREMENT,
+    `name` VARCHAR(255) NOT NULL DEFAULT '',
+    `company_id` INT NOT NULL,
+    `details` json NOT NULL,
+    `active` INT NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
 
-/*
--- company_location table
-CREATE TABLE `company_location` (
+-- customer_location table
+CREATE TABLE `customer_location` (
     `id` INT AUTO_INCREMENT,
     `company_id` INT NOT NULL,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
@@ -58,25 +66,8 @@ CREATE TABLE `company_location` (
     FOREIGN KEY (`company_id`) REFERENCES company (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-*/
 
-/*
--- customer table
-CREATE TABLE `customer` (
-    `id` INT AUTO_INCREMENT,
-    `name` VARCHAR(255) NOT NULL DEFAULT '',
-    `company_id` INT NOT NULL,
-    `details` json NOT NULL,
-    `active` INT NOT NULL,
-    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
-    `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
-    PRIMARY KEY (`id`)
-)  ENGINE=INNODB;
-*/
-
-
--- company_campaigns table
+-- customer_campaigns table
 -- a campaign should have at least one data source.. (MVP just one)
 -- a campaign each data source has a mapping
 -- a campaign should have contact methods
@@ -91,7 +82,7 @@ For certain contact types we will need a bare minimum of fields defined and mapp
 
     * if the message template pulls from a field that's not available in the map, then we'll throw an error
 */
-CREATE TABLE `company_campaigns` (
+CREATE TABLE `customer_campaigns` (
     `id` INT AUTO_INCREMENT,
     `company_id` INT NOT NULL,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
@@ -125,7 +116,7 @@ CREATE TABLE `contact_status` (
 
 
 /*
--- hard-coded table for our current contact method providers
+-- table for our current contact method providers
 
 */
 -- contact_method_providers table

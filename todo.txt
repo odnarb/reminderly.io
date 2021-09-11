@@ -3,61 +3,18 @@ x- means that item is done
 -------------------------------------------
 
 x- create db
-x- create mock schema
-x- create mock get messages table / data / proc
-x- create node.js app to get messages from mysql db depending on run type
-    x - update table to say batch is complete (stored proc)
-x- flesh out db schema
-x- flesh out logging tables
-- plan better solution for storing logs
-    http://brian.moonspot.net/logging-with-mysql
-
-x- need logging tables
-x- need log offloader script
-    x- log tables can be dumped out after x days to a .sql file, and then rotate the table
-    x- simply use the mysqldump command for relevant tables
-
-x- TODO: figure role company restriction (or allow list) via role table
-
-x- proc moves data to history
-    x--removes entries from log tables
-
-x- table of contact methods
-x- table of contact status / description
-
-x- figure out a shard method or clustering
-    x- and how it works into the db design
-    Decision: sharding from the get go might be unnecessary effort in early stages.. I just want to make the db design solid.
-    x- Before really considering clustering/replication tests need to be made...tuning the db, data offloading from queue tables, log tables, etc...
-    x- Read replication is the next easy step to consider.. just have the application deci
-    x- Consider ProxySQL
-
-    - The best way might be to make sure the db is designed for in[serts and selects rather than updates
-       https://medium.com/@benmorel/high-speed-inserts-with-mysql-9d3dcd76f723
-       Then also make sure db inserts are tuned
-
-x- review current schema, compare against MVP outline
-
-x- will need a status update xref table for email, sms, phone and other
-
-x-need to add offloader for messages_status_updates
-
-x-last consideration:
-    x-I split messages and messages_contact_status tables.. now we need to maintain history for both tables and rotate both?
-    x--yes, split history offloading too
 
 -Major re-do:
     split messages into per-data packets.. this will greatly increase the speed of data retrieved when there are thousands of customers
     each campaign gets its own sets of tables for data tracking, message updates, etc.
 
-x- flesh out ui supported features/actions
-x- plan api gateway / api endpoints for supporting the platform
+
+- plan api gateway / api endpoints for supporting the platform
 - write with swagger
     - need to build out responses, error codes, response body, request body requirements
     - might be good to create a folder structure to organize the yaml definition, since a single yaml file is quite large to manage
 
 
-x- review stored procs already created, may need corrections based on changes to the db design
 - write queries based on new data packet approach
     - this will need to be translated into the reminderly.io library
     - once this is written the DB schema might be less prone to big changes
@@ -74,21 +31,31 @@ x- review stored procs already created, may need corrections based on changes to
 - create tests for failures ..?
 - create tests (library-level, and library-to-db)
 
+
 ----------------------------------------------------
-consider:
-track user interactions with the system -- users most likely to respond and respond postively to surveys and reviews
+
+phase 1:
+    plan/write db tables
+    plan/write procs to support data flow
+    test packet loading and data flow through system
+        --small tests: 1,2,5 packets of data
+            --what else do we want to track and log about data loading, messaging, etc
+        --big tests: 100,1000,10000, etc packets of data
 
 ----------------------------------------------------
 
 phase 2:
-    metrics and alarms
+    app/interface
+    user security
+    user analytics
+        track user interactions with the system -- users most likely to respond and respond postively to surveys and reviews
+    unit testing
 
 ----------------------------------------------------
 
 phase 3:
-    unit testing
+    metrics and alarms
     ci/cd
-        dev/qa/integration pipeline
     engineering issue tracking
     disaster recovery
 
