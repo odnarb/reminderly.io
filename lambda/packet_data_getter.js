@@ -27,6 +27,10 @@ let get_connection = function() {
     });
 }
 
+//assume no pagination needed
+let need_to_paginate = false;
+let num_pages = 1;
+
 //async DOES NOT WORK with mysql for some reason... UGH
 exports.handler = (event, context, callback) => {
 
@@ -51,7 +55,14 @@ exports.handler = (event, context, callback) => {
         }
         console.log("---got DB results: ", results);
 
-        let msgs = results[0];
+        let total_row_count = results[0][0].total_row_count;
+        let msgs = results[1];
+
+        //TODO: complete pagination logic
+        if( msgs.count < total_row_count ){
+            need_to_paginate = true;
+            num_pages = Match.ceil(total_row_count/packet_size_limit);
+        }
 
         let batchesComplete = 0;
         let totalBatches = Math.ceil(msgs.length/process.env.sqs_batch_limit);

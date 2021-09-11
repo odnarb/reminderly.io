@@ -58,6 +58,7 @@ INSERT INTO `data_ingest_stage` (`name`,`description`) VALUES
 
 INSERT INTO `contact_status` (`name`,`contact_status`) VALUES
 ('not sent','The message has not been sent yet.'),
+('polled','The message has been prepared for insert into the queue.'),
 ('queue','The message has been queued.'),
 ('sent','The message has been sent.'),
 ('error','There was an error with sending the message.');

@@ -23,10 +23,19 @@ BEGIN
         SET i_limit = i_limit_override;
     END IF;
 
-    SET query = 'SELECT id,data_packet_id,packet_table_name,contact_status_id,contact_method_id,data FROM';
-    SET query = CONCAT(query, ' ', v_packet_table_name );
-    SET query = CONCAT(query, ' WHERE contact_status_id=1 and num_tries < 3' );
-    SET query = CONCAT(query, ' LIMIT ', i_limit);
+    -- get pagination details
+    SET query = CONCAT('SELECT count(*) as total_row_count FROM ', v_packet_table_name, ' ');
+    SET query = CONCAT(query, 'WHERE contact_status_id=1 and num_tries < 3' );
+    SET @query = CONCAT(query,';');
+
+    PREPARE stmt FROM @query;
+    EXECUTE stmt;
+    DEALLOCATE PREPARE stmt;
+
+    -- now get the data
+    SET query = CONCAT('SELECT id,data_packet_id,packet_table_name,contact_status_id,contact_method_id,data FROM ', v_packet_table_name, ' ');
+    SET query = CONCAT(query, 'WHERE contact_status_id=1 and num_tries < 3 ' );
+    SET query = CONCAT(query, 'LIMIT ', i_limit);
 
     IF (i_offset_override > 0) THEN
         SET i_offset = i_offset_override;
@@ -38,7 +47,7 @@ BEGIN
     PREPARE stmt FROM @query;
     EXECUTE stmt;
     DEALLOCATE PREPARE stmt;
- 
+
 
 END //
 
