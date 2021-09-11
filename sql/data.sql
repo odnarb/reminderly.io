@@ -21,12 +21,27 @@ INSERT INTO `company` (
 ) VALUES
 ('Test Company', 'TST-01', '{}', 1);
 
-
-INSERT INTO `company_campaigns` (
+INSERT INTO `customer` (
+    `name`,
     `company_id`,
+    `details`,
+    `active`
+) VALUES
+('Test Customer', 1, '{}', 1);
+
+INSERT INTO `customer_location` (
+    `customer_id`,
     `name`,
     `description`,
-	`data`
+    `data`
+) VALUES
+(1, 'Test Campaign', 'Test campaign for testing contacts', '{"timezone":"America/Phoenix"}');
+
+INSERT INTO `customer_campaigns` (
+    `customer_id`,
+    `name`,
+    `description`,
+    `data`
 ) VALUES
 (1, 'Test Campaign', 'Test campaign for testing contacts', '{"timezone":"America/Phoenix"}');
 

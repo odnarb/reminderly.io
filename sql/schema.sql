@@ -54,7 +54,7 @@ CREATE TABLE `customer` (
 -- customer_location table
 CREATE TABLE `customer_location` (
     `id` INT AUTO_INCREMENT,
-    `company_id` INT NOT NULL,
+    `customer_id` INT NOT NULL,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
     `address_1` VARCHAR(80) NOT NULL DEFAULT '',
     `address_2` VARCHAR(80) NOT NULL DEFAULT '',
@@ -63,7 +63,7 @@ CREATE TABLE `customer_location` (
     `zip` VARCHAR(20) NOT NULL DEFAULT '',
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
@@ -84,13 +84,13 @@ For certain contact types we will need a bare minimum of fields defined and mapp
 */
 CREATE TABLE `customer_campaigns` (
     `id` INT AUTO_INCREMENT,
-    `company_id` INT NOT NULL,
+    `customer_id` INT NOT NULL,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
     `description` VARCHAR(255) NOT NULL DEFAULT '',
     `data` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
+    FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
@@ -169,15 +169,18 @@ CREATE TABLE `data_ingest_stage` (
 -- packet_table_tracking table
 CREATE TABLE `packet_table_tracking` (
     `id` INT AUTO_INCREMENT,
+    `campaign_id` INT NOT NULL,
     `server_name` VARCHAR(255) NOT NULL DEFAULT '',
     `table_name` VARCHAR(255) NOT NULL DEFAULT '',
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`campaign_id`) REFERENCES company_campaigns (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
 -- consider: what to do with additional data? overwrite / flush / append?
 -- track the number of times we tried to load this file
+-- maybe even md5sum the file to make part of table name?
 -- data_packet table
 -- track the table name
 CREATE TABLE `data_packet` (
@@ -186,20 +189,16 @@ CREATE TABLE `data_packet` (
     `data_ingest_source_id` INT NOT NULL,
     `data_ingest_stage_id` INT NOT NULL,
     `packet_table_tracking_id` INT NOT NULL,
-    `company_id` INT NOT NULL,
-    `user_id` INT NOT NULL,
     `tx_guid` VARCHAR(80) NOT NULL DEFAULT '',
     `version` INT NOT NULL DEFAULT 1,
     `num_tries` INT NOT NULL DEFAULT 0,
     `metadata` json NOT NULL,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (`campaign_id`) REFERENCES company_campaigns (`id`),
+    FOREIGN KEY (`campaign_id`) REFERENCES customer_campaigns (`id`),
     FOREIGN KEY (`data_ingest_source_id`) REFERENCES data_ingest_source (`id`),
     FOREIGN KEY (`data_ingest_stage_id`) REFERENCES data_ingest_stage (`id`),
     FOREIGN KEY (`packet_table_tracking_id`) REFERENCES packet_table_tracking (`id`),
-    FOREIGN KEY (`company_id`) REFERENCES company (`id`),
-    FOREIGN KEY (`user_id`) REFERENCES users (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
 
