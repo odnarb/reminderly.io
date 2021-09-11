@@ -46,7 +46,7 @@ phase 1:
 
 phase 2:
     app/interface
-    user security
+        reporting
     user analytics
         track user interactions with the system -- users most likely to respond and respond postively to surveys and reviews
     unit testing
@@ -54,10 +54,14 @@ phase 2:
 ----------------------------------------------------
 
 phase 3:
+    user security
     metrics and alarms
     ci/cd
+
+phase 4:
     engineering issue tracking
     disaster recovery
 
-phase 4:
+phase 5:
     cloud formation
+    api

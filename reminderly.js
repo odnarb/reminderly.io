@@ -270,21 +270,6 @@ class Campaign {
     }
 }
 
-class User {
-    constructor(){}
-    //user has passwords
-    //user has roles
-}
-
-class Role {
-    constructor(){}
-    //role has policies
-}
-
-class Policy {
-    constructor(){}
-}
-
 class DataPacket{
     constructor(){}
 }
