@@ -2,6 +2,10 @@
 x- means that item is done
 -------------------------------------------
 
+NEED TO MAP OUT PROCS TO:
+    Bulk load files / packets based on campaign settings
+    Prepare messages and delimeters
+
 Data process (reference the open project for details):
 
     Ingest packet to packet data table
