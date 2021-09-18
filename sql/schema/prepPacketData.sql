@@ -2,11 +2,21 @@ DELIMITER //
 CREATE PROCEDURE prepPacketData(IN i_campaign_id INT)
 BEGIN
 
+/*
+    or we 
+*/
+
+/*
+    we can do this en masse by selecting campaign ids (based on some criteria that says they're ready)
+*/
+
+SELECT campaign_id FROM customer_campaigns into #tmp_campaign_ids_ready
+
     DECLARE v_packet_table_name VARCHAR(255) DEFAULT '';
     DECLARE i_packet_data_id INT DEFAULT 1;
     DECLARE i_version INT DEFAULT 1;
 
-    insert into data_packet
+    INSERT INTO data_packet
     (
         campaign_id,
         data_ingest_source_id,
@@ -27,15 +37,18 @@ BEGIN
         '{}'
     );
 
-    set i_packet_data_id = (select LAST_INSERT_ID());
+    SET i_packet_data_id = (SELECT LAST_INSERT_ID());
 
-    set i_version = (select version from data_packet where id = i_packet_data_id);
+    SET i_version = (SELECT version FROM data_packet WHERE id = i_packet_data_id);
 
-    set v_packet_table_name = (select CONCAT( 'packet_', i_packet_data_id, '_', date_format( now(), '%m%d%Y'), '_', i_version, '_raw' ));
+    SET v_packet_table_name = (SELECT CONCAT( 'packet_', i_packet_data_id, '_', date_format( now(), '%m%d%Y'), '_', i_version, '_raw' ));
 
-    update data_packet set table_name = v_packet_table_name where id = i_packet_data_id;
+    UPDATE data_packet SET table_name = v_packet_table_name
+    WHERE
+        id = i_packet_data_id
+        AND data_ingest_stage_id = 1;
 
-    select v_packet_table_name as PACKET_TABLE_NAME;
+    SELECT v_packet_table_name AS PACKET_TABLE_NAME;
 
 END //
 
