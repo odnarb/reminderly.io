@@ -1,0 +1,8 @@
+select from data_packet to get the packet table name
+
+mysqlimport --local \
+    --compress \
+    --user=reminderly \
+    --password=reminderly \
+    --host=localhost \
+    --fields-terminated-by=',' packet_1337_07022020_1_data test_packet.csv
