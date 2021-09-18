@@ -50,7 +50,7 @@ SET FOREIGN_KEY_CHECKS=1; -- to re-enable them
 */
 
 /*
-CREATE TABLE `packet_[packet_id]_[date]_[version]_data` (
+CREATE TABLE `packet_[packet_id]_[date]_[version]_raw` (
     `id` INT AUTO_INCREMENT,
     `data_packet_id` INT NOT NULL,
     `data` json NOT NULL,
@@ -68,12 +68,40 @@ packet data will need message fields like:
 
 */
 
-CREATE TABLE `packet_1337_07022020_1_data` (
+load for campaign_id = 1
+
+-- how do we know what to name the table on import?
+    -- We derive it programmatically
+-- raw table of data
+CREATE TABLE `packet_1337_07022020_1_raw` (
     `id` INT AUTO_INCREMENT,
     `data_packet_id` INT NOT NULL,
-    `packet_table_name` VARCHAR(255) NOT NULL DEFAULT '', -- contains table name like: "packet_1337_07022020_1_data"
+    `data` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+-- for when the data is mapped to proper fields
+CREATE TABLE `packet_1337_07022020_1_mapped` (
+    `id` INT AUTO_INCREMENT,
+    `data_packet_id` INT NOT NULL,
+    `packet_table_name` VARCHAR(255) NOT NULL DEFAULT '', -- contains table name like: "packet_1337_07022020_1_mapped"
+    `data` json NOT NULL,
+    `updated_at` DATETIME NOT NULL DEFAULT NOW(),
+    `created_at` DATETIME NOT NULL DEFAULT NOW(),
+    FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB;
+
+CREATE TABLE `packet_1337_07022020_1_queued` (
+    `id` INT AUTO_INCREMENT,
+    `data_packet_id` INT NOT NULL,
+    `packet_table_name` VARCHAR(255) NOT NULL DEFAULT '', -- contains table name like: "packet_1337_07022020_1_queued"
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
     `contact_method_id` INT NOT NULL, -- fill this after contact made?
+    `priority` INT NOT NULL DEFAULT 0,
     `data` json NOT NULL,
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't capture anything but phone calls
     `num_tries` INT NOT NULL DEFAULT 0,
@@ -86,7 +114,6 @@ CREATE TABLE `packet_1337_07022020_1_data` (
     FOREIGN KEY (`data_packet_id`) REFERENCES data_packet (`id`),
     PRIMARY KEY (`id`)
 )  ENGINE=INNODB;
-
 
 
 /*

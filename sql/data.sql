@@ -29,10 +29,12 @@ INSERT INTO `customer` (
 INSERT INTO `customer_location` (
     `customer_id`,
     `name`,
-    `description`,
-    `data`
+    `address_1`,
+    `city`,
+    `state`,
+    `zip`
 ) VALUES
-(1, 'Test Campaign', 'Test campaign for testing contacts', '{"timezone":"America/Phoenix"}');
+(1, 'Test Location', '123 Nowhere', 'Tucson', 'AZ','85737');
 
 INSERT INTO `customer_campaigns` (
     `customer_id`,
@@ -41,6 +43,7 @@ INSERT INTO `customer_campaigns` (
     `data`
 ) VALUES
 (1, 'Test Campaign', 'Test campaign for testing contacts', '{"timezone":"America/Phoenix"}');
+
 
 
 -- 1 - API, 2 - UI
@@ -88,6 +91,7 @@ INSERT INTO `customer` (`name`) VALUES
 */
 
 -- history_table_tracking table
+/*
 INSERT INTO `packet_table_tracking` (`server_name`, `table_name`, `created_at`, `updated_at`) VALUES
 ('localhost','packet_1337_11082019_1_data', now(), now() ),
 ('localhost','packet_1337_11072019_1_data', date_add(now(), INTERVAL -3 DAY), date_add(now(), INTERVAL -3 DAY) ),
@@ -97,27 +101,30 @@ INSERT INTO `packet_table_tracking` (`server_name`, `table_name`, `created_at`, 
 ('localhost','packet_1337_11032019_1_data', date_add(now(), INTERVAL -89 DAY), date_add(now(), INTERVAL -89 DAY) ),
 ('localhost','packet_1337_11022019_1_data', date_add(now(), INTERVAL -90 DAY), date_add(now(), INTERVAL -90 DAY) ),
 ('localhost','packet_1337_07022020_1_data', date_add(now(), INTERVAL -91 DAY), date_add(now(), INTERVAL -91 DAY) );
+*/
 
-INSERT INTO `data_packet` (
-    `campaign_id`,
-    `data_ingest_source_id`,
-    `data_ingest_stage_id`,
-    `packet_table_tracking_id`,
-    `company_id`,
-    `user_id`,
-    `tx_guid`,
-    `version`,
-    `num_tries`,
-    `metadata`
-) VALUES
-(1,2,5,1,1,1,'33333-321321321-321312378934789342', 1, 0, '{}' ),
-(1,2,5,2,1,1,'44444-321321321-321312378934789342', 1, 0, '{}' ),
-(1,2,5,3,1,1,'66666-321321321-321312378934789342', 1, 0, '{}' ),
-(1,2,5,4,1,1,'22222-321321321-321312378934789342', 1, 0, '{}' ),
-(1,1,5,5,1,1,'11111-321321321-321312378934789342', 1, 0, '{}' ),
-(1,1,5,6,1,1,'00000-321321321-321312378934789342', 1, 0, '{}' ),
-(1,1,5,7,1,1,'66666-321321321-321312378934789342', 1, 0, '{}' ),
-(1,1,4,8,1,1,'77777-321321321-321312378934789342', 1, 0, '{}' );
+insert into data_packet
+(
+    campaign_id
+    data_ingest_source_id,
+    data_ingest_stage_id,
+    server_name,
+    table_name,
+    version,
+    num_tries,
+    metadata,
+    updated_at,
+    created_at
+) VALUES (
+    1,
+    1,
+    1,
+    'localhost',
+    '',
+    1,
+    0,
+    '{}'
+);
 
 INSERT INTO `packet_1337_07022020_1_data` (
     `data_packet_id`,

@@ -28,7 +28,6 @@ CREATE TABLE `data_packet` (
     -- `packet_table_tracking_id` INT NOT NULL,
     `server_name` VARCHAR(255) NOT NULL DEFAULT '',
     `table_name` VARCHAR(255) NOT NULL DEFAULT '',
-    `tx_guid` VARCHAR(80) NOT NULL DEFAULT '',
     `version` INT NOT NULL DEFAULT 1,
     `num_tries` INT NOT NULL DEFAULT 0,
     `metadata` json NOT NULL,
