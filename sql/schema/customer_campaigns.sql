@@ -19,6 +19,7 @@ CREATE TABLE `customer_campaigns` (
     `name` VARCHAR(80) NOT NULL DEFAULT '',
     `description` VARCHAR(255) NOT NULL DEFAULT '',
     `data` json NOT NULL,
+    `active` INT NOT NULL DEFAULT 0,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
     `created_at` DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (`customer_id`) REFERENCES customer (`id`),

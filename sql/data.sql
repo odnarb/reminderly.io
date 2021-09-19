@@ -41,13 +41,29 @@ INSERT INTO customer_campaigns (
     customer_id,
     name,
     description,
+    active,
     data
 )
 VALUES
-    (1, 'Test Campaign 1', 'Test Doctor', '{"timezone":"America/Phoenix", "conact_window": "now" "contact_methods":[1,2,3],"data_ingest_source": 1, "data_source": "doctor_smith_appointments.csv", "messages": { "sms": "Hello, {data.first_name|name} you have an appointment on {data.date} at our {data.location.name} office. Reply 1 to CONFIRM, 2 to CANCEL and 3 to UNSUBSCRIBE. Please call {location.phone} to reschedule." } }'),
-    (1, 'Test Campaign 2', 'Test Commercial', '{"timezone":"America/Los_Angeles", "conact_window": { "start": "07:00", "end": "17:00"} "contact_methods":[1,2,3], "data_ingest_source": 1, "data_source": "internet_installs.csv", "messages": { "sms": "Hello, {data.first_name|name}! You have an appointment on {data.date} at {data.time} for internet installation. Reply 1 to CONFIRM, 2 to CANCEL and 3 to UNSUBSCRIBE. Please call {location.phone} to reschedule." } }'),
-    (1, 'Test Campaign 3', 'Test School', '{"timezone":"America/New_York", "conact_window": { "start": "08:00", "end": "16:30"} "contact_methods":[1,2,3], "data_ingest_source": 1, "data_source": "early_out.csv", "messages": { "sms": "Hello {data.first_name|name}, your child {data.child_name|name} has early out tomorrow {data.date} {data.time}. Reply 1 to CONFIRM, 3 to UNSUBSCRIBE." } }'),
-    (1, 'Test Campaign 4', 'Test Real Estate', '{"timezone":"America/Los_Angeles", "conact_window": { "start": "07:00", "end": "17:00"} "contact_methods":[1,2,3], "data_ingest_source": 1, "data_source": "house_showings.csv", "messages": { "sms": "Hello, {data.first_name|name}! You have an appointment on {data.date} for a house showing at {data.location.address}. Reply 1 to CONFIRM, 2 to CANCEL and 3 to UNSUBSCRIBE. Please call {location.phone} to reschedule." } }');
+    (1, 'Test Campaign 1', 'Test Doctor', 1, '{"timezone":"America/Phoenix", "conact_days": [1,2,3,4,5], "conact_window": "now", "contact_methods":[1,2,3],"data_ingest_source": 1, "data_source": "doctor_smith_appointments.csv", "messages": { "sms": "Hello, {data.first_name|name} you have an appointment on {data.date} at our {data.location.name} office. Reply 1 to CONFIRM, 2 to CANCEL and 3 to UNSUBSCRIBE. Please call {location.phone} to reschedule." } }'),
+    (1, 'Test Campaign 2', 'Test Commercial', 1, '{"timezone":"America/Los_Angeles", "conact_days": [2,3,4,5], "conact_window": { "start": "07:00", "end": "17:00"}, "contact_methods":[1,2,3], "data_ingest_source": 1, "data_source": "internet_installs.csv", "messages": { "sms": "Hello, {data.first_name|name}! You have an appointment on {data.date} at {data.time} for internet installation. Reply 1 to CONFIRM, 2 to CANCEL and 3 to UNSUBSCRIBE. Please call {location.phone} to reschedule." } }'),
+    (1, 'Test Campaign 3', 'Test School', 1, '{"timezone":"America/New_York", "conact_days": [3,4,5,6,7], "conact_window": { "start": "08:00", "end": "16:30"}, "contact_methods":[1,2,3], "data_ingest_source": 1, "data_source": "early_out.csv", "messages": { "sms": "Hello {data.first_name|name}, your child {data.child_name|name} has early out tomorrow {data.date} {data.time}. Reply 1 to CONFIRM, 3 to UNSUBSCRIBE." } }'),
+    (1, 'Test Campaign 4', 'Test Real Estate', 1, '{"timezone":"America/Los_Angeles", "conact_days": [2,3,4,5,6], "conact_window": { "start": "07:00", "end": "17:00"}, "contact_methods":[1,2,3], "data_ingest_source": 1, "data_source": "house_showings.csv", "messages": { "sms": "Hello, {data.first_name|name}! You have an appointment on {data.date} for a house showing at {data.location.address}. Reply 1 to CONFIRM, 2 to CANCEL and 3 to UNSUBSCRIBE. Please call {location.phone} to reschedule." } }');
+
+
+/*
+timezone conversion is: convert_tz( datetime, from, to ):
+    convert_tz( now() , 'UTC', date.timezone )
+*/
+
+select * from campaign
+where
+    -- the contact day is this day
+    dayofweek( convert_tz( now() , 'UTC', date.timezone ) ) IN data.contact_days[0]
+    -- time start is correct
+    AND convert_tz( now() , 'UTC', date.timezone ) > convert_tz( data.contact_window.start , 'UTC', date.timezone )
+    -- time end is correct
+    AND convert_tz( now() , 'UTC', date.timezone ) < convert_tz( data.contact_window.end , 'UTC', date.timezone )
 
 -- 1 - API, 2 - UI
 -- data_ingest_source table
