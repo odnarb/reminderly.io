@@ -3,4 +3,4 @@ allow-unsafe
 host=127.0.0.1
 schema=reminderly
 user=reminderly
-password=Rem!nDerly123!$
+password=reminderly

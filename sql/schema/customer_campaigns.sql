@@ -18,6 +18,7 @@ CREATE TABLE `customer_campaigns` (
     `customer_id` INT NOT NULL,
     `name` VARCHAR(80) NOT NULL DEFAULT '',
     `description` VARCHAR(255) NOT NULL DEFAULT '',
+    `timezone` VARCHAR(80) NOT NULL DEFAULT '',
     `data` json NOT NULL,
     `active` INT NOT NULL DEFAULT 0,
     `updated_at` DATETIME NOT NULL DEFAULT NOW(),
