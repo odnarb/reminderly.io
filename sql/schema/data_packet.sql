@@ -26,6 +26,7 @@ CREATE TABLE `data_packet` (
     `data_ingest_source_id` INT NOT NULL,
     `data_ingest_stage_id` INT NOT NULL,
     -- `packet_table_tracking_id` INT NOT NULL,
+    `data_source` VARCHAR(255) NOT NULL DEFAULT '',
     `server_name` VARCHAR(255) NOT NULL DEFAULT '',
     `table_name` VARCHAR(255) NOT NULL DEFAULT '',
     `version` INT NOT NULL DEFAULT 1,
@@ -42,9 +43,11 @@ CREATE TABLE `data_packet` (
 
 
 /*
-This is merely an example of the packet data table..
+This is merely a template of the packet data table..
 
-CREATE TABLE `packet_1337_07022020_1_data` (
+name should be: packet_1337_07022020_1_data
+
+CREATE TABLE `packet_data_template` (
     `id` INT AUTO_INCREMENT,
     `data_packet_id` INT NOT NULL,
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}

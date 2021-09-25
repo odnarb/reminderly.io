@@ -46,10 +46,12 @@ INSERT INTO customer_campaigns (
     data
 )
 VALUES
-    (1, 'Test Campaign 1', 'Test Doctor', 'America/Phoenix',1,'{"contact_days": [1,2,3,4,5], "contact_window": "now", "contact_methods":[1,2,3],"data_ingest_source": 1, "data_source": "doctor_smith_appointments.csv", "messages": { "sms": "Hello, {data.first_name|name} you have an appointment on {data.date} at our {data.location.name} office. Reply 1 to CONFIRM, 2 to CANCEL and 3 to UNSUBSCRIBE. Please call {location.phone} to reschedule." } }'),
+    (1, 'Test Campaign 1', 'Test Doctor', 'America/Phoenix',1,'{"contact_days": [1,2,3,4,5], "contact_window": { "start": "08:00", "end": "16:30"}, "contact_methods":[1,2,3],"data_ingest_source": 1, "data_source": "doctor_smith_appointments.csv", "messages": { "sms": "Hello, {data.first_name|name} you have an appointment on {data.date} at our {data.location.name} office. Reply 1 to CONFIRM, 2 to CANCEL and 3 to UNSUBSCRIBE. Please call {location.phone} to reschedule." } }'),
     (1, 'Test Campaign 2', 'Test Commercial','America/Los_Angeles', 1, '{"contact_days": [2,3,4,5], "contact_window": { "start": "07:00", "end": "17:00"}, "contact_methods":[1,2,3], "data_ingest_source": 1, "data_source": "internet_installs.csv", "messages": { "sms": "Hello, {data.first_name|name}! You have an appointment on {data.date} at {data.time} for internet installation. Reply 1 to CONFIRM, 2 to CANCEL and 3 to UNSUBSCRIBE. Please call {location.phone} to reschedule." } }'),
-    (1, 'Test Campaign 3', 'Test School', 'America/New_York',1,'{"contact_days": [3,4,5,6,7], "contact_window": { "start": "08:00", "end": "16:30"}, "contact_methods":[1,2,3], "data_ingest_source": 1, "data_source": "early_out.csv", "messages": { "sms": "Hello {data.first_name|name}, your child {data.child_name|name} has early out tomorrow {data.date} {data.time}. Reply 1 to CONFIRM, 3 to UNSUBSCRIBE." } }'),
+    (1, 'Test Campaign 3', 'Test School', 'America/New_York',1,'{"contact_days": [3,4,5,6,7], "contact_window": "now", "contact_methods":[1,2,3], "data_ingest_source": 1, "data_source": "early_out.csv", "messages": { "sms": "Hello {data.first_name|name}, your child {data.child_name|name} has early out tomorrow {data.date} {data.time}. Reply 1 to CONFIRM, 3 to UNSUBSCRIBE." } }'),
     (1, 'Test Campaign 4', 'Test Real Estate','America/Chicago',1,'{"contact_days": [2,3,4,5,6], "contact_window": { "start": "07:00", "end": "17:00"}, "contact_methods":[1,2,3], "data_ingest_source": 1, "data_source": "house_showings.csv", "messages": { "sms": "Hello, {data.first_name|name}! You have an appointment on {data.date} for a house showing at {data.location.address}. Reply 1 to CONFIRM, 2 to CANCEL and 3 to UNSUBSCRIBE. Please call {location.phone} to reschedule." } }');
+
+INSERT INTO data_packet (
 
 
 /*
@@ -60,6 +62,7 @@ timezone conversion is: convert_tz( datetime, from, to ):
 -- for windows of NOW
 SELECT
     id,
+    c.data->'$.contact_window' as contact_window,
     c.data->'$.data_source' as data_source
 FROM customer_campaigns c
 WHERE
@@ -72,21 +75,28 @@ WHERE
 
 SELECT
     id,
-    data->'$.data_source' as data_source,
+    json_unquote (data->'$.data_source') as data_source,
     timezone,
-    json_extract(data, '$.contact_window.start'),
-    convert_tz( json_extract(data, '$.contact_window.start') , 'UTC', timezone )
+    json_unquote( json_extract(data, '$.contact_window.start') ) as start_time,
+    json_unquote( json_extract(data, '$.contact_window.end') ) as end_time
 FROM customer_campaigns
 WHERE
     -- the contact day is this day
     LOCATE( dayofweek( convert_tz( now(), 'UTC', timezone ) ), data->'$.contact_days' )
 
-    -- TODO: Figure out time start  -- then time end will follow
-    -- time start is correct
-    AND convert_tz( now(), 'UTC', timezone ) > convert_tz( json_extract(data, '$.contact_window.start') , 'UTC', timezone );
+    -- time start is correct per client campaign settings
+    AND convert_tz( now(), 'UTC', timezone ) > concat(
+        date_format( convert_tz(now(), 'UTC', timezone ), '%Y-%m-%d' ),
+        ' ',
+        json_unquote( json_extract(data, '$.contact_window.start') )
+    )
 
-    -- time end is correct
-    AND convert_tz( now(), 'UTC', timezone ) < convert_tz( json_extract(data, '$.contact_window.start') , 'UTC', timezone );
+    -- time start is correct per client campaign settings
+    AND convert_tz( now(), 'UTC', timezone ) < concat(
+        date_format( convert_tz(now(), 'UTC', timezone ), '%Y-%m-%d' ),
+        ' ',
+        json_unquote( json_extract(data, '$.contact_window.end') )
+    );
 
 -- 1 - API, 2 - UI
 -- data_ingest_source table
@@ -141,20 +151,21 @@ VALUES
 
 INSERT INTO data_packet
 (
-    campaign_id
+    campaign_id,
     data_ingest_source_id,
     data_ingest_stage_id,
     server_name,
     table_name,
     version,
     num_tries,
-    metadata,
-    updated_at,
-    created_at
+    metadata
 )
 VALUES
-    (1,1,1,'localhost','',1,0,'{}');
-
+    (1,1,1,'localhost','',1,0,'{}'),
+    (2,1,1,'localhost','',1,0,'{}'),
+    (3,1,1,'localhost','',1,0,'{}'),
+    (4,1,1,'localhost','',1,0,'{}');
+    
 /*
 packet tables example:
     packet_1337_07022020_1_raw

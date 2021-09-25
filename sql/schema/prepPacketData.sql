@@ -1,55 +1,64 @@
 DELIMITER //
-CREATE PROCEDURE prepPacketData(IN i_campaign_id INT)
+CREATE PROCEDURE prepPacketData()
 BEGIN
 
-/*
-    or we 
-*/
+    /*
+        Prep campaign data packets such that there's a table name prepared and entry in data_packet
+    */
 
-/*
-    we can do this en masse by selecting campaign ids (based on some criteria that says they're ready)
-*/
+    CREATE TEMPORARY TABLE IF NOT EXISTS tmp_campaign_ids_ready (
+        id INT,
+        data_source VARCHAR(500),
+        packet_table_name VARCHAR(500)
+    )
+    AS (
+        SELECT
+            c.id,
+            json_unquote (c.data->'$.data_source') as data_source,
+            CONCAT('packet_',c.id,'_', DATE_FORMAT( now(), '%m%d%Y'),'_', (COALESCE( dp.version, 0 ) + 1),'_data') as packet_table_name,
+            (COALESCE( dp.version, 0 ) + 1) as version
+        FROM customer_campaigns c
+        LEFT JOIN data_packet dp ON c.id = dp.campaign_id
+        WHERE
+            -- the contact day is this day
+            LOCATE( dayofweek( convert_tz( now(), 'UTC', timezone ) ), c.data->'$.contact_days' )
 
--- SELECT campaign_id FROM customer_campaigns into #tmp_campaign_ids_ready
+            -- time start is correct per client campaign settings
+            AND convert_tz( now(), 'UTC', timezone ) > concat(
+                date_format( convert_tz(now(), 'UTC', timezone ), '%Y-%m-%d' ),
+                ' ',
+                json_unquote( json_extract(c.data, '$.contact_window.start') )
+            )
 
-    DECLARE v_packet_table_name VARCHAR(255) DEFAULT '';
-    DECLARE i_packet_data_id INT DEFAULT 1;
-    DECLARE i_version INT DEFAULT 1;
+            -- time start is correct per client campaign settings
+            AND convert_tz( now(), 'UTC', timezone ) < concat(
+                date_format( convert_tz(now(), 'UTC', timezone ), '%Y-%m-%d' ),
+                ' ',
+                json_unquote( json_extract(c.data, '$.contact_window.end') )
+            )
+    );
 
-    INSERT INTO data_packet
-    (
+    INSERT INTO data_packet (
         campaign_id,
         data_ingest_source_id,
         data_ingest_stage_id,
         server_name,
         table_name,
+        data_source,
         version,
         num_tries,
         metadata
-    ) VALUES (
-        i_campaign_id,
+    ) SELECT
+        id,
         1,
         1,
         'localhost',
-        '',
-        1,
+        packet_table_name,
+        data_source,
+        version,
         0,
         '{}'
-    );
-
-    SET i_packet_data_id = (SELECT LAST_INSERT_ID());
-
-    SET i_version = (SELECT version FROM data_packet WHERE id = i_packet_data_id);
-
-    SET v_packet_table_name = (SELECT CONCAT( 'packet_', i_packet_data_id, '_', date_format( now(), '%m%d%Y'), '_', i_version, '_raw' ));
-
-    UPDATE data_packet
-    SET table_name = v_packet_table_name
-    WHERE
-        id = i_packet_data_id
-        AND data_ingest_stage_id = 1;
-
-    SELECT v_packet_table_name AS PACKET_TABLE_NAME;
+    FROM tmp_campaign_ids_ready;
 
 END //
 

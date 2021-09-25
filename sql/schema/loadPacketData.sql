@@ -1,23 +1,45 @@
+DROP PROCEDURE loadPacketData;
+
 DELIMITER //
-CREATE PROCEDURE loadPacketData(IN o_packet JSON)
+CREATE PROCEDURE loadPacketData()
 BEGIN
 
     -- define limit.. if any
-    DECLARE v_packet_table_name VARCHAR(255) DEFAULT '';
-    DECLARE query VARCHAR(1000) DEFAULT '';
+    DECLARE v_packet_table_name varchar(255) DEFAULT '';
+    DECLARE v_filename varchar(255) DEFAULT '';
+    DECLARE query varchar(1000) DEFAULT '';
 
-    SET v_packet_table_name  = JSON_UNQUOTE(JSON_EXTRACT(o_packet,'$.packet_table_name'));
+    -- set some vars for the loop
+    DECLARE loop_max INT DEFAULT 0;
+    DECLARE loop_counter INT DEFAULT 1;
 
-    /*
-    -- get pagination details
-    SET query = CONCAT('SELECT count(*) as total_row_count FROM ', v_packet_table_name, ' ');
-    SET query = CONCAT(query, 'WHERE contact_status_id=1 and num_tries < 3' );
-    SET @query = CONCAT(query,';');
+    -- get the packet rows that need to be ingested
+    CREATE TEMPORARY TABLE IF NOT EXISTS tmp_campaign_ids_ready (
+        id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        data_packet_id INT,
+        table_name VARCHAR(500),
+        data_source VARCHAR(500)
+    )
+    AS (
+        SELECT
+            id AS data_packet_id,
+            campaign_id,
+            table_name,
+            data_source
+        FROM data_packet
+        WHERE
+            -- data packets that are prepped
+            data_ingest_stage_id = 1
 
-    PREPARE stmt FROM @query;
-    EXECUTE stmt;
-    DEALLOCATE PREPARE stmt;
-    */
+            -- data packets from SFTP only
+            AND data_ingest_source_id = 1
+
+            -- with less than 3 tries
+            AND num_tries < 3
+    );
+
+    SELECT COUNT(*) FROM tmp_campaign_ids_ready INTO loop_max;
+    SET loop_counter=1;
 
     -- before this runs, we need to convert the line endings from \r\n to \n
 
@@ -25,15 +47,33 @@ BEGIN
 
     -- make sure it exists before trying?
 
-    /*
-    LOAD DATA LOCAL INFILE "/path/to/file.csv"
-    INTO TABLE @packet_table_name
-    COLUMNS TERMINATED BY ','
-    OPTIONALLY ENCLOSED BY '"'
-    ESCAPED BY '"'
-    LINES TERMINATED BY '\n'
-    IGNORE 1 LINES;
-    */
+    WHILE loop_counter < loop_max DO
+        SET v_packet_table_name = (SELECT table_name FROM tmp_campaign_ids_ready WHERE id = loop_counter);
+        SET v_filename = (SELECT data_source FROM tmp_campaign_ids_ready WHERE id = loop_counter);
+
+        DROP TABLE IF EXISTS v_packet_table_name;
+
+        CREATE TABLE v_packet_table_name like data_packet_template;
+
+        SET query = CONCAT(
+            "LOAD DATA LOCAL INFILE ", v_filename," ",
+            "INTO TABLE ", v_packet_table_name, " ",
+            "COLUMNS TERMINATED BY ','",
+            "OPTIONALLY ENCLOSED BY '"',",
+            "ESCAPED BY '"'",
+            "LINES TERMINATED BY '\n'",
+            "IGNORE 1 LINES"
+        );
+        SET @query = CONCAT(query,';');
+
+        SELECT @query as dyn_sql;
+
+        PREPARE stmt FROM @query;
+        EXECUTE stmt;
+        DEALLOCATE PREPARE stmt;
+
+      SET loop_counter = loop_counter + 1;
+    END WHILE;
 
 END //
 
