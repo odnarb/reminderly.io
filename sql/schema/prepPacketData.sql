@@ -5,8 +5,9 @@ proc_label:BEGIN
     /*
         Prep campaign data packets such that there's a table name prepared and entry in data_packet
     */
+    DROP TABLE IF EXISTS tmp_campaign_ids_ready;
 
-    CREATE TEMPORARY TABLE IF NOT EXISTS tmp_campaign_ids_ready (
+    CREATE TEMPORARY TABLE tmp_campaign_ids_ready (
         id INT,
         data_source VARCHAR(500),
         packet_table_name VARCHAR(500),
@@ -36,6 +37,9 @@ proc_label:BEGIN
                 date_format( convert_tz(now(), 'UTC', timezone ), '%Y-%m-%d' ),
                 ' ',
                 json_unquote( json_extract(c.data, '$.contact_window.end') )
+            )
+            AND c.id NOT IN (
+                SELECT c.id FROM data_packet WHERE data_ingest_stage_id < 6 AND dp.campaign_id = c.id
             )
     );
 
