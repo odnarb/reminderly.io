@@ -1,6 +1,6 @@
 DELIMITER //
 CREATE PROCEDURE prepPacketData()
-BEGIN
+proc_label:BEGIN
 
     /*
         Prep campaign data packets such that there's a table name prepared and entry in data_packet
@@ -9,7 +9,8 @@ BEGIN
     CREATE TEMPORARY TABLE IF NOT EXISTS tmp_campaign_ids_ready (
         id INT,
         data_source VARCHAR(500),
-        packet_table_name VARCHAR(500)
+        packet_table_name VARCHAR(500),
+        version INT
     )
     AS (
         SELECT
@@ -37,6 +38,11 @@ BEGIN
                 json_unquote( json_extract(c.data, '$.contact_window.end') )
             )
     );
+
+    IF (SELECT count(*) FROM tmp_campaign_ids_ready) = 0 THEN
+        SELECT 'LEAVING';
+        LEAVE proc_label;
+    END IF;
 
     INSERT INTO data_packet (
         campaign_id,

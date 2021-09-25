@@ -3,13 +3,12 @@ x- means that item is done
 -------------------------------------------
 
 NEED TO MAP OUT PROCS TO:
-    Bulk load files / packets based on campaign settings
-    Prepare messages and delimeters
+    prepPacketData() - packets based on campaign settings
+    loadPacketData() - Bulk load files 
+    [proc name] ?    - Map messages / functions / rules (Prepare messages)
+    [proc name] ?    - Queue messages
 
 Data process (reference the open project for details):
-
-    Ingest packet to packet data table
-
 
     Data Ingest
         via campaign settings:

@@ -2,7 +2,7 @@ DROP PROCEDURE loadPacketData;
 
 DELIMITER //
 CREATE PROCEDURE loadPacketData()
-BEGIN
+proc_label:BEGIN
 
     -- define limit.. if any
     DECLARE v_packet_table_name varchar(255) DEFAULT '';
@@ -38,7 +38,12 @@ BEGIN
             AND num_tries < 3
     );
 
+    IF (SELECT count(*) FROM tmp_campaign_ids_ready) = 0 THEN
+        LEAVE proc_label;
+    END IF;
+
     SELECT COUNT(*) FROM tmp_campaign_ids_ready INTO loop_max;
+
     SET loop_counter=1;
 
     -- before this runs, we need to convert the line endings from \r\n to \n
@@ -53,16 +58,14 @@ BEGIN
 
         DROP TABLE IF EXISTS v_packet_table_name;
 
-        CREATE TABLE v_packet_table_name like data_packet_template;
+        CREATE TABLE v_packet_table_name like packet_data_template;
 
         SET query = CONCAT(
-            "LOAD DATA LOCAL INFILE ", v_filename," ",
-            "INTO TABLE ", v_packet_table_name, " ",
-            "COLUMNS TERMINATED BY ','",
-            "OPTIONALLY ENCLOSED BY '"',",
-            "ESCAPED BY '"'",
-            "LINES TERMINATED BY '\n'",
-            "IGNORE 1 LINES"
+            'LOAD DATA LOCAL INFILE ', v_filename,' INTO TABLE ', v_packet_table_name, ' ',
+            'FIELDS TERMINATED BY '','' ',
+            'OPTIONALLY ENCLOSED BY ''"'' ',
+            'LINES TERMINATED BY ''\n'' ',
+            'IGNORE 1 LINES'
         );
         SET @query = CONCAT(query,';');
 
