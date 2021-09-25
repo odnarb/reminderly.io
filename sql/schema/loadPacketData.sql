@@ -1,5 +1,3 @@
-DROP PROCEDURE loadPacketData;
-
 DELIMITER //
 CREATE PROCEDURE loadPacketData()
 proc_label:BEGIN
