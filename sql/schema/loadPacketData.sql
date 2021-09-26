@@ -1,3 +1,5 @@
+DROP PROCEDURE loadPacketData;
+
 DELIMITER //
 CREATE PROCEDURE loadPacketData()
 proc_label:BEGIN
@@ -5,14 +7,42 @@ proc_label:BEGIN
     -- define limit.. if any
     DECLARE v_packet_table_name varchar(255) DEFAULT '';
     DECLARE v_filename varchar(255) DEFAULT '';
+
     DECLARE query varchar(1000) DEFAULT '';
+
+    DECLARE i_data_packet_id INT DEFAULT 0;
+    DECLARE i_campaign_id INT DEFAULT 0;
 
     -- set some vars for the loop
     DECLARE loop_max INT DEFAULT 0;
     DECLARE loop_counter INT DEFAULT 1;
 
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+
+        GET DIAGNOSTICS CONDITION 1 @msg_text = MESSAGE_TEXT;
+
+        SELECT 'EXCEPTION DETECTED';
+
+        INSERT INTO log_data_packet ( data_packet_id, log, details ) SELECT i_data_packet_id, CONCAT('ERROR:', @msg_text), '{}';
+
+          -- .. set any flags etc  eg. SET @flag = 0; ..
+        SELECT CONCAT('DATA PACKET LOAD FAILED: ', i_data_packet_id );
+        UPDATE
+            data_packet
+        SET
+            num_tries = num_tries + 1
+        WHERE
+            id = i_data_packet_id;
+
+        INSERT INTO log_data_packet ( data_packet_id, log, details ) SELECT i_data_packet_id, '---END (WITH ERROR)---', '{}';
+
+        ROLLBACK;
+    END;
+
     -- get the packet rows that need to be ingested
-    CREATE TEMPORARY TABLE IF NOT EXISTS tmp_campaign_ids_ready (
+    DROP TABLE tmp_campaign_ids_ready;
+    CREATE TEMPORARY TABLE tmp_campaign_ids_ready (
         id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
         data_packet_id INT,
         table_name VARCHAR(500),
@@ -34,6 +64,7 @@ proc_label:BEGIN
 
             -- with less than 3 tries
             AND num_tries < 3
+            LIMIT 100
     );
 
     IF (SELECT count(*) FROM tmp_campaign_ids_ready) = 0 THEN
@@ -42,36 +73,64 @@ proc_label:BEGIN
 
     SELECT COUNT(*) FROM tmp_campaign_ids_ready INTO loop_max;
 
-    SET loop_counter=1;
-
-    -- before this runs, we need to convert the line endings from \r\n to \n
-
-    -- find the path to the file
+    SET loop_counter=0;
 
     -- make sure it exists before trying?
 
     WHILE loop_counter < loop_max DO
-        SET v_packet_table_name = (SELECT table_name FROM tmp_campaign_ids_ready WHERE id = loop_counter);
-        SET v_filename = (SELECT data_source FROM tmp_campaign_ids_ready WHERE id = loop_counter);
+        SELECT
+            id,
+            campaign_id,
+            table_name,
+            data_source
+        INTO
+            i_data_packet_id,
+            i_campaign_id,
+            v_packet_table_name,
+            v_filename
+        FROM tmp_campaign_ids_ready
+        WHERE
+            id = loop_counter+1;
 
-        DROP TABLE IF EXISTS v_packet_table_name;
+        START TRANSACTION;
 
-        CREATE TABLE v_packet_table_name like packet_data_template;
+            INSERT INTO log_data_packet ( data_packet_id, log, details ) SELECT i_data_packet_id, '---START---', '{}';
 
-        SET query = CONCAT(
-            'LOAD DATA LOCAL INFILE ', v_filename,' INTO TABLE ', v_packet_table_name, ' ',
-            'FIELDS TERMINATED BY '','' ',
-            'OPTIONALLY ENCLOSED BY ''"'' ',
-            'LINES TERMINATED BY ''\n'' ',
-            'IGNORE 1 LINES'
-        );
-        SET @query = CONCAT(query,';');
+-- DROP TABLE IF EXISTS packet_4_09252021_2_data;CREATE TABLE packet_4_09252021_2_data like packet_data_template;LOAD DATA LOCAL INFILE '/home/brandon/house_showings.csv' INTO TABLE packet_4_09252021_2_data CHARACTER SET utf8 FIELDS TERMINATED BY '\n' OPTIONALLY ENCLOSED BY '"' (raw_data);
 
-        SELECT @query as dyn_sql;
+            SET query = CONCAT(
+                'DROP TABLE IF EXISTS ',v_packet_table_name, ';',
+                'CREATE TABLE ',v_packet_table_name,' like packet_data_template;',
+                'LOAD DATA LOCAL INFILE ''/home/brandon/', v_filename, ''' ',
+                'INTO TABLE ',v_packet_table_name, ' ',
+                'CHARACTER SET utf8 ',
+                'FIELDS ',
+                'TERMINATED BY ''\\n'' ',
+                'OPTIONALLY ENCLOSED BY ''"'' ',
+                -- 'IGNORE 1 LINES ',
+                '(raw_data)'
+            );
+            SET query = CONCAT(query,';');
 
-        PREPARE stmt FROM @query;
-        EXECUTE stmt;
-        DEALLOCATE PREPARE stmt;
+            INSERT INTO log_data_packet ( data_packet_id, log, details ) SELECT i_data_packet_id, CONCAT( 'BULK LOAD STATEMENT: ', query ), '{}';
+
+            PREPARE stmt FROM @query;
+            EXECUTE stmt;
+            DEALLOCATE PREPARE stmt;
+
+            INSERT INTO log_data_packet ( data_packet_id, log, details ) SELECT i_data_packet_id, 'BULK LOAD SUCCESSFUL', '{}';
+
+            UPDATE
+                data_packet
+            SET
+                num_tries = num_tries + 1,
+                data_ingest_stage_id = 2
+            WHERE
+                id = i_data_packet_id;
+
+            INSERT INTO log_data_packet ( data_packet_id, log, details ) SELECT i_data_packet_id, '---DONE---', '{}';
+
+        COMMIT;
 
       SET loop_counter = loop_counter + 1;
     END WHILE;
@@ -79,3 +138,10 @@ proc_label:BEGIN
 END //
 
 DELIMITER ;
+
+
+truncate table log_data_packet;
+
+call loadPacketData();
+
+select * from log_data_packet;

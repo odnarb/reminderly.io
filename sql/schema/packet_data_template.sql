@@ -1,13 +1,21 @@
 /*
     This is merely a template of the packet data table..
     name should be: packet_1337_07022020_1_data
+
+-- will contain raw data, mapped data, and queued data
+
 */
+
 CREATE TABLE `packet_data_template` (
     `id` INT AUTO_INCREMENT,
     `data_packet_id` INT NOT NULL,
+    `packet_table_name` VARCHAR(255) NOT NULL DEFAULT '', -- contains table name like: "packet_1337_07022020_1_queued"
     `contact_status_id` INT NOT NULL, -- {message sent, contacted, failed, etc}
     `contact_method_id` INT NOT NULL, -- fill this after contact made?
-    `data` json NOT NULL,
+    `priority` INT NOT NULL DEFAULT 0,
+    `raw_data` TEXT NOT NULL,
+    `mapped_data` json NOT NULL,
+    `queued_data` json NOT NULL,
     `raw_response` VARCHAR(80) NOT NULL DEFAULT '', -- [DTMF, character, word, raw data] -- we don't capture anything but phone calls
     `num_tries` INT NOT NULL DEFAULT 0,
     `tx_guid` VARCHAR(80) NOT NULL DEFAULT '',
