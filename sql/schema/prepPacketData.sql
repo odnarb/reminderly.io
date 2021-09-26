@@ -38,9 +38,8 @@ proc_label:BEGIN
                 ' ',
                 json_unquote( json_extract(c.data, '$.contact_window.end') )
             )
-            AND c.id NOT IN (
-                SELECT c.id FROM data_packet WHERE data_ingest_stage_id < 6 AND dp.campaign_id = c.id
-            )
+            AND data_ingest_stage_id < 6
+            AND dp.campaign_id = c.id
     );
 
     IF (SELECT count(*) FROM tmp_campaign_ids_ready) = 0 THEN
