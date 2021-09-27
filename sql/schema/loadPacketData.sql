@@ -24,10 +24,15 @@ proc_label:BEGIN
 
         SELECT 'EXCEPTION DETECTED';
 
+        IF @msg_text IS NULL THEN
+        SELECT 'SETTING @msg_text..';
+            SET @msg_text = '';
+        END IF;
+
         INSERT INTO log_data_packet ( data_packet_id, log, details ) SELECT i_data_packet_id, CONCAT('ERROR:', @msg_text), '{}';
 
-          -- .. set any flags etc  eg. SET @flag = 0; ..
         SELECT CONCAT('DATA PACKET LOAD FAILED: ', i_data_packet_id );
+
         UPDATE
             data_packet
         SET
@@ -41,7 +46,7 @@ proc_label:BEGIN
     END;
 
     -- get the packet rows that need to be ingested
-    DROP TABLE tmp_campaign_ids_ready;
+    DROP TABLE IF EXISTS tmp_campaign_ids_ready;
     CREATE TEMPORARY TABLE tmp_campaign_ids_ready (
         id INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
         data_packet_id INT,
@@ -96,8 +101,9 @@ proc_label:BEGIN
 
             INSERT INTO log_data_packet ( data_packet_id, log, details ) SELECT i_data_packet_id, '---START---', '{}';
 
--- DROP TABLE IF EXISTS packet_4_09252021_2_data;CREATE TABLE packet_4_09252021_2_data like packet_data_template;LOAD DATA LOCAL INFILE '/home/brandon/house_showings.csv' INTO TABLE packet_4_09252021_2_data CHARACTER SET utf8 FIELDS TERMINATED BY '\n' OPTIONALLY ENCLOSED BY '"' (raw_data);
-
+            CANNOT LOAD FILE VIA PREPARED STATEMENT
+            IT IS NOT SUPPORTED IN MYSQL
+            I will have to run this from a script session to do it dynamically (node.js)
             SET query = CONCAT(
                 'DROP TABLE IF EXISTS ',v_packet_table_name, ';',
                 'CREATE TABLE ',v_packet_table_name,' like packet_data_template;',
@@ -110,9 +116,9 @@ proc_label:BEGIN
                 -- 'IGNORE 1 LINES ',
                 '(raw_data)'
             );
-            SET query = CONCAT(query,';');
+            SET @query = CONCAT(query,';');
 
-            INSERT INTO log_data_packet ( data_packet_id, log, details ) SELECT i_data_packet_id, CONCAT( 'BULK LOAD STATEMENT: ', query ), '{}';
+            INSERT INTO log_data_packet ( data_packet_id, log, details ) SELECT i_data_packet_id, CONCAT( 'BULK LOAD STATEMENT: ', @query ), '{}';
 
             PREPARE stmt FROM @query;
             EXECUTE stmt;
