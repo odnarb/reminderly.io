@@ -40,7 +40,6 @@ const
     session = require('express-session'),
     bodyParser = require('body-parser'),
     cookieParser = require('cookie-parser'),
-    csrf = require('csurf'),
     events = require('events'),
     favicon = require('serve-favicon'),
     path = require('path'),
@@ -110,11 +109,6 @@ const redis_config = {
 };
 
 app.use(cookieParser());
-// //csrf options
-const csrfMiddleware = csrf({
-    cookie: true
-});
-app.use(csrfMiddleware);
 
 //setup session
 app.use(session({
@@ -151,7 +145,6 @@ app.use(loadResLocalsPolicy);
 app.use( (req,res,next) => {
     res.locals.appName = process.env.APP_NAME;
     res.locals.url = req.url;
-    res.locals._csrf = req.csrfToken();
 
     if( res.locals.error_status == undefined ){
         res.locals.error_status = ''
@@ -174,8 +167,8 @@ app.use( (req,res,next) => {
 // APP ROUTER
 ////////////////////////////////////////////////////////
 
-const routeMain = require('./routes/main.js')(globals);
-app.use('/', routeMain);
+const routeApi = require('./routes/api.js')(globals);
+app.use('/api', routeApi);
 
 // const user = require('./routes/user.js')(globals);
 // app.use('/user', user);

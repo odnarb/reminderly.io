@@ -2,6 +2,7 @@ const { Sequelize, Model, DataTypes } = require('sequelize')
 
 class Customer extends Model {}
 class Company extends Model {}
+class Campaign extends Model {}
 
 module.exports = (sequelize) => {
 
@@ -26,6 +27,23 @@ module.exports = (sequelize) => {
         name: DataTypes.STRING,
         alias: DataTypes.STRING,
         details: DataTypes.JSON,
+        active: DataTypes.INTEGER,
+        updated_at: {
+          type: DataTypes.DATE,
+          defaultValue: DataTypes.NOW
+        },
+        created_at: {
+          type: DataTypes.DATE,
+          defaultValue: DataTypes.NOW
+        }
+    }, { sequelize, freezeTableName: true, modelName: 'company', timestamps: false })
+
+    module.Campaign = Campaign.init({
+        customer_id: DataTypes.INTEGER,
+        name: DataTypes.STRING,
+        description: DataTypes.STRING,
+        timezone: DataTypes.INTEGER,
+        data: DataTypes.JSON,
         active: DataTypes.INTEGER,
         updated_at: {
           type: DataTypes.DATE,
