@@ -4,9 +4,23 @@
   "description": "Reminderly.io repo",
   "main": "reminderly.js",
   "dependencies": {
-    "aws-sdk": "^2.709.0",
+    "body-parser": "^1.19.0",
+    "connect-redis": "^5.0.0",
+    "cookie-parser": "^1.4.5",
+    "csurf": "^1.11.0",
+    "dotenv": "^8.1.0",
+    "ejs": "^2.7.1",
+    "express": "^4.17.1",
+    "express-ejs-layouts": "^2.5.0",
+    "express-session": "^1.17.1",
+    "minimist": "^1.2.5",
+    "mysql2": "^2.3.3",
     "node-uuid": "^1.4.8",
-    "mysql": "^2.18.1"
+    "redis": "^3.0.2",
+    "sequelize": "^6.21.1",
+    "serve-favicon": "^2.5.0",
+    "uuid": "^8.3.1",
+    "winston": "^3.3.3"
   },
   "devDependencies": {},
   "scripts": {
