@@ -1,0 +1,43 @@
+/*
+-a campaign should have at least one data source.. (MVP just one)
+-a campaign each data source has a mapping
+-a campaign should have contact methods
+-a campaign should have messages defined
+-a campaign should have a schedule of contact windows.. or now..
+-a campaign should define if confirm, cancel, reschedule options available
+
+For certain contact types we will need a bare minimum of fields defined and mapped:
+    sms: to, message body
+    email: to, subject line, message body
+    phone: to, message body
+
+    * if the message template pulls from a field that's not available in the map, then we'll throw an error
+
+
+    ('SFTP','This source means the data packet came from the SFTP source'),
+    ('API','This source means the data packet came from the API'),
+    ('UI','This source means the data packet came from our web portal upload');
+
+*/
+
+curl -x POST http://localhost:3000/campaigns/1 --data
+{
+    customer_id: 1,
+    name: "Test Campaign",
+    description: "this is a description",
+    timezone: -7,
+    data: {
+        data_ingest_source: 1,
+        mapping: {},
+        messages: [
+            { "Hello {fields.first_name}, this is a message from {customer.title}" }
+        ],
+        schedule: [{
+            start: "08:00",
+            end: "17:00",
+            contact_methods: ["sms","email","voice"]
+        }],
+        responses: 
+    },
+    active: 1
+}
