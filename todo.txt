@@ -116,3 +116,44 @@ phase 5:
     - write with swagger
         - need to build out responses, error codes, response body, request body requirements
         - might be good to create a folder structure to organize the yaml definition, since a single yaml file is quite large to manage
+
+
+----------------------------------------------------
+
+
+API
+  Campaign
+    Customer
+    Files/packets/Lists (of contacts)
+    Messages (html, text)
+    Delivery Method Schedules (both are customizeable at the same time)
+      WhatsApp, sms, voice, IG, Messenger, etc
+        --send delivery invite
+
+  FILES/PACKETS
+    get files I have for my account
+    upload new file
+    load file into system
+
+  MESSAGES
+    map/stage messages (apply message functions)
+    queue messages for delivery
+    do deliveries starting at x
+      -- this should finish in a relatively quick time
+        -- outbound api's should be able to deliver bulk messages rather quickly
+    get receipts of communication (delivery dispositions)
+
+
+  DELIVERY METHOD SCHEDULES
+    create a schedule:
+      campaign, Day of the week, and time frame (UTC) but also show their timezone offset
+
+  Create new account
+
+  Grant acct API access
+
+
+Upload a file
+Load it
+Apply functions
+Send
