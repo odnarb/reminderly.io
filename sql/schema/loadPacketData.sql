@@ -101,6 +101,7 @@ proc_label:BEGIN
 
             INSERT INTO log_data_packet ( data_packet_id, log, details ) SELECT i_data_packet_id, '---START---', '{}';
 
+            /*
             CANNOT LOAD FILE VIA PREPARED STATEMENT
             IT IS NOT SUPPORTED IN MYSQL
             I will have to run this from a script session to do it dynamically (node.js)
@@ -123,6 +124,7 @@ proc_label:BEGIN
             PREPARE stmt FROM @query;
             EXECUTE stmt;
             DEALLOCATE PREPARE stmt;
+            */
 
             INSERT INTO log_data_packet ( data_packet_id, log, details ) SELECT i_data_packet_id, 'BULK LOAD SUCCESSFUL', '{}';
 
