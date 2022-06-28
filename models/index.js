@@ -53,7 +53,7 @@ module.exports = (sequelize) => {
           type: DataTypes.DATE,
           defaultValue: DataTypes.NOW
         }
-    }, { sequelize, freezeTableName: true, modelName: 'company', timestamps: false })
+    }, { sequelize, freezeTableName: true, modelName: 'campaign', timestamps: false })
 
     return module
 };
