@@ -23,7 +23,7 @@ For certain contact types we will need a bare minimum of fields defined and mapp
 curl -x POST http://localhost:3000/campaigns/1 --data
 {
     customer_id: 1,
-    name: "Test Campaign",
+    name: "2 Days Out",
     description: "this is a description",
     timezone: -7,
     data: {
@@ -33,11 +33,49 @@ curl -x POST http://localhost:3000/campaigns/1 --data
             { "Hello {fields.first_name}, this is a message from {customer.title}" }
         ],
         schedule: [{
+            contact_methods: ["sms", "email"]
+            days: [0,1,1,1,1,1,0]
             start: "08:00",
-            end: "17:00",
-            contact_methods: ["sms","email","voice"]
+            end: "17:00"
         }],
-        responses: 
+        //require 2fa for web page confirmations?
+        response_config: {
+            captcha: true,
+            2fa: true
+        },
+        responses: {
+            "sms" : {
+                confirm: ["1"],
+                cancel: ["2"],
+                reschedule: ["3"]
+            },
+            "email" : {
+                confirm: "html page?",
+                cancel: "html page?",
+                reschedule: "html page?"
+            },
+            "voice" : {
+                confirm: "1",'
+                cancel: "2",
+                reschedule: "3"
+            }
+        ],
+        response_followup: {
+            "sms": {
+                confirm: "Thank you, {fields.first_name}, your appointment with {customer.title} has been confirmed. Please arrive 15 mins. early." },
+                cancel: "",
+                rescedule: ""
+            "email": {
+                confirm: "",
+                cancel: "",
+                reschedule: ""
+            },
+            "voice": {
+                confirm: "Thank you, {fields.first_name} your appointment with {customer.title} has been confirmed. Please arrive 15 minutes early. Thank you and good bye!",
+                cancel: "Your appointment has been cancelled."
+                reschedule: "Please call {customer.phone} to reschedule."
+            }
+        }
     },
     active: 1
 }
