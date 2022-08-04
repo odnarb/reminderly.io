@@ -28,7 +28,13 @@ curl -x POST http://localhost:3000/campaigns/1 --data
     timezone: -7,
     data: {
         data_ingest_source: 1,
-        mapping: {},
+        mapping: {
+            first_name: "field1",
+            last_name: "field2",
+            cellphone: "field3",
+            landline: "field4",
+            : "",
+        },
         messages: [
             { "Hello {fields.first_name}, this is a message from {customer.title}" }
         ],
