@@ -1,4 +1,8 @@
 /*
+consider more advanced mapping rules later:
+https://jsonlogic.com/
+https://www.npmjs.com/package/json-logic-js
+
 -a campaign should have at least one data source.. (MVP just one)
 -a campaign each data source has a mapping
 -a campaign should have contact methods
@@ -32,8 +36,8 @@ curl -x POST http://localhost:3000/campaigns/1 --data
             first_name: "field1",
             last_name: "field2",
             cellphone: "field3",
-            landline: "field4",
-            : "",
+            landline: "field4"
+            customer_id: "field5" -- if the customer is in our system, the message can reference other customer fields.. of course the UI would need to communicate that
         },
         messages: [
             { "Hello {fields.first_name}, this is a message from {customer.title}" }
@@ -51,9 +55,15 @@ curl -x POST http://localhost:3000/campaigns/1 --data
         },
         responses: {
             "sms" : {
-                confirm: ["1"],
-                cancel: ["2"],
-                reschedule: ["3"]
+                // old verbose format
+                // confirm: ["1","y","yes","si"],
+                // cancel: ["2","n","no","cancel"],
+                // reschedule: ["3","r","reschedue"]
+
+                //or send to an HTML page?
+                confirm: "html page?",
+                cancel: "html page?",
+                reschedule: "html page?"
             },
             "email" : {
                 confirm: "html page?",
@@ -61,7 +71,7 @@ curl -x POST http://localhost:3000/campaigns/1 --data
                 reschedule: "html page?"
             },
             "voice" : {
-                confirm: "1",'
+                confirm: "1",
                 cancel: "2",
                 reschedule: "3"
             }
