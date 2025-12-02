@@ -1,19 +1,28 @@
-Sending Architecture
+Architecture
 =========================
 
 Scheduler
 --------------
---every 5 mins check for campaigns that need to fire
+campaign queueing
+--every 5 mins check for campaigns that need to fire & queue
 --triggers gcp function
 --function gets campaigns that need to fire (based on nextFireDate < now(), in the past)
+--send to pub/sub which triggers queueing function
+--queueing function gathers messages and queues or fails messages
+
+message sending
+--every 5 mins check for messages that need to go out
+--triggers gcp function
+--function gets messages that need to be sent (those in company queue collections) 
 --send to pub/sub which triggers sending function
---sending function gathers messages and sends
+--scaled sending function (because of pub/sub) gathers messages and sends
 
 Incoming messages & dispositions
 ---------------------------------------
 open a route that a function responds to (or pub/sub directly attached to): /messages/incoming
 --route this as needed based on headers: companyId, messageId
 --update message items, status, dates, etc
+--of course this'll have some kind of authentication or confirmation it's from Twilio, or other external provider
 
 Data ingest - the action of taking a file and loading it into the DB
 ------------------------------------------------------------------------------------------
@@ -26,9 +35,46 @@ Data ingest - the action of taking a file and loading it into the DB
 Message mapping -- the action of pulling fields from data and applying a message format to it.
 -----------------------------------------------------------------------------------------------
 --we don't care about the data that is uploaded, as long as the message template and data fields line up
+  --this allows for custom data fields across the board for companies
 --campaign definitions define contact window, message mapping, confirm/cancel/reschedule options, contact methods (can have multiple types per campaign)
 --we allow a campaign preview before it is marked as ready and can fire
 --at campaign fire time, or now if on-demand, we gather messages, apply their template, and send
+
+Message Queuing
+---------------
+Cleaning / Field Manipulation
+Phone number validation (just validates format)
+Email format validation (this doesn't capture all issues)
+Message Assembly
+Message Filters: ie chop off certain text (such as "Bill amt:")
+Message deduplication
+  What is a dupe?: Same day, same person, same doctor, same end contact point (email, phone)
+A message fails to queue if any steps fail here.
+  Campaign data gets flagged and moved into failures table with detailed information of its failure
+
+----------------------------------------------------
+
+API
+  Campaign
+    Customer
+    Files/packets/Lists (of contacts)
+    Messages (html, text)
+    Delivery Method Schedules (both are customizeable at the same time)
+      WhatsApp, sms, voice, IG, Messenger, etc
+        --send delivery invite
+
+  FILES/PACKETS
+    get files I have for my account
+    upload new file
+    load file into system
+
+  MESSAGES
+    map/stage messages (apply message functions)
+    queue messages for delivery
+    do deliveries starting at x
+      -- this should finish in a relatively quick time
+        -- outbound api's should be able to deliver bulk messages rather quickly
+    get receipts of communication (delivery dispositions)
 
 Reporting
 ------------------------------
