@@ -42,43 +42,19 @@ Message mapping -- the action of pulling fields from data and applying a message
 
 Message Queuing
 ---------------
-Cleaning / Field Manipulation
-Phone number validation (just validates format)
-Email format validation (this doesn't capture all issues)
-Message Assembly
-Message Filters: ie chop off certain text (such as "Bill amt:")
+Special char detection
+Phone number format check
+Email format check
 Message deduplication
   What is a dupe?: Same day, same person, same doctor, same end contact point (email, phone)
+Message Assembly: apply fields to template
+  --trim whitespace per field - this is manadatory and does not fail any message
 A message fails to queue if any steps fail here.
-  Campaign data gets flagged and moved into failures table with detailed information of its failure
-
-----------------------------------------------------
-
-API
-  Campaign
-    Customer
-    Files/packets/Lists (of contacts)
-    Messages (html, text)
-    Delivery Method Schedules (both are customizeable at the same time)
-      WhatsApp, sms, voice, IG, Messenger, etc
-        --send delivery invite
-
-  FILES/PACKETS
-    get files I have for my account
-    upload new file
-    load file into system
-
-  MESSAGES
-    map/stage messages (apply message functions)
-    queue messages for delivery
-    do deliveries starting at x
-      -- this should finish in a relatively quick time
-        -- outbound api's should be able to deliver bulk messages rather quickly
-    get receipts of communication (delivery dispositions)
+  Campaign row gets flagged and moved into failures collection with detailed information of its failure
 
 Reporting
 ------------------------------
-Reports can be ran against campaigns and dates, or dates themselves
+Reports can be ran against campaigns, customers, and dates
 
 Dashboard Features
 ---------------------
@@ -86,4 +62,10 @@ upload data
 review data
 manage api keys
 manage campaigns: create, edit, preview, view status
+review message failures: errors, duplications
 reporting
+
+----------------------------------------------------
+
+API (later)
+no specifications as of now
