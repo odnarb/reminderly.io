@@ -1,71 +1,223 @@
-Architecture
-=========================
 
-Scheduler
---------------
-campaign queueing
---every 5 mins check for campaigns that need to fire & queue
---triggers gcp function
---function gets campaigns that need to fire (based on nextFireDate < now(), in the past)
---send to pub/sub which triggers queueing function
---queueing function gathers messages and queues or fails messages
+# 📘 **Patient Appointment Reminder System — Architecture Document**
 
-message sending
---every 5 mins check for messages that need to go out
---triggers gcp function
---function gets messages that need to be sent (those in company queue collections) 
---send to pub/sub which triggers sending function
---scaled sending function (because of pub/sub) gathers messages and sends
+## Overview
+This system automates appointment reminders for clinics by supporting:
 
-Incoming messages & dispositions
----------------------------------------
-open a route that a function responds to (or pub/sub directly attached to): /messages/incoming
---route this as needed based on headers: companyId, messageId
---update message items, status, dates, etc
---of course this'll have some kind of authentication or confirmation it's from Twilio, or other external provider
+- Campaign scheduling
+- Data ingest
+- Message mapping & templating
+- Message queueing
+- Delivery sending (SMS/Email)
+- Delivery receipts
+- Failures + retry
+- Reporting + dashboards
+- Fully multi-tenant isolation
 
-Data ingest - the action of taking a file and loading it into the DB
-------------------------------------------------------------------------------------------
---Upload from portal (or API later) per campaign
---Find the data sources that haven't been loaded
---find the file name
---try to load that file into its appropriate data table
---track results and progress
+The system uses **Google Cloud Platform (GCP)** and **Firestore** as the primary components.
 
-Message mapping -- the action of pulling fields from data and applying a message format to it.
------------------------------------------------------------------------------------------------
---we don't care about the data that is uploaded, as long as the message template and data fields line up
-  --this allows for custom data fields across the board for companies
---campaign definitions define contact window, message mapping, confirm/cancel/reschedule options, contact methods (can have multiple types per campaign)
---we allow a campaign preview before it is marked as ready and can fire
---at campaign fire time, or now if on-demand, we gather messages, apply their template, and send
+---
 
-Message Queuing
----------------
-Special char detection
-Phone number format check
-Email format check
-Message deduplication
-  What is a dupe?: Same day, same person, same doctor, same end contact point (email, phone)
-Message Assembly: apply fields to template
-  --trim whitespace per field - this is manadatory and does not fail any message
-A message fails to queue if any steps fail here.
-  Campaign row gets flagged and moved into failures collection with detailed information of its failure
+# 1. **Architecture Summary**
 
-Reporting
-------------------------------
-Reports can be ran against campaigns, customers, and dates
+### **Core GCP Components**
+- **Cloud Scheduler** — triggers campaign/message checks every 5 min
+- **Cloud Functions** — queueing, sending, ingest, and reporting
+- **Pub/Sub** — async scaling for sending and queueing
+- **Firestore** — campaign, message, failure, ingest, summary storage
+- **Cloud Storage** — raw file uploads
+- **Firebase Auth** — dashboard authentication
 
-Dashboard Features
----------------------
-upload data
-review data
-manage api keys
-manage campaigns: create, edit, preview, view status
-review message failures: errors, duplications
-reporting
+Optional future expansion:
+- Auth0 SSO  
+- BigQuery export  
 
-----------------------------------------------------
+---
 
-API (later)
-no specifications as of now
+# 2. **Multi-Tenant Data Model**
+
+### All data is stored under company-scoped paths:
+```
+/companies/{companyId}/campaigns/{campaignId}
+/companies/{companyId}/messages/{messageId}
+/companies/{companyId}/failuresData/{failureId}
+/companies/{companyId}/failuresQueue/{failureId}
+/companies/{companyId}/failuresSend/{failureId}
+/companies/{companyId}/ingestFiles/{fileId}
+/companies/{companyId}/summaries/{YYYY-MM-DD}
+/companies/{companyId}/settings
+```
+
+Global collections:
+```
+/users/{uid}
+/templatesGlobal/{id}
+/appSettings/{id}
+```
+
+---
+
+# 3. **Security Model**
+
+### **Authentication**
+- Firebase Auth
+- All authenticated users carry:
+  - `companyId`
+  - `role`
+
+### **Authorization**
+```javascript
+match /companies/{companyId}/{collection=**}/{docId} {
+  allow read, write: if
+    request.auth != null &&
+    request.auth.token.companyId == companyId &&
+    request.auth.token.role in ['admin', 'staff'];
+}
+```
+
+---
+
+# 4. **Scheduler Architecture**
+
+### **Campaign Scheduler**
+- Find campaigns with `nextFireDate <= now()` and `status = "ready"`
+
+### **Message Scheduler**
+- Find queued messages with `scheduledSendAt <= now()`
+
+---
+
+# 5. **Idempotency Strategy**
+
+Uses status-based locking with TTL-assisted lock docs.
+
+```
+status: ready | processing | complete | failed
+processingAt: timestamp
+```
+
+Additional TTL lock doc:
+```
+/processingLocks/{entityId}
+```
+
+---
+
+# 6. **Data Ingest (Row-by-Row Partial Load)**
+
+- File uploaded → ingestFile doc created
+- Rows validated
+- Valid rows saved
+- Invalid rows → failuresData collection
+- File ends as:
+  - complete
+  - complete-with-errors
+  - failed
+
+---
+
+# 7. **Message Mapping**
+
+/- Flexible fields
+- Trim/normalize
+- Snapshot template version at send time
+- Retries use **latest** template version
+
+---
+
+# 8. **Message Queueing Pipeline**
+
+- Special char check
+- Phone/email check
+- Dedupe check
+- Template merge
+
+Failures → failuresQueue.
+
+---
+
+# 9. **Duplicate Logic**
+
+Duplicate if:
+1. personId
+2. doctorId
+3. contactPoint
+4. appointmentDate
+5. calendarDay
+
+Composite index required.
+
+---
+
+# 10. **Sending Architecture**
+
+- Pub/Sub scaled sending
+- Per-company rate limits
+- TTL rate-window docs
+
+---
+
+# 11. **Delivery Receipts**
+
+Webhook updates message doc:
+```
+status
+providerStatus
+providerMessageId
+providerResponse
+statusHistory
+```
+
+Idempotent timestamp-based.
+
+---
+
+# 12. **Failure Handling (Three Buckets)**
+
+```
+failuresData
+failuresQueue
+failuresSend
+```
+
+---
+
+# 13. **Reporting Model (Daily Summaries)**
+
+```
+/companies/{companyId}/summaries/{YYYY-MM-DD}
+```
+
+Daily totals:
+- uploaded
+- queued
+- sent
+- delivered
+- failures
+
+Dashboard uses summaries (fast, cheap).
+
+---
+
+# 14. **Dashboard Features**
+
+- upload data
+- review data
+- manage campaigns
+- preview templates
+- view messages
+- view failures
+- reporting dashboard
+
+---
+
+# 15. **Future Roadmap**
+
+- Auth0 / SSO
+- BigQuery analytics
+- AI cleanup pipelines
+- Full REST API
+
+---
+
+# 🎉 End of Document
