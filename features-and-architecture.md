@@ -201,6 +201,7 @@ Dashboard uses summaries (fast, cheap).
 
 # 14. **Dashboard Features**
 
+- react app on cloud run
 - upload data
 - review data
 - manage campaigns
@@ -219,5 +220,73 @@ Dashboard uses summaries (fast, cheap).
 - Full REST API
 
 ---
+
+# 16. **File Architecture**
+
+/
+├── core/                          # Shared logic used across functions + Cloud Run
+│   ├── db/
+│   ├── validation/
+│   ├── templating/
+│   ├── queue/
+│   ├── util/
+│   └── index.js
+│
+├── functions/                     # Cloud Functions bundles
+│   ├── send/
+│   │   ├── index.js
+│   │   ├── package.json
+│   │   └── core (copied from ../core at build time)
+│   ├── queue/
+│   │   ├── index.js
+│   │   ├── package.json
+│   │   └── core (copied from ../core at build time)
+│   ├── ingest/
+│   │   ├── index.js
+│   │   ├── package.json
+│   │   └── core (copied from ../core at build time)
+│   ├── report/
+│   │   ├── index.js
+│   │   ├── package.json
+│   │   └── core (copied from ../core at build time)
+│   └── shared/                    # (Optional) shared files symlinked or copied in
+│
+├── src/                           # Cloud Run app
+│   ├── routes/
+│   ├── middleware/
+│   ├── controllers/
+│   ├── services/
+│   ├── health/                    # health checks
+│   ├── index.js                   # entry into cloudrun
+│   └── ...
+│
+├── package.json
+├── .gitignore
+│
+├── .env.example                   # Example environment variables
+│
+├── deploy/                        # Infra + deployment scripts
+│   ├── cloudbuild-dev.yaml
+│   ├── cloudbuild-prod.yaml
+│   ├── terraform/                 # (Optional but recommended)
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   └── outputs.tf
+│   └── scripts/                   # utility scripts (deploy, build, prune)
+│
+├── .github/
+│   └── workflows/
+│       ├── dev.yml
+│       └── prod.yml
+│
+├── tests/                         # Jest or Vitest test suite
+│   ├── unit/
+│   ├── integration/
+│   └── mocks/
+│
+├── docs/                          # Architecture/DB/README documents
+│
+└── README.md
+
 
 # 🎉 End of Document
