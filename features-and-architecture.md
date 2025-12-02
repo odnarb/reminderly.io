@@ -1,4 +1,3 @@
-
 # 📘 **Patient Appointment Reminder System — Architecture Document**
 
 ## Overview
@@ -8,7 +7,7 @@ This system automates appointment reminders for clinics by supporting:
 - Data ingest
 - Message mapping & templating
 - Message queueing
-- Delivery sending (SMS/Email)
+- Delivery sending (SMS/Email/Voice)
 - Delivery receipts
 - Failures + retry
 - Reporting + dashboards
@@ -22,21 +21,22 @@ The system uses **Google Cloud Platform (GCP)** and **Firestore** as the primary
 
 ### **Core GCP Components**
 - **Cloud Scheduler** — triggers campaign/message checks every 5 min
-- **Cloud Functions** — queueing, sending, ingest, and reporting
-- **Pub/Sub** — async scaling for sending and queueing
-- **Firestore** — campaign, message, failure, ingest, summary storage
+- **Cloud Functions** — queueing, sending, ingest, reporting
+- **Pub/Sub** — async scale-out for queueing/sending
+- **Firestore** — campaigns, messages, failures, ingests, summaries
 - **Cloud Storage** — raw file uploads
 - **Firebase Auth** — dashboard authentication
 
 Optional future expansion:
-- Auth0 SSO  
-- BigQuery export  
+- Auth0 SSO
+- BigQuery export
 
 ---
 
 # 2. **Multi-Tenant Data Model**
 
-### All data is stored under company-scoped paths:
+All data is stored under company-scoped paths:
+
 ```
 /companies/{companyId}/campaigns/{campaignId}
 /companies/{companyId}/messages/{messageId}
@@ -61,7 +61,7 @@ Global collections:
 
 ### **Authentication**
 - Firebase Auth
-- All authenticated users carry:
+- Auth token stores:
   - `companyId`
   - `role`
 
@@ -80,23 +80,28 @@ match /companies/{companyId}/{collection=**}/{docId} {
 # 4. **Scheduler Architecture**
 
 ### **Campaign Scheduler**
-- Find campaigns with `nextFireDate <= now()` and `status = "ready"`
+- Every 5 minutes:
+  - Find campaigns with `nextFireDate <= now()`
+  - Queue campaign’s batch generation
 
 ### **Message Scheduler**
-- Find queued messages with `scheduledSendAt <= now()`
+- Every 5 minutes:
+  - Find `QUEUED` messages with `scheduledSendAt <= now()`
+  - Throttle per campaign
+  - Send via Pub/Sub
 
 ---
 
 # 5. **Idempotency Strategy**
 
-Uses status-based locking with TTL-assisted lock docs.
+Status-based locking with optional lock TTL docs:
 
 ```
 status: ready | processing | complete | failed
 processingAt: timestamp
 ```
 
-Additional TTL lock doc:
+TTL-based lock doc:
 ```
 /processingLocks/{entityId}
 ```
@@ -105,45 +110,48 @@ Additional TTL lock doc:
 
 # 6. **Data Ingest (Row-by-Row Partial Load)**
 
-- File uploaded → ingestFile doc created
+- File uploaded → `ingestFile` doc created
 - Rows validated
 - Valid rows saved
-- Invalid rows → failuresData collection
+- Invalid rows → failuresData
 - File ends as:
-  - complete
-  - complete-with-errors
-  - failed
+  - `complete`
+  - `complete-with-errors`
+  - `failed`
+
+Ingest data is **dumb**: appointment details & patient info only.
 
 ---
 
 # 7. **Message Mapping**
 
-/- Flexible fields
-- Trim/normalize
-- Snapshot template version at send time
+- Flexible field mapping
+- Trim/normalize data
+- Template snapshot evaluated at message generation
 - Retries use **latest** template version
 
 ---
 
 # 8. **Message Queueing Pipeline**
 
+Per row:
 - Special char check
-- Phone/email check
-- Dedupe check
+- Phone/email validation
+- Duplicate check
 - Template merge
-
-Failures → failuresQueue.
+- Final message queued or skipped
+- Failures → failuresQueue
 
 ---
 
 # 9. **Duplicate Logic**
 
-Duplicate if:
-1. personId
-2. doctorId
-3. contactPoint
-4. appointmentDate
-5. calendarDay
+Message considered duplicate if:
+1. `personId`
+2. `doctorId`
+3. `contactPoint`
+4. `appointmentDate`
+5. `calendarDay`
 
 Composite index required.
 
@@ -151,15 +159,16 @@ Composite index required.
 
 # 10. **Sending Architecture**
 
-- Pub/Sub scaled sending
-- Per-company rate limits
-- TTL rate-window docs
+- Pub/Sub scalable sending
+- Per-company & per-campaign rate limits
+- TTL docs to enforce rate windows
 
 ---
 
 # 11. **Delivery Receipts**
 
-Webhook updates message doc:
+Webhook → updates:
+
 ```
 status
 providerStatus
@@ -168,7 +177,7 @@ providerResponse
 statusHistory
 ```
 
-Idempotent timestamp-based.
+Idempotent via timestamps.
 
 ---
 
@@ -188,43 +197,44 @@ failuresSend
 /companies/{companyId}/summaries/{YYYY-MM-DD}
 ```
 
-Daily totals:
+Daily:
 - uploaded
 - queued
 - sent
 - delivered
 - failures
 
-Dashboard uses summaries (fast, cheap).
+Dashboard consumes summaries (fast, cheap).
 
 ---
 
 # 14. **Dashboard Features**
 
-- react app on cloud run
-- upload data
-- review data
-- manage campaigns
-- preview templates
-- view messages
-- view failures
-- reporting dashboard
+- React app on Cloud Run
+- Uploading + ingest previews
+- Review data
+- Manage campaigns
+- Preview templates
+- Message viewer
+- Failure viewer
+- Reporting dashboard
 
 ---
 
 # 15. **Future Roadmap**
 
-- Auth0 / SSO
+- Auth0 / full SSO
 - BigQuery analytics
-- AI cleanup pipelines
+- Automated cleanup pipelines
 - Full REST API
 
 ---
 
 # 16. **File Architecture**
 
+```
 /
-├── core/                          # Shared logic used across functions + Cloud Run
+├── core/                          # Shared logic for functions + Cloud Run
 │   ├── db/
 │   ├── validation/
 │   ├── templating/
@@ -232,61 +242,107 @@ Dashboard uses summaries (fast, cheap).
 │   ├── util/
 │   └── index.js
 │
-├── functions/                     # Cloud Functions bundles
+├── functions/                     # GCP Cloud Functions
 │   ├── send/
-│   │   ├── index.js
-│   │   ├── package.json
-│   │   └── core (copied from ../core at build time)
 │   ├── queue/
-│   │   ├── index.js
-│   │   ├── package.json
-│   │   └── core (copied from ../core at build time)
 │   ├── ingest/
-│   │   ├── index.js
-│   │   ├── package.json
-│   │   └── core (copied from ../core at build time)
 │   ├── report/
-│   │   ├── index.js
-│   │   ├── package.json
-│   │   └── core (copied from ../core at build time)
-│   └── shared/                    # (Optional) shared files symlinked or copied in
+│   └── shared/
 │
 ├── src/                           # Cloud Run app
 │   ├── routes/
 │   ├── middleware/
 │   ├── controllers/
 │   ├── services/
-│   ├── health/                    # health checks
-│   ├── index.js                   # entry into cloudrun
-│   └── ...
+│   ├── health/
+│   └── index.js
 │
-├── package.json
-├── .gitignore
-│
-├── .env.example                   # Example environment variables
-│
-├── deploy/                        # Infra + deployment scripts
+├── deploy/
 │   ├── cloudbuild-dev.yaml
 │   ├── cloudbuild-prod.yaml
-│   ├── terraform/                 # (Optional but recommended)
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   └── outputs.tf
-│   └── scripts/                   # utility scripts (deploy, build, prune)
+│   └── terraform/
 │
-├── .github/
-│   └── workflows/
-│       ├── dev.yml
-│       └── prod.yml
-│
-├── tests/                         # Jest or Vitest test suite
-│   ├── unit/
-│   ├── integration/
-│   └── mocks/
-│
-├── docs/                          # Architecture/DB/README documents
-│
+├── tests/
+├── docs/
 └── README.md
+```
 
+---
+
+# 17. **Campaign Configuration & Reminder Logic** *(Conversation Decisions Integrated)*
+
+## **Campaign = Smart**
+Campaign defines:
+- `offsets`: e.g., `[7,3,1]`
+- `allowedHoursStart` / `allowedHoursEnd`
+- `timezone`
+- `sendDays = "all" | "weekdays-only"`
+- `rateLimit.maxPerMinute`
+- `patientLimits.maxPerDay`
+- Template: **single template**, offset-aware
+- State: `draft | active | paused | archived`
+
+## **Ingest = Dumb**
+A file ingest **does not create a campaign**.
+It only attaches data to an **existing** campaign and generates messages that follow campaign rules.
+
+---
+
+# 18. **Campaign States**
+
+### `draft`
+- Ingest allowed
+- All generated messages → `SKIPPED:CAMPAIGN_DRAFT`
+
+### `active`
+- Normal  
+- Ingest creates queued messages based on rules
+
+### `paused`
+- Ingest allowed
+- All messages → `SKIPPED:CAMPAIGN_PAUSED`
+
+### `archived`
+- Ingest **rejected**
+
+---
+
+# 19. **Reminder Timestamp Generation Flow**
+
+For each appointment row:
+
+### 1. **Compute base timestamp**
+`base = appointmentDate - offsetDays` (in campaign timezone)
+
+### 2. **If base < now → SKIP (PAST_WINDOW)**
+
+### 3. **Clamp to allowed hours**
+- Before allowed window → set to `allowedHoursStart`
+- After allowed window → set to `allowedHoursStart` **next day**
+
+### 4. **Weekend bump (if weekdays-only)**
+- Sat/Sun → move to Monday @ `allowedHoursStart`
+
+### 5. **If new time < now → SKIP**
+
+### 6. **Per-patient cap**
+- If messages today (campaign TZ) ≥ `maxPerDay`
+  → `SKIPPED:PATIENT_DAILY_LIMIT`
+
+### 7. **Create QUEUED message**
+```
+status: QUEUED
+scheduledSendAt: computedTimestamp
+offsetDays: X
+skipReason: null
+```
+
+### 8. **Send-time throttle**
+Scheduler:
+- Finds `scheduledSendAt <= now`
+- Sends ≤ `rateLimit.maxPerMinute` per campaign
+- Updates status to SENT/FAILED
+
+---
 
 # 🎉 End of Document
