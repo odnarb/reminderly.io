@@ -37,6 +37,7 @@ Reports can be ran against campaigns and dates, or dates themselves
 Dashboard Features
 ---------------------
 upload data
+review data
 manage api keys
 manage campaigns: create, edit, preview, view status
 reporting
