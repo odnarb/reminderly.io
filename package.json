@@ -4,34 +4,11 @@
   "description": "Reminderly.io repo",
   "main": "reminderly.js",
   "dependencies": {
-    "aws-sdk": "^2.1441.0",
-    "body-parser": "^1.19.0",
-    "compression": "^1.7.4",
-    "connect-redis": "^5.0.0",
-    "cookie-parser": "^1.4.5",
-    "dotenv": "^8.1.0",
-    "ejs": "^3.1.8",
     "express": "^4.17.1",
-    "express-ejs-layouts": "^2.5.0",
-    "express-session": "^1.17.1",
-    "minimist": "^1.2.5",
-    "mysql2": "^2.3.3",
-    "node-uuid": "^1.4.8",
-    "nodemailer": "^6.9.4",
-    "redis": "^3.0.2",
-    "sequelize": "^6.21.1",
-    "sequelize-auto": "^0.8.8",
-    "serve-favicon": "^2.5.0",
-    "uuid": "^8.3.1",
+    "luxon": "^3.7.2",
     "winston": "^3.3.3",
-    "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "axios": "^0.27.2",
-    "form-data": "^4.0.0",
-    "jshint": "latest",
-    "nedb-session-store": "^1.1.2",
-    "nodemon": "^3.0.0",
     "standard": "^17.1.0"
   },
   "scripts": {
@@ -42,7 +19,7 @@
     "url": "git+https://github.com/odnarb/reminderly.io.git"
   },
   "author": "Brandon Chambers",
-  "license": "Apache 2.0",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/odnarb/reminderly.io/issues"
   },
