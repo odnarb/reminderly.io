@@ -1,119 +1,42 @@
 Sending Architecture
------------------------
+=========================
 
-Build:
-    --Create SQS and lambda poller per packet
-    --Use a lambda to create this set
+Scheduler
+--------------
+--every 5 mins check for campaigns that need to fire
+--triggers gcp function
+--function gets campaigns that need to fire (based on nextFireDate < now(), in the past)
+--send to pub/sub which triggers sending function
+--sending function gathers messages and sends
 
-Teardown:
-    --Remove when campaign is removed
-    --Use a lambda to remove this set
-
-Lambda: get packets and their data
-    --send to appropriate SQS depending on the packet
-
-SQS:
-    --each packet (campaign) gets its own SQS queue
-    --limitation for now is 120k per queue (campaign)
-
-Lambda:
-    --poll its SQS queue
-
------------------------------------------
-
-Incoming and outgoing messages
+Incoming messages & dispositions
 ---------------------------------------
-Lambda(sendContact_step1)
-pull from DB and send to SQS
-
---packet_data_getter.js
-    --get contacts and push into SQS
---packet_silencer.js
-    --set packet as fetched
-
-Lambda(sendContact_step2)
-poll from SQS and send to API service for contact
-
---sendContacts.js
-
-Lambda(disposition_step1)
--from API Gateway
--send to SQS
-
-Lambda(disposition_step2)
--poll from SQS
--send to DB
-
-Lambda(incoming_step1)
--from API Gateway
--send to SQS
-
-Lambda(incoming_step2)
--poll from SQS
--send to DB
+open a route that a function responds to (or pub/sub directly attached to): /messages/incoming
+--route this as needed based on headers: companyId, messageId
+--update message items, status, dates, etc
 
 Data ingest - the action of taking a file and loading it into the DB
 ------------------------------------------------------------------------------------------
---Upload from portal (or API later)
+--Upload from portal (or API later) per campaign
 --Find the data sources that haven't been loaded
 --find the file name
 --try to load that file into its appropriate data table
 --track results and progress
 
-Data mapping -- the action of pulling fields from data and applying a message format to it.
-------------------------------------------------------------------------------------------
---Create a SQL script to accept different formats
---campaign definitions define contact window, message format (or mapping), confirm/cancel/reschedule options, contact methods,
---this is a stored proc or series of stored procs
---packet data moves into campaign table after message construction (data mapping)
-
-Instant / On-Demand Messaging
-------------------------------
---create an on-demand campaign
---data is loaded into its own packet table
---data is mapped and whatnot 
---but contacts are sent immediately when ready
-page source (one-liner or data packet) -> From API Gateway -> Lambda(on-demand)
--> DB (gets inserted as an on-demand msg)
--> SQS(email/phone/sms/etc)
-
+Message mapping -- the action of pulling fields from data and applying a message format to it.
+-----------------------------------------------------------------------------------------------
+--we don't care about the data that is uploaded, as long as the message template and data fields line up
+--campaign definitions define contact window, message mapping, confirm/cancel/reschedule options, contact methods (can have multiple types per campaign)
+--we allow a campaign preview before it is marked as ready and can fire
+--at campaign fire time, or now if on-demand, we gather messages, apply their template, and send
 
 Reporting
 ------------------------------
-Reports can be ran against packet tables, depending on the campaign
+Reports can be ran against campaigns and dates, or dates themselves
 
-
-
-
-----------------DB----------------
-
-hard-coded and semi-hard-coded data
-------------------------------------------------
-contact_methods
-contact_status
-contact_method_providers
-data_ingest_source
-data_ingest_stage
-message_functions
-
-dynamic data
------------------------------------------------
-
-packet_1337_07022020_1_data
-	--campaign table?
-	campaign_data_1337
-	--holds historical data up to a full month
-	campaign_data_1337_05312020
-	campaign_data_1337_04302020
-	--holds historical data starting with date tag
-data_packet
-packet_table_tracking
-company
-users
-user-company access
-	--assume no access
-company_campaigns
-
-sms_unsubscribe
-email_unsubscribe
-phone_unsubscribe
+Dashboard Features
+---------------------
+upload data
+manage api keys
+manage campaigns: create, edit, preview, view status
+reporting
