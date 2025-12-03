@@ -1,5 +1,7 @@
 import { Campaign, IngestRow, GeneratedMessage } from './types';
 
+import { computeScheduledSendAt } from './scheduling';
+
 interface GenerateMessagesOptions {
   now: Date;                       // injected for testability
   // later: patientDailyCountLookup, etc.
@@ -12,45 +14,71 @@ export function generateMessagesFromRow(
 ): GeneratedMessage[] {
   const { now } = options;
 
-  // 1) Campaign state gate
+  // 1) Hard gate: archived generates nothing
   if (campaign.status === 'archived') {
-    return []; // ingest should probably be blocked before this
+    return [];
   }
 
-  // For draft/paused we still generate but mark as SKIPPED later.
   const isAutoSkippedByState =
     campaign.status === 'draft' || campaign.status === 'paused';
 
   const messages: GeneratedMessage[] = [];
 
   for (const offsetDays of campaign.offsets) {
-    // TODO: implement:
-    // - base = appt - offset
-    // - if base < now => skip PAST_WINDOW
-    // - clamp to allowedHours
-    // - weekend bump if weekdays-only
-    // - if clamped < now => skip
-    const scheduledSendAt = computeScheduledSendAt(
-      campaign,
-      row.appointmentDate,
-      offsetDays,
-      now
-    );
+    // If campaign isn't active, we still create a SKIPPED record
+    if (isAutoSkippedByState) {
+      messages.push({
+        campaignId: campaign.id,
+        ingestRowId: row.id,
+        status: 'SKIPPED',
+        skipReason: 'CAMPAIGN_STATE',
 
-    if (!scheduledSendAt) {
-      // e.g. PAST_WINDOW case; we just don't create a message at all
+        scheduledSendAt: null,
+        offsetDays,
+
+        contactPoint: row.contactPoint,
+        contactType: row.contactType,
+        personId: row.patientId ?? null,
+        doctorId: row.doctorId ?? null,
+        appointmentDate: row.appointmentDate,
+      });
       continue;
     }
 
-    const baseMessage: GeneratedMessage = {
+    // Compute scheduling for active campaigns
+    const { scheduledSendAt, skipReason } = computeScheduledSendAt({
+      appointmentDate: row.appointmentDate,
+      offsetDays,
+      now,
+      campaign,
+    });
+
+    // Scheduling-based skips
+    if (!scheduledSendAt) {
+      messages.push({
+        campaignId: campaign.id,
+        ingestRowId: row.id,
+        status: 'SKIPPED',
+        skipReason, // PAST_WINDOW or CLAMPED_PAST
+
+        scheduledSendAt: null,
+        offsetDays,
+
+        contactPoint: row.contactPoint,
+        contactType: row.contactType,
+        personId: row.patientId ?? null,
+        doctorId: row.doctorId ?? null,
+        appointmentDate: row.appointmentDate,
+      });
+      continue;
+    }
+
+    // Happy path – ready to be picked up by queueing later
+    messages.push({
       campaignId: campaign.id,
       ingestRowId: row.id,
-      status: isAutoSkippedByState ? 'SKIPPED' : 'QUEUED',
-      skipReason: isAutoSkippedByState
-        ? (campaign.status === 'draft'
-            ? 'CAMPAIGN_DRAFT'
-            : 'CAMPAIGN_PAUSED')
-        : null,
+      status: 'PENDING',
+      skipReason: null,
 
       scheduledSendAt,
       offsetDays,
@@ -60,21 +88,8 @@ export function generateMessagesFromRow(
       personId: row.patientId ?? null,
       doctorId: row.doctorId ?? null,
       appointmentDate: row.appointmentDate,
-    };
-
-    messages.push(baseMessage);
+    });
   }
 
   return messages;
-}
-
-// Stub for now — next step we fill this in
-function computeScheduledSendAt(
-  campaign: Campaign,
-  appointmentDate: Date,
-  offsetDays: number,
-  now: Date
-): Date | null {
-  // placeholder, we’ll wire the full rules next
-  return appointmentDate; // just to have a compile-happy stub
 }

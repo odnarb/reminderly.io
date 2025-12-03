@@ -1,5 +1,7 @@
 export type CampaignStatus = 'draft' | 'active' | 'paused' | 'archived';
 
+export type SkipReason = 'CAMPAIGN_STATE' | 'PAST_WINDOW' | 'CLAMPED_PAST';
+
 export interface Campaign {
   id: string;
   name: string;
@@ -33,15 +35,21 @@ export interface IngestRow {
   appointmentDate: Date;           // already parsed into JS Date
 }
 
-export type MessageStatus = 'QUEUED' | 'SENDING' | 'SENT' | 'FAILED' | 'SKIPPED';
+export type MessageStatus =
+  | 'PENDING'
+  | 'QUEUED'
+  | 'SENDING'
+  | 'SENT'
+  | 'FAILED'
+  | 'SKIPPED';
 
 export interface GeneratedMessage {
   campaignId: string;
   ingestRowId: string;
   status: MessageStatus;
-  skipReason: string | null;
+  skipReason: SkipReason | null;
 
-  scheduledSendAt: Date;
+  scheduledSendAt: Date | null;   // <-- allow null for SKIPPED
   offsetDays: number;
 
   contactPoint: string;
